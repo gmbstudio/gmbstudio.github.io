@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Family Meal Planner - Plan weekly meals, manage recipes, and create smart shopping lists easily.">
+    <meta name="keywords" content="meal planner, recipe manager, shopping list, family meals, cooking, meal prep">
+    <meta property="og:title" content="Family Meal Planner">
+    <meta property="og:description" content="Plan weekly meals, manage recipes, and create smart shopping lists easily.">
+    <meta property="og:type" content="website">
+    <title>Family Meal Planner - Your Kitchen Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --coral-pink: #FF5A5F;
+            --coral-pink-light: #FF8A8E;
+            --coral-pink-dark: #CC484C;
+            --teal: #00A699;
+            --teal-light: #33C9BB;
+            --teal-dark: #00847A;
+            --deep-pink: #E51D52;
+            --dark-gray: #484848;
+            --light-gray: #F2F3F1;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark-gray);
+            line-height: 1.6;
+            background-color: var(--white);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--dark-gray);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--coral-pink), var(--coral-pink-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--coral-pink);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--coral-pink);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--coral-pink-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--teal);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--teal-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--dark-gray);
+            border: 2px solid var(--dark-gray);
+        }
+
+        .btn-outline:hover {
+            background: var(--dark-gray);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 24px 80px;
+            background: linear-gradient(180deg, var(--light-gray) 0%, var(--white) 100%);
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--dark-gray);
+        }
+
+        .hero h1 span {
+            color: var(--coral-pink);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #666;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .store-badge {
+            height: 54px;
+            transition: transform 0.2s;
+        }
+
+        .store-badge:hover {
+            transform: scale(1.05);
+        }
+
+        .hero-image {
+            max-width: 100%;
+            margin-top: 40px;
+        }
+
+        .phone-mockup {
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .phone-frame {
+            width: 100%;
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .phone-screen {
+            width: 100%;
+            aspect-ratio: 9/19.5;
+            background: linear-gradient(180deg, var(--coral-pink-light) 0%, var(--light-gray) 30%);
+            border-radius: 32px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone-status-bar {
+            height: 44px;
+            background: var(--coral-pink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .phone-content {
+            flex: 1;
+            padding: 16px;
+            background: var(--white);
+        }
+
+        .mock-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .mock-title {
+            height: 14px;
+            background: var(--dark-gray);
+            border-radius: 4px;
+            width: 60%;
+            margin-bottom: 8px;
+        }
+
+        .mock-text {
+            height: 10px;
+            background: #ccc;
+            border-radius: 4px;
+            width: 80%;
+        }
+
+        .mock-chip {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--teal-light);
+            border-radius: 16px;
+            font-size: 0.75rem;
+            color: white;
+            margin-top: 8px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 24px;
+            background: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--dark-gray);
+        }
+
+        .section-header p {
+            font-size: 1.125rem;
+            color: #666;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon.coral { background: rgba(255, 90, 95, 0.1); }
+        .feature-icon.teal { background: rgba(0, 166, 153, 0.1); }
+        .feature-icon.amber { background: rgba(255, 179, 71, 0.1); }
+        .feature-icon.purple { background: rgba(156, 39, 176, 0.1); }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark-gray);
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Screenshots Section */
+        .screenshots {
+            padding: 100px 24px;
+            background: var(--light-gray);
+            overflow: hidden;
+        }
+
+        .screenshots-container {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .screenshot {
+            width: 220px;
+            background: #1a1a1a;
+            border-radius: 28px;
+            padding: 8px;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s;
+        }
+
+        .screenshot:hover {
+            transform: scale(1.05);
+        }
+
+        .screenshot-inner {
+            width: 100%;
+            aspect-ratio: 9/19.5;
+            border-radius: 22px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screenshot-header {
+            height: 60px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .screenshot-header.coral { background: var(--coral-pink); color: white; }
+        .screenshot-header.teal { background: var(--teal); color: white; }
+        .screenshot-header.amber { background: #FF9800; color: white; }
+        .screenshot-header.gray { background: var(--dark-gray); color: white; }
+
+        .screenshot-body {
+            flex: 1;
+            background: var(--white);
+            padding: 12px;
+        }
+
+        .screenshot-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .mock-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .mock-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--teal);
+            border-radius: 4px;
+        }
+
+        .mock-checkbox.checked {
+            background: var(--teal);
+        }
+
+        .mock-item-text {
+            flex: 1;
+        }
+
+        .mock-item-title {
+            height: 10px;
+            background: var(--dark-gray);
+            border-radius: 3px;
+            width: 70%;
+            margin-bottom: 4px;
+        }
+
+        .mock-item-sub {
+            height: 8px;
+            background: #ccc;
+            border-radius: 3px;
+            width: 50%;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            padding: 100px 24px;
+            background: var(--white);
+        }
+
+        .benefits-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .benefits-text h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--dark-gray);
+        }
+
+        .benefits-list {
+            list-style: none;
+        }
+
+        .benefits-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .benefit-check {
+            width: 28px;
+            height: 28px;
+            background: var(--teal);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .benefits-list li span {
+            font-size: 1.125rem;
+            color: #666;
+        }
+
+        .benefits-image {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 100px 24px;
+            background: linear-gradient(135deg, var(--coral-pink) 0%, var(--deep-pink) 100%);
+            text-align: center;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta .btn {
+            background: white;
+            color: var(--coral-pink);
+        }
+
+        .cta .btn:hover {
+            background: var(--light-gray);
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 24px 30px;
+            background: var(--dark-gray);
+            color: white;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .footer-brand .logo-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .footer-brand span {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .footer-about p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+        }
+
+        .footer-links h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-bottom p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .social-links a:hover {
+            background: var(--coral-pink);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .benefits-content {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-image {
+                order: -1;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-header h2,
+            .benefits-text h2,
+            .cta h2 {
+                font-size: 1.75rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots-container {
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 20px;
+            }
+
+            .screenshot {
+                flex-shrink: 0;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">
+            <div class="logo-icon">🍽️</div>
+            <span>Family Meal Planner</span>
+        </a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#screenshots">Screenshots</a>
+            <a href="#download">Download</a>
+            <a href="privacy_policy.html">Privacy</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Plan meals. <span>Save time.</span><br>Enjoy cooking.</h1>
+            <p>Your personal kitchen assistant that makes meal planning simple and stress-free. Organize recipes, plan your week, and never wonder "what's for dinner?" again.</p>
+            <div class="hero-buttons">
+                <a href="#download" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.523 2H6.477C5.768 2 5.143 2.47 4.95 3.15L3 10v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9l-1.95-6.85C18.857 2.47 18.232 2 17.523 2zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5z"/>
+                    </svg>
+                    Download Now
+                </a>
+                <a href="#features" class="btn btn-outline">Learn More</a>
+            </div>
+            <div class="phone-mockup">
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <div class="phone-status-bar">This Week's Meals</div>
+                        <div class="phone-content">
+                            <div class="mock-card">
+                                <div class="mock-title"></div>
+                                <div class="mock-text"></div>
+                                <span class="mock-chip">Dinner</span>
+                            </div>
+                            <div class="mock-card">
+                                <div class="mock-title"></div>
+                                <div class="mock-text"></div>
+                                <span class="mock-chip" style="background: var(--coral-pink);">Lunch</span>
+                            </div>
+                            <div class="mock-card">
+                                <div class="mock-title"></div>
+                                <div class="mock-text"></div>
+                                <span class="mock-chip" style="background: #FF9800;">Breakfast</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Everything you need to plan meals</h2>
+            <p>Powerful features designed to make your kitchen life easier</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon coral">📅</div>
+                <h3>Weekly Meal Calendar</h3>
+                <p>Plan breakfast, lunch, and dinner for the entire week. Drag and drop recipes to different days and view your meal plan at a glance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon teal">📖</div>
+                <h3>Recipe Manager</h3>
+                <p>Store unlimited recipes with ingredients and step-by-step instructions. Organize by category and find exactly what you need.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon amber">🛒</div>
+                <h3>Smart Shopping Lists</h3>
+                <p>Automatically generate shopping lists from your meal plan. Smart ingredient aggregation combines items across recipes.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon purple">📴</div>
+                <h3>Works Offline</h3>
+                <p>Your data stays on your device. No account required, no internet needed. Fast, private, and always accessible.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section class="screenshots" id="screenshots">
+        <div class="section-header">
+            <h2>See it in action</h2>
+            <p>A clean, intuitive interface that makes meal planning a breeze</p>
+        </div>
+        <div class="screenshots-container">
+            <!-- Screenshot 1: Meal Calendar -->
+            <div class="screenshot">
+                <div class="screenshot-inner">
+                    <div class="screenshot-header coral">
+                        <span class="screenshot-title">Meal Calendar</span>
+                        <span>+</span>
+                    </div>
+                    <div class="screenshot-body">
+                        <div class="mock-list-item">
+                            <div style="width: 8px; height: 40px; background: var(--coral-pink); border-radius: 4px;"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                                <div class="mock-item-sub"></div>
+                            </div>
+                        </div>
+                        <div class="mock-list-item">
+                            <div style="width: 8px; height: 40px; background: var(--teal); border-radius: 4px;"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                                <div class="mock-item-sub"></div>
+                            </div>
+                        </div>
+                        <div class="mock-list-item">
+                            <div style="width: 8px; height: 40px; background: #FF9800; border-radius: 4px;"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                                <div class="mock-item-sub"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshot 2: Recipes -->
+            <div class="screenshot">
+                <div class="screenshot-inner">
+                    <div class="screenshot-header teal">
+                        <span class="screenshot-title">My Recipes</span>
+                        <span>🔍</span>
+                    </div>
+                    <div class="screenshot-body">
+                        <div class="mock-list-item">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FFD54F, #FF9800); border-radius: 8px;"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                                <div class="mock-item-sub"></div>
+                            </div>
+                        </div>
+                        <div class="mock-list-item">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #81C784, #388E3C); border-radius: 8px;"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                                <div class="mock-item-sub"></div>
+                            </div>
+                        </div>
+                        <div class="mock-list-item">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF8A80, #E53935); border-radius: 8px;"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                                <div class="mock-item-sub"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshot 3: Shopping List -->
+            <div class="screenshot">
+                <div class="screenshot-inner">
+                    <div class="screenshot-header amber">
+                        <span class="screenshot-title">Shopping List</span>
+                        <span>✓</span>
+                    </div>
+                    <div class="screenshot-body">
+                        <div class="mock-list-item">
+                            <div class="mock-checkbox checked"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title" style="text-decoration: line-through; opacity: 0.5;"></div>
+                            </div>
+                        </div>
+                        <div class="mock-list-item">
+                            <div class="mock-checkbox"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                            </div>
+                        </div>
+                        <div class="mock-list-item">
+                            <div class="mock-checkbox"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                            </div>
+                        </div>
+                        <div class="mock-list-item">
+                            <div class="mock-checkbox"></div>
+                            <div class="mock-item-text">
+                                <div class="mock-item-title"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshot 4: Recipe Detail -->
+            <div class="screenshot">
+                <div class="screenshot-inner">
+                    <div class="screenshot-header gray">
+                        <span class="screenshot-title">Recipe Detail</span>
+                        <span>♡</span>
+                    </div>
+                    <div class="screenshot-body">
+                        <div style="width: 100%; height: 80px; background: linear-gradient(135deg, var(--coral-pink-light), var(--coral-pink)); border-radius: 12px; margin-bottom: 12px;"></div>
+                        <div class="mock-title" style="width: 80%; margin-bottom: 12px;"></div>
+                        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                            <span style="padding: 4px 10px; background: var(--light-gray); border-radius: 12px; font-size: 10px;">30 min</span>
+                            <span style="padding: 4px 10px; background: var(--light-gray); border-radius: 12px; font-size: 10px;">4 servings</span>
+                        </div>
+                        <div class="mock-text" style="margin-bottom: 6px;"></div>
+                        <div class="mock-text" style="width: 90%; margin-bottom: 6px;"></div>
+                        <div class="mock-text" style="width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="benefits-content">
+            <div class="benefits-text">
+                <h2>Why families love us</h2>
+                <ul class="benefits-list">
+                    <li>
+                        <div class="benefit-check">✓</div>
+                        <span><strong>Save time</strong> - No more daily "what's for dinner?" stress</span>
+                    </li>
+                    <li>
+                        <div class="benefit-check">✓</div>
+                        <span><strong>Reduce food waste</strong> - Plan ahead and buy only what you need</span>
+                    </li>
+                    <li>
+                        <div class="benefit-check">✓</div>
+                        <span><strong>Save money</strong> - Smart shopping lists prevent impulse buys</span>
+                    </li>
+                    <li>
+                        <div class="benefit-check">✓</div>
+                        <span><strong>Eat healthier</strong> - Plan balanced meals for the whole week</span>
+                    </li>
+                    <li>
+                        <div class="benefit-check">✓</div>
+                        <span><strong>Keep recipes safe</strong> - Never lose a family favorite again</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="benefits-image">
+                <div class="phone-mockup">
+                    <div class="phone-frame">
+                        <div class="phone-screen">
+                            <div class="phone-status-bar" style="background: var(--teal);">My Recipes</div>
+                            <div class="phone-content">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #FFD54F, #FF9800); border-radius: 12px;"></div>
+                                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #81C784, #388E3C); border-radius: 12px;"></div>
+                                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #FF8A80, #E53935); border-radius: 12px;"></div>
+                                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #90CAF9, #1976D2); border-radius: 12px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="download">
+        <h2>Ready to simplify your meals?</h2>
+        <p>Download Family Meal Planner today and take the stress out of cooking for your family.</p>
+        <div class="cta-buttons">
+            <a href="#" class="btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35zm13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27zm3.35-4.31c.34.27.59.69.59 1.19s-.22.9-.57 1.18l-2.29 1.32-2.5-2.5 2.5-2.5 2.27 1.31zM6.05 2.66l10.76 6.22-2.27 2.27L6.05 2.66z"/>
+                </svg>
+                Google Play
+            </a>
+            <a href="#" class="btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                </svg>
+                App Store
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-about">
+                <div class="footer-brand">
+                    <div class="logo-icon">🍽️</div>
+                    <span>Family Meal Planner</span>
+                </div>
+                <p>Your personal kitchen assistant that makes meal planning simple and stress-free. Plan meals, manage recipes, and create smart shopping lists.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#screenshots">Screenshots</a></li>
+                    <li><a href="#download">Download</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy_policy.html">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="mailto:gmbdesign.inc@gmail.com">Contact Us</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Family Meal Planner. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Twitter">𝕏</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="Facebook">f</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
