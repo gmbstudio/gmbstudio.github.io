@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <!-- Icon-only mark: square canvas, for avatars/favicons -->
+  <g transform="translate(20,20)" fill="none" stroke="#FFFFFF" stroke-width="6"
+     stroke-linecap="round" stroke-linejoin="round">
+    <rect width="120" height="120" rx="28" fill="#E10600" stroke="none"/>
+    <polygon points="22,46 39,39 98,74 82,81" fill="#FFFFFF" stroke="none"/>
+    <polyline points="69,18 22,46 82,81"/>
+    <polyline points="39,39 98,74 51,102"/>
+  </g>
+</svg>

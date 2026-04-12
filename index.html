@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>gmbStudio — Software that fits your life</title>
+  <meta name="description" content="gmbStudio is an independent software studio building focused apps for everyday life.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/">
+      <img src="assets/icon.svg" alt="" width="36" height="36">
+      <span class="brand__text"><b>gmb</b>STUDIO</span>
+    </a>
+    <nav>
+      <a href="#apps">Apps</a>
+      <a href="#about">About</a>
+      <a href="https://github.com/gmbstudio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <img class="hero__logo" src="assets/logo.svg" alt="gmbStudio">
+      <h1>Software that fits your life.</h1>
+      <p>An independent studio crafting focused apps for everyday life — built with care, shipped with intent.</p>
+      <a class="btn" href="#apps">See our apps</a>
+    </section>
+
+    <section id="apps" class="section">
+      <h2>Apps</h2>
+      <div class="grid">
+        <a class="card" href="https://gmbstudio.github.io/family-meal-planner/">
+          <div class="card__tag">Productivity</div>
+          <h3>Family Meal Planner</h3>
+          <p>Plan meals, save time, enjoy cooking. Weekly calendar, recipes and shopping lists in one place.</p>
+          <span class="card__cta">Visit →</span>
+        </a>
+        <div class="card card--placeholder">
+          <div class="card__tag">Coming soon</div>
+          <h3>Next app</h3>
+          <p>Something new is in the workshop.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <h2>About</h2>
+      <p class="lead">gmbStudio is a one-person software studio. We build small, sharp tools that respect your time and your data. No dark patterns, no bloat.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> gmbStudio. All rights reserved.</p>
+    <p><a href="https://github.com/gmbstudio" target="_blank" rel="noopener">github.com/gmbstudio</a></p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

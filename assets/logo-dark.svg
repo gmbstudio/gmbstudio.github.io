@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" font-family="'Inter','Helvetica Neue',Arial,sans-serif">
+  <!-- Dark-theme variant: same layout, STUDIO in white for contrast on dark bg -->
+  <g transform="translate(60,20)" fill="none" stroke="#FFFFFF" stroke-width="6"
+     stroke-linecap="round" stroke-linejoin="round">
+    <rect width="120" height="120" rx="28" fill="#E10600" stroke="none"/>
+    <polygon points="22,46 39,39 98,74 82,81" fill="#FFFFFF" stroke="none"/>
+    <polyline points="69,18 22,46 82,81"/>
+    <polyline points="39,39 98,74 51,102"/>
+  </g>
+
+  <g transform="translate(212,102)">
+    <text font-size="60" font-weight="800" fill="#E10600" letter-spacing="-2.5">gmb</text>
+    <text x="128" font-size="60" font-weight="400" fill="#FFFFFF" letter-spacing="5">STUDIO</text>
+  </g>
+</svg>
