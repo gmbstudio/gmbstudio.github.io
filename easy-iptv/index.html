@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Easy IPTV — Native IPTV player for Apple TV</title>
+  <meta name="description" content="Easy IPTV is a fast, native player for Apple TV. Bring your own provider — Xtream Codes or M3U — and watch live TV, films and series, with automatic failover that keeps playback alive.">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/">
+      <img src="../assets/icon.svg" alt="" width="36" height="36">
+      <span class="brand__text"><b>gmb</b>STUDIO</span>
+    </a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Your IPTV, done right on Apple TV.</h1>
+      <p>Easy IPTV is a fast, native player for Apple TV. Bring your own provider — an Xtream Codes account or an M3U playlist — and watch your live channels, films and series in a clean, focus-first interface built for the remote.</p>
+      <a class="btn" href="#features">Coming soon to Apple TV</a>
+    </section>
+
+    <section id="features" class="section">
+      <h2>Built around reliability</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card__tag">Failover</div>
+          <h3>It keeps playing</h3>
+          <p>Channels with several sources switch quality or source automatically when one drops — so the stream stays alive instead of freezing.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Native</div>
+          <h3>Made for the remote</h3>
+          <p>A true tvOS interface with focus-first navigation, instant start and fast zapping. No clumsy ports, no lag.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Your provider</div>
+          <h3>Bring your own</h3>
+          <p>Xtream Codes API or M3U / M3U8 playlists. Add several providers and merge them into a single catalogue.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Quality</div>
+          <h3>Pick your stream</h3>
+          <p>Swap UHD / FHD / HD live with left and right on the remote. A freeze watchdog and auto-reconnect handle the rest.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Guide</div>
+          <h3>EPG &amp; logos</h3>
+          <p>Electronic Programme Guide with dedicated channel logos, plus films and series with posters, details and Continue Watching.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Private</div>
+          <h3>Nothing leaves your device</h3>
+          <p>Your provider credentials stay on your device. We host no content and collect no data.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section">
+      <h2>How it works</h2>
+      <p class="lead">Easy IPTV is a <strong>player only</strong>. It ships with no channels and no content. You bring your own IPTV subscription — or a public, legal playlist — add it once in Settings, and start watching. We don't host, provide or link to any content.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> gmbStudio. All rights reserved.</p>
+    <p>
+      <a href="privacy_policy.html">Privacy Policy</a> ·
+      <a href="support.html">Support</a> ·
+      <a href="https://github.com/gmbstudio" target="_blank" rel="noopener">github.com/gmbstudio</a>
+    </p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
