@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Support — Family Meal Planner</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/">
+      <img src="../assets/icon.svg" alt="" width="36" height="36">
+      <span class="brand__text"><b>gmb</b>STUDIO</span>
+    </a>
+    <nav>
+      <a href="index.html">Meal Planner</a>
+      <a href="privacy_policy.html">Privacy</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section" style="max-width:760px;">
+      <h2>Family Meal Planner — Support</h2>
+      <p class="lead" style="font-size:16px;">Need a hand? Email us at <a href="mailto:askme@gmbstudio.cc">askme@gmbstudio.cc</a> and we'll get back to you.</p>
+
+      <h3>Getting started</h3>
+      <ol>
+        <li>Open <strong>Recipes</strong> and tap <strong>+</strong> to add your recipes — name, ingredients and steps.</li>
+        <li>Go to <strong>Plan</strong>, pick a day and assign a recipe to breakfast, lunch or dinner.</li>
+        <li>Open <strong>Shopping</strong> to get a list generated automatically from your week's meals — check items off as you shop.</li>
+      </ol>
+
+      <h3>Frequently asked</h3>
+      <p><strong>Do I need an account?</strong><br>No. The app works right away and fully offline — your recipes, meal plans and shopping lists are stored on your device.</p>
+      <p><strong>Where is my data stored?</strong><br>Locally on your device. We don't upload your recipes or meal plans to our servers. See our <a href="privacy_policy.html">Privacy Policy</a>.</p>
+      <p><strong>How do I remove the ads?</strong><br>Open <strong>Settings → Remove ads</strong> and complete the one-time purchase. Already bought it? Use <strong>Restore purchases</strong> on the same screen.</p>
+      <p><strong>Do the ads track me?</strong><br>No. We serve non-personalized (contextual) ads only — no cross-app tracking and no advertising identifier.</p>
+      <p><strong>How do I delete my data?</strong><br>Uninstalling the app removes all locally stored data. You can also clear individual recipes, plans and lists inside the app.</p>
+      <p><strong>Which devices are supported?</strong><br>iPhone (iOS) and Android.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> gmbStudio. All rights reserved.</p>
+    <p><a href="index.html">Meal Planner</a> · <a href="privacy_policy.html">Privacy Policy</a></p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
