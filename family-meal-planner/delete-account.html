@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Delete your account — Family Meal Planner</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/">
+      <img src="../assets/icon.svg" alt="" width="36" height="36">
+      <span class="brand__text"><b>gmb</b>STUDIO</span>
+    </a>
+    <nav>
+      <a href="index.html">Meal Planner</a>
+      <a href="support.html">Support</a>
+      <a href="privacy_policy.html">Privacy</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section" style="max-width:760px;line-height:1.7;">
+      <h2>Delete your account &amp; data</h2>
+      <p style="color:#888;font-style:italic;">Family Meal Planner — by gmbStudio. Last updated: July 27, 2026</p>
+
+      <p>This page explains how to request deletion of your <strong>Family Meal Planner</strong> account and the data associated with it. Using an account in Family Meal Planner is optional — the app works fully as a guest.</p>
+
+      <h3>How to request deletion</h3>
+      <ol>
+        <li>Send an email to <a href="mailto:askme@gmbstudio.cc?subject=Delete%20my%20Family%20Meal%20Planner%20account">askme@gmbstudio.cc</a> from the email address associated with your account.</li>
+        <li>Use the subject line <em>"Delete my Family Meal Planner account"</em>.</li>
+        <li>We verify the request and delete your account and associated profile data. This is completed within <strong>30 days</strong>, and you receive a confirmation.</li>
+      </ol>
+
+      <h3>What is deleted</h3>
+      <p>When your account is deleted, we remove the profile data stored in our backend (Supabase):</p>
+      <ul>
+        <li>Your <strong>email address</strong> (account identifier)</li>
+        <li>Your <strong>display name</strong></li>
+        <li>Your <strong>profile photo (avatar)</strong></li>
+        <li>Your anonymous <strong>user identifier</strong></li>
+      </ul>
+
+      <h3>What stays on your device</h3>
+      <p>Your recipes, meal plans and shopping lists are stored <strong>locally on your device</strong>, not in our backend. To remove them, delete the items inside the app or uninstall the app — uninstalling removes all locally stored data.</p>
+
+      <h3>Data retention</h3>
+      <p>We do not retain account/profile data after deletion, except where a limited retention period is required by law (for example, records related to fraud prevention or legal obligations). No additional retention periods apply to the profile data listed above.</p>
+
+      <h3>Questions</h3>
+      <p>Contact us at <a href="mailto:askme@gmbstudio.cc">askme@gmbstudio.cc</a>.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> gmbStudio. All rights reserved.</p>
+    <p><a href="index.html">Meal Planner</a> · <a href="support.html">Support</a> · <a href="privacy_policy.html">Privacy</a></p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
