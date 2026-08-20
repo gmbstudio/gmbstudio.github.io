@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Grismoor — Native IPTV player for Apple TV</title>
+  <meta name="description" content="Grismoor is a fast, native player for Apple TV. Bring your own provider — Xtream Codes or M3U — and watch live TV, films and series, with automatic failover that keeps playback alive.">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/">
+      <img src="../assets/icon.svg" alt="" width="36" height="36">
+      <span class="brand__text"><b>gmb</b>STUDIO</span>
+    </a>
+    <nav>
+      <a href="#story">The game</a>
+      <a href="#features">Features</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Escape before dawn.</h1>
+      <p>Grismoor is a hand-painted medieval escape room. You wake in a cell with no memory and a message scratched into the stone. Room by room, you work the locks open, piece together who you are, and find out who betrayed you — at your own pace, with no timers.</p>
+      <a class="btn" href="#features">Coming soon to iPhone, iPad and Android</a>
+    </section>
+
+    <section id="story" class="section">
+      <h2>A castle that answers back</h2>
+      <p class="lead">Ten rooms — the cell, the corridor, the kitchens, the crypt, the chapel, the clock tower — and thirty-four puzzles built from what is actually in them: tally marks on a wall, a scrambled ledger, a scale with one hollow weight. Solve them and the conspiracy comes apart one revelation at a time, towards three different endings.</p>
+    </section>
+
+    <section id="features" class="section">
+      <h2>What it is</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card__tag">Story</div>
+          <h3>A betrayal, told room by room</h3>
+          <p>Not a set of loose puzzle rooms: one narrative, with a voiced narrator, flashbacks and three endings depending on what you work out.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Puzzles</div>
+          <h3>Clues live in the room</h3>
+          <p>Thirty-four puzzles with diegetic clues — nothing is explained by a menu. Free, unlimited hints when you want a nudge instead of a walkthrough.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">No timers</div>
+          <h3>At your own pace</h3>
+          <p>Dawn is atmosphere, not a countdown. Nothing ends your game because you took your time.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Art</div>
+          <h3>Hand-painted, torch-lit</h3>
+          <p>Every room is painted art, not stock 3D. Original music and a voiced narrator.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Offline</div>
+          <h3>Plays anywhere</h3>
+          <p>The whole game runs on your device. No connection, no account, no ads.</p>
+        </div>
+        <div class="card">
+          <div class="card__tag">Fair</div>
+          <h3>Act I free, one unlock</h3>
+          <p>Play the first act free. If you want the rest, it is a single purchase — no subscription, no energy, no hints for sale.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> gmbStudio. All rights reserved.</p>
+    <p>
+      <a href="privacy_policy.html">Privacy Policy</a> ·
+      <a href="support.html">Support</a> ·
+      <a href="https://github.com/gmbstudio" target="_blank" rel="noopener">github.com/gmbstudio</a>
+    </p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
