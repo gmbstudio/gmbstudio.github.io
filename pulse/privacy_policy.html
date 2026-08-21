@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Política de privacidad — Pulse (herramienta interna de gmbStudio)</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/">
+      <img src="../assets/icon.svg" alt="" width="36" height="36">
+      <span class="brand__text"><b>gmb</b>STUDIO</span>
+    </a>
+  </header>
+
+  <main>
+    <section class="section" style="max-width:760px;">
+      <h2>Política de privacidad — Pulse</h2>
+      <p class="lead" style="font-size:16px;">Última actualización: 21 de agosto de 2026</p>
+
+      <p><strong>Pulse es una herramienta interna de gmbStudio</strong>, no una app para el
+      público. Se distribuye exclusivamente por TestFlight a personas del equipo y requiere
+      un token de administración para funcionar.</p>
+
+      <h3>Datos de quien usa Pulse</h3>
+      <p><strong>Ninguno.</strong> La app no tiene cuentas ni registro, no recoge datos de
+      quien la usa, no incorpora analíticas ni SDK de terceros y no muestra publicidad. El
+      token de administración se guarda únicamente en el llavero del dispositivo y nunca
+      se comparte.</p>
+
+      <h3>Qué muestra Pulse</h3>
+      <p>Métricas <strong>agregadas y anónimas</strong> de las apps de gmbStudio: recuentos
+      de uso, ventas y posiciones en las tiendas. Esos datos proceden de los informes de
+      App Store Connect y de la telemetría anónima propia del estudio, que no contiene
+      identidades ni contenido de usuarios (ver la política de cada app). Pulse solo los
+      lee; no los recoge ni los enriquece.</p>
+
+      <h3>Servicios que contacta</h3>
+      <p>Únicamente el servidor de telemetría de gmbStudio
+      (<code>gmb-events.events-worker.workers.dev</code>), con el token de administración.
+      No contacta con ningún otro servicio.</p>
+
+      <h3>Contacto</h3>
+      <p><a href="mailto:askme@gmbstudio.cc">askme@gmbstudio.cc</a></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> gmbStudio. Todos los derechos reservados.</p>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
