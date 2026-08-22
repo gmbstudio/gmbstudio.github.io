@@ -129,3 +129,59 @@ a { color: inherit; text-decoration: none; }
 }
 .footer p { margin: 6px 0; }
 .footer a:hover { color: var(--red); }
+
+/* --- Página de app: icono del hero, nota bajo el botón y tira de capturas --- */
+.hero__icon {
+  width: 90px; height: 90px;
+  border-radius: 20px;
+  margin-bottom: 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.16);
+}
+.hero__note {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-top: 14px;
+}
+.shots {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 32px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+}
+.shots figure { margin: 0; text-align: center; }
+.shots img {
+  width: 240px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 34px rgba(0,0,0,.14);
+  background: var(--surface);
+}
+.shots figcaption {
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.shots__note {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+.section .lead a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 640px) {
+  .shots { gap: 20px; padding: 6px 20px 30px; }
+  .shots img { width: 150px; border-radius: 16px; }
+}
+
+/* En pantallas estrechas la barra superior desbordaba y provocaba scroll
+   horizontal en toda la página (afectaba a todas las páginas del sitio). */
+@media (max-width: 640px) {
+  .nav { flex-direction: column; gap: 12px; padding: 16px 20px; }
+  .nav nav { flex-wrap: wrap; justify-content: center; gap: 18px; font-size: 13px; }
+}
