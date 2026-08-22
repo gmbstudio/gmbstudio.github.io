@@ -130,53 +130,79 @@ a { color: inherit; text-decoration: none; }
 .footer p { margin: 6px 0; }
 .footer a:hover { color: var(--red); }
 
-/* --- Página de app: icono del hero, nota bajo el botón y tira de capturas --- */
+/* --- Página de app: hero con collage multidispositivo --- */
+.hero--app { padding: 54px 32px 0; max-width: 1120px; }
 .hero__icon {
   width: 90px; height: 90px;
   border-radius: 20px;
   margin-bottom: 22px;
   box-shadow: 0 10px 30px rgba(0,0,0,.16);
 }
-.hero__note {
-  font-size: 13.5px;
-  color: var(--muted);
-  margin-top: 14px;
+.hero__note { font-size: 13.5px; color: var(--muted); margin-top: 14px; }
+.badge-link { display: inline-block; margin-top: 6px; transition: transform .15s ease; }
+.badge-link:hover { transform: translateY(-1px); }
+.badge-link img { display: block; width: 180px; height: auto; }
+
+/* El grupo de dispositivos escala con su ancho: proporciones estables en
+   cualquier pantalla, sin media queries por elemento. */
+.devices {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9.3;
+  max-width: 1000px;
+  margin: 40px auto 0;
+  overflow: hidden;                 /* los aparatos "nacen" del borde inferior */
 }
-.shots {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 10px 32px 40px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-  justify-content: center;
+.devices::before {                  /* halo de marca, identidad y no decoración */
+  content: "";
+  position: absolute; inset: 6% 10% 12%;
+  background: radial-gradient(ellipse at 50% 45%, rgba(225,6,0,.16), transparent 70%);
+  filter: blur(30px);
 }
-.shots figure { margin: 0; text-align: center; }
-.shots img {
-  width: 240px;
-  max-width: 100%;
+.devices__tv {
+  position: absolute; left: 13%; top: 0; width: 74%;
+  background: #0b0b0d;
+  padding: 0.85%;
+  border-radius: 14px;
+  box-shadow: 0 26px 60px rgba(0,0,0,.34);
+}
+.devices__tv img { display: block; width: 100%; height: auto; border-radius: 7px; }
+.devices__pad, .devices__phone {
+  position: absolute;
+  display: block;
   height: auto;
-  border-radius: 22px;
-  border: 1px solid var(--border);
-  box-shadow: 0 12px 34px rgba(0,0,0,.14);
-  background: var(--surface);
+  background: #0b0b0d;
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 22px 50px rgba(0,0,0,.34);
 }
-.shots figcaption {
-  margin-top: 12px;
-  font-size: 13.5px;
-  color: var(--muted);
+.devices__pad {
+  left: 3.5%; bottom: -11%;
+  width: 26.5%;
+  padding: 0.9%;
+  border-radius: 16px;
+  transform: rotate(-3.5deg);
+}
+.devices__phone {
+  right: 5%; bottom: -9%;
+  width: 13.5%;
+  padding: 1%;
+  border-radius: 20px;
+  transform: rotate(3deg);
 }
 .shots__note {
-  flex-basis: 100%;
   text-align: center;
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--muted);
-  margin: 4px 0 0;
+  margin: 26px 0 0;
 }
 .section .lead a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
-@media (max-width: 640px) {
-  .shots { gap: 20px; padding: 6px 20px 30px; }
-  .shots img { width: 150px; border-radius: 16px; }
+
+@media (max-width: 760px) {
+  .devices { aspect-ratio: 16 / 12.4; margin-top: 34px; }
+  .devices__tv { left: 4%; width: 92%; border-radius: 9px; }
+  .devices__pad { display: none; }        /* en móvil, TV + iPhone bastan */
+  .devices__phone { right: 4%; width: 27%; bottom: -10%; }
+  .badge-link img { width: 160px; }
 }
 
 /* En pantallas estrechas la barra superior desbordaba y provocaba scroll
