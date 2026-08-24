@@ -33,22 +33,44 @@
 
   <main>
     <section class="hero hero--app">
-      <img class="hero__icon" src="img/icon.png" alt="Easy IPTV app icon" width="90" height="90">
-      <h1>Your playlists, finally at home on Apple.</h1>
-      <p>Easy IPTV plays your own <strong>M3U playlists</strong> and <strong>Xtream Codes</strong> account on <strong>iPhone, iPad and Apple TV</strong> — a proper native interface, no ads, and automatic failover so a dead source doesn't end your evening.</p>
-      <a class="badge-link" href="https://apps.apple.com/app/id6784622899" aria-label="Download Easy IPTV on the App Store">
-        <img src="img/appstore-badge.svg" alt="Download on the App Store" width="180" height="60">
-      </a>
-      <p class="hero__note">Free to use · One download for iPhone, iPad and Apple TV</p>
+      <div class="hero__copy">
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Apple TV · iPhone · iPad</p>
+        <h1>Your playlists, finally at home on Apple.</h1>
+        <p class="hero__sub">Point Easy IPTV at your own <strong>M3U playlist</strong> or <strong>Xtream Codes</strong> account and it turns into a proper TV: channels, guide, films and series — native on every screen you own.</p>
 
-      <div class="devices">
-        <div class="devices__tv">
-          <img src="img/tv.jpg" alt="Easy IPTV on Apple TV, showing films and Continue Watching" width="1280" height="720" fetchpriority="high">
+        <ul class="proof">
+          <li>No ads, ever</li>
+          <li>No account to create</li>
+          <li>Automatic failover</li>
+          <li>7 languages</li>
+        </ul>
+
+        <div class="hero__cta">
+          <a class="badge-link" href="https://apps.apple.com/app/id6784622899" aria-label="Download Easy IPTV on the App Store">
+            <img src="img/appstore-badge.svg" alt="Download on the App Store" width="180" height="60">
+          </a>
+          <a class="cta-secondary" href="#how">How it works →</a>
         </div>
-        <img class="devices__pad" src="img/ipad.png" alt="Easy IPTV on iPad, showing the channel library" width="880" height="751" loading="lazy">
-        <img class="devices__phone" src="img/iphone.png" alt="Easy IPTV on iPhone, showing the touch programme guide" width="420" height="913" loading="lazy">
+        <p class="hero__note">Free to use · One purchase covers iPhone, iPad and Apple TV</p>
       </div>
-      <p class="shots__note">Real screens, with free public channels and public-domain films — Easy IPTV ships no content.</p>
+
+      <div class="hero__stage">
+        <div class="devices">
+          <div class="devices__tv">
+            <div class="zap">
+              <img class="zap__shot is-1" src="img/tv.jpg" alt="Easy IPTV on Apple TV showing films and Continue Watching" width="1100" height="619" fetchpriority="high">
+              <img class="zap__shot is-2" src="img/tv-series.jpg" alt="Series library on Apple TV" width="1100" height="619" loading="lazy">
+              <img class="zap__shot is-3" src="img/tv-epg.jpg" alt="Programme guide on Apple TV" width="1100" height="619" loading="lazy">
+              <div class="zap__bug" aria-hidden="true">
+                <span class="is-1">Films</span><span class="is-2">Series</span><span class="is-3">Guide</span>
+              </div>
+            </div>
+          </div>
+          <img class="devices__pad" src="img/ipad.png" alt="Easy IPTV on iPad showing the channel library" width="880" height="751" loading="lazy">
+          <img class="devices__phone" src="img/iphone.png" alt="Easy IPTV on iPhone showing the touch programme guide" width="420" height="913" loading="lazy">
+        </div>
+        <p class="shots__note">Real screens, with free public channels and public-domain films. We ship no content.</p>
+      </div>
     </section>
 
     <section id="features" class="section">
