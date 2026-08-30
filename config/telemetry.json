@@ -1,0 +1,7 @@
+{
+  "_": "A dónde mandan la telemetría las apps de gmbStudio. Se lee en caliente para poder mover el receptor SIN sacar versión de cada app.",
+  "_como": "Cambia `events`, haz commit y push. Las apps lo recogen en su siguiente arranque (releen como mucho una vez al día). Solo se acepta https.",
+  "_ojo": "Este fichero vive en GitHub Pages (185.199.x) A PROPOSITO: es una ruta de red distinta a la del receptor. Si el receptor esta bloqueado, esto se sigue leyendo. Ponerlo en el propio receptor no serviria de nada.",
+  "_token": "El token NO viaja aqui. Los dos extremos son nuestros, asi que un receptor nuevo puede aceptar el mismo token que ya llevan compilado las apps. Publicarlo aqui solo lo haria mas facil de encontrar sin dar ninguna capacidad nueva.",
+  "events": "https://gmb-events.events-worker.workers.dev/e"
+}
