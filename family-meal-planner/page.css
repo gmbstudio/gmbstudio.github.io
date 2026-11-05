@@ -1,0 +1,52 @@
+/* Portada de Easy Meal Planner: encima de ../styles.css (común del sitio).
+   ponytail: los arreglos de accesibilidad de abajo (rojo de texto, zonas
+   táctiles, 12 px) valen para todo el sitio; subirlos a ../styles.css (común,
+   lo decide el admin) y borrar aquí el bloque «Accesibilidad». */
+
+/* --- Accesibilidad (HIG + Material) --- */
+:root { --red-text: #E10600; } /* 4,97:1 sobre blanco */
+@media (prefers-color-scheme: dark) {
+  :root { --red-text: #ff6b63; } /* 6,8:1 sobre --bg oscuro; #E10600 no llegaba */
+}
+.brand__text b, .section h2, .card__tag, .card__cta, .cta-secondary,
+.section .lead a, .footer a:hover { color: var(--red-text); }
+.card__tag { font-size: 12px; }                            /* era 11 px */
+.nav nav a { padding: 14px 4px; }                          /* zona táctil ≥48 px */
+.brand { padding: 6px 0; }                                 /* 36 → 48 px */
+.footer a { display: inline-block; padding: 12px 4px; }    /* zona táctil ≥48 px */
+.hero__note { margin-top: 20px; }
+
+/* Insignia de Google Play recortada a su caja: misma altura visual que la de Apple */
+.badge-link img.badge--play { width: auto; height: 60px; }
+
+/* Escenario solo de teléfono: tres pantallas en abanico, sin bisel dibujado */
+.phones {
+  position: relative; width: 100%; max-width: 600px; margin: 0 auto;
+  aspect-ratio: 16 / 13;
+}
+.phones::before {
+  content: "";
+  position: absolute; inset: 10% 14%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(225,6,0,.16), transparent 70%);
+  filter: blur(34px);
+}
+.phones img {
+  position: absolute; display: block; height: auto;
+  border-radius: 7% / 3.2%;
+  border: 1px solid var(--border);
+  box-shadow: 0 22px 50px rgba(0,0,0,.24);
+  background: #fff;
+}
+.phones__main { left: 50%; top: 0; width: 34%; transform: translateX(-50%); z-index: 1; }
+.phones__side { top: 9%; width: 29%; }
+.phones__side.is-left  { left: 8%;  transform: rotate(-6deg); }
+.phones__side.is-right { right: 8%; transform: rotate(6deg); }
+
+@media (max-width: 900px) {
+  .badge-link img.badge--play { width: auto; height: 55px; }
+  .phones { aspect-ratio: 1; }
+  .phones__main { width: 44%; }
+  .phones__side { width: 36%; }
+  .phones__side.is-left { left: 1%; }
+  .phones__side.is-right { right: 1%; }
+}
