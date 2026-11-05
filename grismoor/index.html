@@ -3,13 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Grismoor — Native IPTV player for Apple TV</title>
-  <meta name="description" content="Grismoor is a fast, native player for Apple TV. Bring your own provider — Xtream Codes or M3U — and watch live TV, films and series, with automatic failover that keeps playback alive.">
+  <meta name="color-scheme" content="dark">
+  <title>Grismoor — a hand-painted puzzle adventure for iPhone and iPad</title>
+  <meta name="description" content="Wake in a cell with no memory and escape before dawn. Grismoor is a hand-painted medieval puzzle adventure for iPhone and iPad. Act I is complete and free: four rooms, five puzzles, no ads and no timers.">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="canonical" href="https://gmbstudio.cc/grismoor/">
+  <link rel="alternate" hreflang="en" href="https://gmbstudio.cc/grismoor/">
+  <link rel="alternate" hreflang="es" href="https://gmbstudio.cc/grismoor/es/">
+  <link rel="alternate" hreflang="x-default" href="https://gmbstudio.cc/grismoor/">
+  <meta property="og:title" content="Grismoor — Escape before dawn">
+  <meta property="og:description" content="A hand-painted medieval puzzle adventure. Act I complete and free on iPhone and iPad.">
+  <meta property="og:image" content="https://gmbstudio.cc/grismoor/img/og.jpg">
+  <meta property="og:url" content="https://gmbstudio.cc/grismoor/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" as="image" href="img/home.webp" type="image/webp" media="(min-width: 901px)">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="game.css">
 </head>
 <body>
   <header class="nav">
@@ -18,58 +30,107 @@
       <span class="brand__text"><b>gmb</b>STUDIO</span>
     </a>
     <nav>
-      <a href="#story">The game</a>
-      <a href="#features">Features</a>
+      <a href="#world">The game</a>
+      <a href="#act-i">Act I</a>
+      <a href="#privacy">Privacy</a>
       <a href="support.html">Support</a>
+      <a class="lang" href="es/" hreflang="es" lang="es">Español</a>
     </nav>
   </header>
 
   <main>
-    <section class="hero">
-      <h1>Escape before dawn.</h1>
-      <p>Grismoor is a hand-painted medieval escape room. You wake in a cell with no memory and a message scratched into the stone. Room by room, you work the locks open, piece together who you are, and find out who betrayed you — at your own pace, with no timers.</p>
-      <a class="btn" href="#features">Coming soon to iPhone, iPad and Android</a>
+    <section class="hero hero--game">
+      <div class="hero__copy">
+        <img class="game-logo" src="img/logo.webp" alt="Grismoor" width="1100" height="259">
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Puzzle adventure · iPhone · iPad</p>
+        <h1>Escape before dawn.</h1>
+        <p class="hero__sub">You wake in a cell with no memory and a message scratched into the stone. Room by room, work the locks open, piece together who you are — and who betrayed you.</p>
+        <ul class="proof"><li>Act I free</li><li>No ads</li><li>No timers</li><li>Plays offline</li></ul>
+        <div class="hero__cta">
+          <a class="badge-link" href="https://apps.apple.com/app/id6792275436" aria-label="Download Grismoor on the App Store">
+            <img src="img/appstore-badge.svg" alt="Download on the App Store" width="180" height="60">
+          </a>
+        </div>
+        <p class="hero__note">Act I complete and free · Acts II and III in the works · Android coming</p>
+      </div>
+      <div>
+        <video class="trailer" controls playsinline preload="none" poster="img/trailer-poster.webp" aria-label="Grismoor trailer" width="1280" height="590">
+          <source src="img/trailer-en.mp4" type="video/mp4">
+          Your browser can't play this video.
+        </video>
+        <p class="trailer__note">Trailer · tap to play, with sound</p>
+      </div>
     </section>
 
-    <section id="story" class="section">
+    <section id="world" class="section">
       <h2>A castle that answers back</h2>
-      <p class="lead">Ten rooms — the cell, the corridor, the kitchens, the crypt, the chapel, the clock tower — and thirty-four puzzles built from what is actually in them: tally marks on a wall, a scrambled ledger, a scale with one hollow weight. Solve them and the conspiracy comes apart one revelation at a time, towards three different endings.</p>
+      <p class="lead serif">Hand-painted, torch-lit rooms where every clue is part of the room: tally marks on a wall, a scale with one hollow weight, a candle that shows what the stone hides.</p>
+      <div class="gallery" tabindex="0" role="region" aria-label="A castle that answers back">
+          <figure>
+            <img src="img/celda.webp" alt="A dark stone cell lit by a single torch" width="1688" height="942" loading="lazy">
+            <figcaption>The cell</figcaption>
+          </figure>
+          <figure>
+            <img src="img/corredor.webp" alt="A castle corridor with torches along the walls" width="1688" height="942" loading="lazy">
+            <figcaption>The corridor</figcaption>
+          </figure>
+          <figure>
+            <img src="img/cocinas.webp" alt="The castle kitchens, with a hearth and a long table" width="1688" height="942" loading="lazy">
+            <figcaption>The kitchens</figcaption>
+          </figure>
+          <figure>
+            <img src="img/panel.webp" alt="Story panel: a message scratched into a cell wall" width="1688" height="942" loading="lazy">
+            <figcaption>The story, told in panels</figcaption>
+          </figure>
+      </div>
     </section>
 
-    <section id="features" class="section">
-      <h2>What it is</h2>
+    <section id="act-i" class="section">
+      <h2>What’s in Act I</h2>
       <div class="grid">
         <div class="card">
-          <div class="card__tag">Story</div>
-          <h3>A betrayal, told room by room</h3>
-          <p>Not a set of loose puzzle rooms: one narrative, with a voiced narrator, flashbacks and three endings depending on what you work out.</p>
+          <div class="card__tag">Rooms</div>
+          <h3>Four rooms, five puzzles</h3>
+          <p>The cell, the corridor, the pantry and the kitchens. Dials, levers, a balance and a candle, each with its own mechanism.</p>
         </div>
         <div class="card">
-          <div class="card__tag">Puzzles</div>
-          <h3>Clues live in the room</h3>
-          <p>Thirty-four puzzles with diegetic clues — nothing is explained by a menu. Free, unlimited hints when you want a nudge instead of a walkthrough.</p>
+          <div class="card__tag">Hints</div>
+          <h3>A nudge, not the answer</h3>
+          <p>Light a candle stub when you’re stuck: the hint points the way without giving it away. They’re hidden in every room.</p>
         </div>
         <div class="card">
-          <div class="card__tag">No timers</div>
-          <h3>At your own pace</h3>
-          <p>Dawn is atmosphere, not a countdown. Nothing ends your game because you took your time.</p>
+          <div class="card__tag">Notebook</div>
+          <h3>It remembers for you</h3>
+          <p>What you see, what you read, what you recall about yourself. Your Wit grows with every puzzle and earns you ranks.</p>
         </div>
         <div class="card">
-          <div class="card__tag">Art</div>
-          <h3>Hand-painted, torch-lit</h3>
-          <p>Every room is painted art, not stock 3D. Original music and a voiced narrator.</p>
+          <div class="card__tag">iPhone Duo</div>
+          <h3>A two-screen handheld</h3>
+          <p>Half-folded, it plays like a two-screen console: look up top, touch below.</p>
         </div>
         <div class="card">
-          <div class="card__tag">Offline</div>
-          <h3>Plays anywhere</h3>
-          <p>The whole game runs on your device. No connection, no account, no ads.</p>
+          <div class="card__tag">Your pace</div>
+          <h3>Dawn is atmosphere, not a clock</h3>
+          <p>Nothing ends your game because you took your time. When you finish the act, replay any puzzle.</p>
         </div>
         <div class="card">
-          <div class="card__tag">Fair</div>
-          <h3>Act I free, one unlock</h3>
-          <p>Play the first act free. If you want the rest, it is a single purchase — no subscription, no energy, no hints for sale.</p>
+          <div class="card__tag">Sound</div>
+          <h3>Voiced and scored</h3>
+          <p>A narrator in English and Spanish, an original score and the crackle of every torch.</p>
         </div>
       </div>
+    </section>
+
+    <section id="free" class="section">
+      <h2>Free, and what comes next</h2>
+      <p class="lead"><strong>Act I is complete and free</strong>: no ads, no subscription, no lives or energy, and nothing to buy inside the game today.</p>
+      <p class="lead">Acts II and III — the chapel, the crypt, the clock tower and the three endings — are in the works. When you finish Act I, the game lets you ask us to tell you when they land.</p>
+    </section>
+
+    <section id="privacy" class="section">
+      <h2>Your game stays on your device</h2>
+      <p class="lead">Grismoor plays <strong>offline</strong> and needs no account: your progress is saved on your device only.</p>
+      <p class="lead">The game sends <strong>anonymous usage statistics</strong> (which room you reach, when a hint is used) so we can see where players get stuck; you can switch them off in Settings. If you ask to be told when Act II lands, the device sends a notification token for that one message. The details are in the <a href="privacy_policy.html">privacy policy</a>.</p>
     </section>
   </main>
 
@@ -78,7 +139,8 @@
     <p>
       <a href="privacy_policy.html">Privacy Policy</a> ·
       <a href="support.html">Support</a> ·
-      <a href="https://github.com/gmbstudio" target="_blank" rel="noopener">github.com/gmbstudio</a>
+      <a href="https://apps.apple.com/app/id6792275436">App Store</a> ·
+      <a href="es/" hreflang="es">Español</a>
     </p>
   </footer>
 
