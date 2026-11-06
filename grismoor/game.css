@@ -63,7 +63,7 @@ html { scrollbar-color: #3a3a48 var(--bg); }
 .hero--game > * { min-width: 0; } /* Safari toma el width=1280 del vídeo como mínimo de la columna y la página se ensanchaba */
 .trailer {
   display: block; width: 100%; max-width: 100%; height: auto;
-  aspect-ratio: 1920 / 886;
+  aspect-ratio: 16 / 9;
   border-radius: 12px;
   border: 1px solid rgba(230,218,194,.18);
   box-shadow: 0 26px 60px rgba(0,0,0,.5);
