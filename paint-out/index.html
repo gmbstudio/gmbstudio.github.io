@@ -671,6 +671,7 @@ async function toggle3d(force, target) {
 function setLevel(level, report) {
   L = level; REP = report; solver = Solver(L); M = margin(); indexPortals();
   board = makeBoard(L, 0, []); moves = L.moves; start = { board, moves, exits: 0 }; view = 0; exits = 0;
+  solver.minMoves(board); // se resuelve ya, con el rótulo del nivel delante, y no tras el primer toque
   closeOv(); if (on3d) { on3d = false; $('v3d').hidden = true; $('board').style.display = ''; }
   coach = null; hideCoach(); render();
   if (!reduced) $('board').animate([{ opacity: 0, transform: 'scale(.97)' }, { opacity: 1, transform: 'none' }], 360);
@@ -925,7 +926,7 @@ async function settle() {
   arr.forEach(([p, pos]) => arrive(p, pos)); // sin esperar: se puede seguir tocando mientras llegan
   if (isEmpty(board) && board.layer + 1 < L.layers.length) {
     busy = true;
-    if (arr.length) await new Promise((r) => setTimeout(r, 450));
+    if (arr.length) await new Promise((r) => setTimeout(r, 250));
     await fall();
     busy = false;
   }
@@ -949,7 +950,6 @@ async function arrive(portal, pos) {
   const v = vortex(ex2, ey2, a.color, peek ? {} : { scale: sc, opacity: .45 }); // atenuado: está en la capa de abajo
   particles(ex2, ey2, -ddx, -ddy, a.color, dim); // abajo, el portal escupe la pintura hacia dentro del tablero
   node.style.transformBox = 'fill-box'; node.style.transformOrigin = 'center';
-  if (!peek && $('ghost')) anim($('ghost'), [{ opacity: .38 }, { opacity: .9, offset: .3 }, { opacity: .9, offset: .7 }, { opacity: .38 }], 1000); // la capa de abajo se ilumina al recibir
   await anim(node, [{ transform: `translate(${entry[0] - mid[0]}px,${entry[1] - mid[1]}px) rotate(-300deg) scale(.08)`, opacity: 0 },
     { transform: `translate(${(entry[0] - mid[0]) * .5}px,${(entry[1] - mid[1]) * .5}px) scale(1)`, opacity: 1, offset: .45 },
     { transform: 'none', opacity: 1 }], 620);
@@ -968,9 +968,7 @@ let paintG;
 function paintLayer() {
   if (!paintG) {
     paintG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    paintG.setAttribute('aria-hidden', 'true'); paintG.setAttribute('pointer-events', 'none'); paintG.setAttribute('filter', 'url(#paintF)');
-    paintG.innerHTML = `<filter id="paintF" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3"/>
-      <feDisplacementMap in="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter>`;
+    paintG.setAttribute('aria-hidden', 'true'); paintG.setAttribute('pointer-events', 'none'); // sin filtros SVG: en Safari de iPhone se pintan por CPU en cada fotograma
   }
   return paintG;
 }
@@ -990,14 +988,16 @@ function paintTrail(el, color) {
     l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2);
     l.setAttribute('stroke', fill); l.setAttribute('stroke-linecap', 'round');
     g.appendChild(l);
-    l.animate([{ strokeWidth: sw, opacity: .8 }, { strokeWidth: sw * .9, opacity: .55, offset: .3 }, { strokeWidth: sw * .25, opacity: 0 }], { duration: life, fill: 'forwards' }).finished.then(() => l.remove());
+    l.setAttribute('stroke-width', sw);
+    l.animate([{ opacity: .75 }, { opacity: .5, offset: .3 }, { opacity: 0 }], { duration: life, fill: 'forwards' }).finished.then(() => l.remove());
   };
   const step = () => {
     if (!on || !el.isConnected) return;
     const p = pos();
-    if (prev && Math.hypot(p[0] - prev[0], p[1] - prev[1]) > 1) {
+    if (prev && Math.hypot(p[0] - prev[0], p[1] - prev[1]) < S * .3) return requestAnimationFrame(step); // un trazo cada ~⅓ de casilla
+    if (prev) {
       dab(prev[0], prev[1], p[0], p[1], w * (.85 + Math.random() * .3), 1500 + Math.random() * 400);
-      if (Math.random() < .25) { // gotas sueltas a los lados
+      if (Math.random() < .35) { // gotas sueltas a los lados
         const a = Math.random() * Math.PI * 2, r = w * (.5 + Math.random() * .5), x = p[0] + Math.cos(a) * r, y = p[1] + Math.sin(a) * r;
         dab(x, y, x + .1, y, S * (.08 + Math.random() * .1), 1300);
       }
@@ -1026,8 +1026,8 @@ function particlesIn(x, y, color, { scale = 1, opacity = 1 } = {}) {
   if (reduced) return;
   const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   g.setAttribute('pointer-events', 'none'); g.setAttribute('opacity', opacity);
-  const n = 18;
-  g.innerHTML = Array.from({ length: n }, (_, j) => `<circle cx="${x}" cy="${y}" r="${(4 + (j % 3) * 2.5) * scale}" fill="${col(color)}" stroke="${deep(color)}" stroke-width="1.5"/>`).join('');
+  const n = 9; // pocas y sin contorno: en Safari de iPhone cada elemento animado del SVG cuesta un repintado
+  g.innerHTML = Array.from({ length: n }, (_, j) => `<circle cx="${x}" cy="${y}" r="${(5 + (j % 3) * 3) * scale}" fill="${col(color)}"/>`).join('');
   fxLayer().appendChild(g);
   Promise.all([...g.children].map((c, j) => {
     const a0 = (j / n) * Math.PI * 2 + Math.random() * .4, r0 = (70 + Math.random() * 50) * scale;
@@ -1040,7 +1040,7 @@ function particles(x, y, dx, dy, color, { scale = 1, opacity = 1 } = {}) {
   if (reduced) return;
   const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   g.setAttribute('pointer-events', 'none');
-  const n = 14, base = Math.atan2(dy, dx);
+  const n = 7, base = Math.atan2(dy, dx);
   g.setAttribute('opacity', opacity);
   g.innerHTML = Array.from({ length: n }, (_, j) => `<circle cx="${x}" cy="${y}" r="${(6 + (j % 3) * 3) * scale}" fill="${col(color)}"/>`).join('');
   fxLayer().appendChild(g);
@@ -1060,7 +1060,7 @@ function vortex(x, y, color, { scale = 1, opacity = 1 } = {}) {
   g.setAttribute('opacity', opacity);
   const c = col(color);
   g.setAttribute('pointer-events', 'none');
-  g.innerHTML = [72, 52, 32].map((r0, j) => r0 * scale).map((r, j) => `<circle class="vr" cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}"
+  g.innerHTML = [72, 40].map((r0, j) => r0 * scale).map((r, j) => `<circle class="vr" cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}"
     stroke-width="${9 - j * 2}" stroke-dasharray="${r * .9} ${r * .5}" stroke-linecap="round"/>`).join('') +
     `<circle class="vc" cx="${x}" cy="${y}" r="${14 * scale}" fill="${c}"/>`;
   fxLayer().appendChild(g);
@@ -1080,8 +1080,8 @@ async function fall() { // la cámara cae a la capa siguiente
   sfx('caida', .7, 1100);
   const cur = $('cur'), ghost = $('ghost');
   await Promise.all([
-    anim(cur, [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.35)', opacity: 0 }], 650),
-    anim(ghost, [{ transform: 'scale(.86)', opacity: .38 }, { transform: 'scale(1)', opacity: 1 }], 650),
+    anim(cur, [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.35)', opacity: 0 }], 480),
+    anim(ghost, [{ transform: 'scale(.86)', opacity: .38 }, { transform: 'scale(1)', opacity: 1 }], 480),
   ]);
   if (endless) return shiftWindow(board.outgoing);
   board = makeBoard(L, board.layer + 1, board.outgoing, board.sent.slice(1)); // con lo que ya mandaron los portales que saltan
@@ -1092,14 +1092,19 @@ async function fall() { // la cámara cae a la capa siguiente
 }
 
 // ---- Sonido (ElevenLabs): efectos cortos y dos temas en bucle; el navegador solo deja sonar tras el primer toque ----
+// Efectos con Web Audio: se decodifican una vez y suenan al instante. Con <audio> clonado, Safari en iPhone se atascaba en cada toque.
 const SND = {}; let muted = false, music = null;
-['salida', 'uy', 'puerta', 'portal', 'llegada', 'caida', 'victoria', 'fin'].forEach((k) => { SND[k] = new Audio(`audio/${k}.mp3`); SND[k].preload = 'auto'; });
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+['salida', 'uy', 'puerta', 'portal', 'llegada', 'caida', 'victoria', 'fin'].forEach((k) => fetch(`audio/${k}.mp3`).then((r) => r.arrayBuffer())
+  .then((b) => new Promise((ok, ko) => AC.decodeAudioData(b, ok, ko))).then((d) => { SND[k] = d; }).catch(() => {}));
 const TRACKS = { campana: new Audio('audio/tema-campana.mp3'), infinito: new Audio('audio/tema-infinito.mp3') };
 Object.values(TRACKS).forEach((a) => { a.loop = true; a.volume = .28; });
 function sfx(k, vol = .8, maxMs = 0) {
   if (muted || !SND[k]) return;
-  const a = SND[k].cloneNode(); a.volume = vol; a.play().catch(() => {});
-  if (maxMs) setTimeout(() => { const t0 = performance.now(); const f = () => { const p = (performance.now() - t0) / 300; a.volume = Math.max(0, vol * (1 - p)); p < 1 ? requestAnimationFrame(f) : a.pause(); }; f(); }, maxMs);
+  if (AC.state === 'suspended') AC.resume();
+  const src = AC.createBufferSource(), g = AC.createGain();
+  src.buffer = SND[k]; g.gain.value = vol; src.connect(g).connect(AC.destination); src.start();
+  if (maxMs) { const t = AC.currentTime + maxMs / 1000; g.gain.setValueAtTime(vol, t); g.gain.linearRampToValueAtTime(0, t + .3); src.stop(t + .32); }
 }
 function fadeVol(a, to, ms = 600, then) { // la música nunca entra ni se corta de golpe
   const from = a.volume, t0 = performance.now();
@@ -1531,6 +1536,7 @@ svg.addEventListener('keydown', (e) => { const g = e.target.closest('.arrow'); i
 $('rewindBtn').onclick = rewind;
 $('muteBtn').onclick = () => setMuted(!muted);
 // Safari y Chrome no dejan sonar nada hasta el primer toque: en cuanto lo hay, arranca la música que toque
+addEventListener('pointerdown', () => AC.resume(), { capture: true }); // iOS: el audio solo se desbloquea con un toque
 addEventListener('pointerdown', () => { if (music && !muted && music.paused) { music.volume = 0; music.play().then(() => fadeVol(music, .28, 900)).catch(() => {}); } }, { once: true, capture: true });
 setMuted(false);
 $('menuBtn').onclick = menu;
