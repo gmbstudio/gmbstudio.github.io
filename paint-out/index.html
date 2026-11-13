@@ -169,7 +169,9 @@
   .card .left svg { width: 24px; height: 24px; }
   .card .fstip { font-size: .875rem; color: var(--ink2); max-width: 300px; } .card .fstip svg { vertical-align: -3px; }
   .card .q { font-weight: 600; margin: 4px 0 0; max-width: 320px; text-align: left; align-self: stretch; }
-  .card textarea { font: inherit; font-size: 1rem; width: 100%; max-width: 320px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--cellline); background: var(--panel); color: var(--ink); padding: 10px 12px; resize: none; }
+  .card .q .opt { font-weight: 400; color: var(--ink2); }
+  .card input[type=text] { min-height: 48px; }
+  .card textarea, .card input[type=text] { font: inherit; font-size: 1rem; width: 100%; max-width: 320px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--cellline); background: var(--panel); color: var(--ink); padding: 10px 12px; resize: none; }
   .card .seg .btn { min-width: 80px; }
   .card .lang .btn { min-width: 110px; font-size: .9375rem; }
   .card .title { font-size: 2.25rem; font-weight: 800; letter-spacing: -.02em; margin: 0; }
@@ -1376,16 +1378,19 @@ function story(k = 0) {
   $('sNext').onclick = () => (last ? startGame() : story(k + 1));
   $('sSkip').onclick = startGame;
 }
-// Dos preguntas, una vez por aparato (o cuando se piden desde la portada). Mide «se siente distinto» y «seguiría jugando».
+// Tres preguntas, una vez por aparato (o desde la portada): seguiría jugando, su opinión libre y, sin sugerir nombres, a qué juego le recuerda
+// (así se mide «se siente distinto» de forma indirecta).
 function survey(then, asked = false) {
   if (!asked && !Tel.once('encuesta')) return then();
   Tel.track('scene_open', { name: 'encuesta' });
   let keep = '';
-  card(`<h2>${tx('Dos preguntas rápidas')}</h2>
-    <label class="q" for="qSame">${tx('¿En qué se parece o se diferencia de otros juegos de flechas que conozcas?')}</label>
-    <textarea id="qSame" rows="3" maxlength="280" placeholder="${tx('Si no conoces ninguno, dinos qué te ha parecido')}"></textarea>
+  card(`<h2>${tx('Tres preguntas rápidas')}</h2>
     <p class="q" id="qK">${tx('¿Seguirías jugando?')}</p>
     <div class="row seg" role="radiogroup" aria-labelledby="qK">${['Sí', 'Quizá', 'No'].map((t) => `<button class="btn" role="radio" aria-checked="false" data-v="${t.toLowerCase()}">${tx(t)}</button>`).join('')}</div>
+    <label class="q" for="qOp">${tx('¿Qué te ha gustado y qué cambiarías?')}</label>
+    <textarea id="qOp" rows="3" maxlength="280"></textarea>
+    <label class="q" for="qRe">${tx('¿Te ha recordado a algún juego? ¿A cuál?')} <span class="opt">${tx('(opcional)')}</span></label>
+    <input id="qRe" type="text" maxlength="60" autocomplete="off">
     <div class="row"><button class="btn ghostbtn" id="sNo">${tx('Ahora no')}</button><button class="btn primary big" id="sOk" disabled>${tx('Enviar')}</button></div>`);
   const ok = $('sOk');
   $('card').querySelectorAll('.seg .btn').forEach((b) => (b.onclick = () => {
@@ -1393,7 +1398,7 @@ function survey(then, asked = false) {
     $('card').querySelectorAll('.seg .btn').forEach((x) => { x.setAttribute('aria-checked', x === b); x.classList.toggle('primary', x === b); });
     ok.disabled = false;
   }));
-  ok.onclick = () => { Tel.track('survey', { same: $('qSame').value.trim().slice(0, 280), keep, lang: LANG }); Tel.flush();
+  ok.onclick = () => { Tel.track('survey', { keep, opinion: $('qOp').value.trim().slice(0, 280), remind: $('qRe').value.trim().slice(0, 60), lang: LANG }); Tel.flush();
     card(`<h2>${tx('¡Gracias!')}</h2><p>${tx('Nos ayuda mucho.')}</p><div class="row"><button class="btn primary big" id="b1">${tx('Seguir')}</button></div>`); $('b1').onclick = then; };
   $('sNo').onclick = () => { Tel.track('survey_skip'); then(); };
 }
