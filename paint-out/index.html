@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>Paint Out · prototipo</title>
+<title>Paint Out</title>
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <!-- pantalla completa en el iPhone de verdad: añadido a la pantalla de inicio se abre sin barras de Safari -->
@@ -171,6 +171,7 @@
   .card .q { font-weight: 600; margin: 4px 0 0; max-width: 320px; text-align: left; align-self: stretch; }
   .card textarea { font: inherit; font-size: 1rem; width: 100%; max-width: 320px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--cellline); background: var(--panel); color: var(--ink); padding: 10px 12px; resize: none; }
   .card .seg .btn { min-width: 80px; }
+  .card .lang .btn { min-width: 110px; font-size: .9375rem; }
   .card .optout { font-size: .875rem; color: var(--ink2); display: flex; gap: 8px; align-items: center; min-height: 48px; }
   .card .optout input { width: 22px; height: 22px; accent-color: var(--focus); }
   .card .title { font-size: 2.25rem; font-weight: 800; letter-spacing: -.02em; margin: 0; }
@@ -237,7 +238,9 @@
 <script src="reglas.js"></script>
 <script src="infinito.js"></script>
 <script src="telemetria.js"></script>
+<script src="i18n.js"></script>
 <script>
+const { tx, tr, LANG } = I18N;
 const { DIRS, cells, laneCell, makeBoard, probe, apply, isEmpty, doorColor, Solver, WHITE } = Reglas;
 const S = 100;                                // casilla, en unidades del viewBox
 let M = { x: 82, y: 82 };                     // margen para las puertas, por eje (ver margin())
@@ -283,19 +286,19 @@ function arrowSVG(a, i, ox, oy, interactive) {
   const x0 = Math.min(...xs), y0 = Math.min(...ys), x1 = Math.max(...xs), y1 = Math.max(...ys);
   const pad = 9;
   const hx = ox + a.x * S + S / 2, hy = oy + a.y * S + S / 2;
-  const tail = cs[cs.length - 1], tx = ox + tail[0] * S + S / 2, ty = oy + tail[1] * S + S / 2;
+  const tail = cs[cs.length - 1], tlx = ox + tail[0] * S + S / 2, ty = oy + tail[1] * S + S / 2;
   // cabeza: chevrón hacia la dirección; cola: el símbolo del color
   const f = a.len === 1 ? 14 : 0, b = a.len === 1 ? 20 : 0;
   const cx = hx + dx * f, cy = hy + dy * f, px = -dy, py = dx;
   const chev = `M${cx - dx * 14 + px * 20} ${cy - dy * 14 + py * 20} L${cx + dx * 12} ${cy + dy * 12} L${cx - dx * 14 - px * 20} ${cy - dy * 14 - py * 20}`;
-  const label = `Flecha ${NAME[a.color]} hacia ${DIRNAME[a.dir]}${a.len > 1 ? `, ${a.len} casillas` : ''}`;
+  const label = tr(`Flecha ${NAME[a.color]} hacia ${DIRNAME[a.dir]}${a.len > 1 ? `, ${a.len} casillas` : ''}`, `${tx(NAME[a.color])} arrow pointing ${tx(DIRNAME[a.dir])}${a.len > 1 ? `, ${a.len} cells` : ''}`);
   const attrs = interactive ? `class="arrow" data-i="${i}" role="button" tabindex="0" aria-label="${label}"` : 'aria-hidden="true"';
   return `<g ${attrs}>
     <rect x="${ox + x0 * S}" y="${oy + y0 * S}" width="${(x1 - x0 + 1) * S}" height="${(y1 - y0 + 1) * S}" fill="transparent"/>
     <rect x="${ox + x0 * S + pad}" y="${oy + y0 * S + pad}" width="${(x1 - x0 + 1) * S - 2 * pad}" height="${(y1 - y0 + 1) * S - 2 * pad}"
       rx="26" fill="${col(a.color)}" stroke="${deep(a.color)}" stroke-width="5" stroke-opacity="var(--o)"/>
     <g class="ac"><path d="${chev}" fill="none" stroke="${ink(a.color)}" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
-    ${symbol(a.color, tx - dx * b, ty - dy * b, a.len === 1 ? 11 : 16, ink(a.color))}</g>
+    ${symbol(a.color, tlx - dx * b, ty - dy * b, a.len === 1 ? 11 : 16, ink(a.color))}</g>
   </g>`;
 }
 
@@ -445,12 +448,12 @@ function render() {
   document.body.style.setProperty('--life', Math.min(1, exits / REP.minMoves).toFixed(3));
   $('movesN').textContent = moves;
   $('moves').classList.toggle('low', moves <= 3);
-  $('moves').setAttribute('aria-label', `${moves} movimientos`);
+  $('moves').setAttribute('aria-label', tr(`${moves} movimientos`, `${moves} moves`));
   $('lvl').textContent = endless ? `∞ ${endless.chain.top + board.layer + 1}` : tag(li);
   const t = $('tuto'); t.hidden = !!endless || L.id > TUTO_N;    // niveles 1–5: tutorial, con su progreso a la vista
   if (!t.hidden) {
     t.querySelector('.segs').innerHTML = Array.from({ length: TUTO_N }, (_, k) => `<i class="${k < L.id ? 'on' : ''}"></i>`).join('');
-    t.setAttribute('aria-label', `Tutorial, prueba ${L.id} de ${TUTO_N}`);
+    t.setAttribute('aria-label', tr(`Tutorial, prueba ${L.id} de ${TUTO_N}`, `Tutorial, stage ${L.id} of ${TUTO_N}`));
   }
   $('rewindBtn').disabled = start.board === board && start.moves === moves;
   placeCoach();
@@ -516,16 +519,16 @@ function renderLayers() {
   const base = endless ? endless.chain.top : 0; // en el infinito, las capas se numeran desde la superficie
   nav.innerHTML = '<div class="stack">' + L.layers.map((_, k) => {
     const done = k < board.layer, here = k === board.layer, next = k === board.layer + 1;
-    const label = `Capa ${base + k + 1}${done ? ', vaciada' : here ? ', la que juegas' : next ? ', ver lo que hay abajo' : ''}`;
+    const label = tr(`Capa ${base + k + 1}${done ? ', vaciada' : here ? ', la que juegas' : next ? ', ver lo que hay abajo' : ''}`, `Layer ${base + k + 1}${done ? ', emptied' : here ? ', the one you play' : next ? ', see what’s below' : ''}`);
     return `${k ? '<span class="sep" aria-hidden="true">›</span>' : ''}<button class="btn" data-k="${k}" aria-label="${label}"
       ${here ? 'aria-current="true"' : ''} ${k === view && !here ? 'aria-pressed="true"' : ''} ${done ? 'disabled' : ''}>
       ${done ? '✓' : ''}${base + k + 1}${left(k) ? `<span class="badge" aria-hidden="true">${left(k)}</span>` : ''}</button>`;
-  }).join('') + `</div><button class="btn" id="b3d" aria-pressed="${on3d}" aria-label="Ver todas las capas en 3D">${ICON.layers}</button>`;
+  }).join('') + `</div><button class="btn" id="b3d" aria-pressed="${on3d}" aria-label="${tx('Ver todas las capas en 3D')}">${ICON.layers}</button>`;
   $('b3d').onclick = () => toggle3d();
   nav.querySelectorAll('[data-k]').forEach((b) => (b.onclick = () => setView(+b.dataset.k)));
-  setHint(on3d ? 'Arrastra para girar · pellizca para acercar · toca una capa para entrar'
+  setHint(tx(on3d ? 'Arrastra para girar · pellizca para acercar · toca una capa para entrar'
     : view > board.layer ? 'Así va la capa de abajo · desliza hacia abajo o toca para volver'
-    : board.layer + 1 < L.layers.length ? 'Desliza hacia arriba para ver la capa de abajo' : '');
+    : board.layer + 1 < L.layers.length ? 'Desliza hacia arriba para ver la capa de abajo' : ''));
 }
 
 // Navegar entre capas, en los dos sentidos y saltando las que haga falta, con la misma transición:
@@ -691,11 +694,11 @@ function startEndless() {
   playMusic('infinito'); Tel.track('scene_open', { name: 'infinito' }); lvStart('inf');
   document.querySelector('header').classList.remove('gone'); $('ov').classList.remove('welcome');
   const chain = Infinito.Chain(Math.floor(Math.random() * 1e6) + 1);
-  if (!chain.init()) { card('<h2>No he podido generar la pila</h2><div class="row"><button class="btn primary big" id="b1">Inicio</button></div>'); $('b1').onclick = home; return; }
+  if (!chain.init()) { card(`<h2>${tx('No he podido generar la pila')}</h2><div class="row"><button class="btn primary big" id="b1">${tx('Inicio')}</button></div>`); $('b1').onclick = home; return; }
   endless = { chain, spare: 3 }; // margen de choques al empezar
   enterWindow();
   const ch = $('chapter');
-  ch.innerHTML = `<small>Modo infinito</small><b>¿Hasta dónde bajas?</b><span>Vacía la capa de arriba y baja a la siguiente. La pila no se acaba. Cada capa te da un toque por flecha; los choques se pagan del margen (empiezas con 3 y ganas 1 cada 4 capas).${best ? `<br>Tu récord: capa ${best}.` : ''}</span>`;
+  ch.innerHTML = `<small>${tx('Modo infinito')}</small><b>${tx('¿Hasta dónde bajas?')}</b><span>${tr('Vacía la capa de arriba y baja a la siguiente. La pila no se acaba. Cada capa te da un toque por flecha; los choques se pagan del margen (empiezas con 3 y ganas 1 cada 4 capas).', 'Empty the top layer and go down to the next. The stack never ends. Each layer gives you one tap per arrow; bumps are paid from your spare moves (you start with 3 and earn 1 every 4 layers).')}${best ? tr(`<br>Tu récord: capa ${best}.`, `<br>Your record: layer ${best}.`) : ''}</span>`;
   ch.hidden = false;
   let done = false;
   const go = () => { if (done) return; done = true; anim(ch, [{ opacity: 1 }, { opacity: 0 }], 300).then(() => { ch.hidden = true; }); };
@@ -716,17 +719,17 @@ function shiftWindow(out) {
   const c = endless.chain;
   endless.spare = moves + ((c.top + 1) % 4 === 0 ? 1 : 0); // lo que te sobra pasa a la siguiente; +1 cada 4 capas
   best = Math.max(best, c.top + 2);
-  if (!c.shift(out)) { card('<h2>No he podido generar la siguiente capa</h2><div class="row"><button class="btn primary big" id="b1">Inicio</button></div>'); $('b1').onclick = home; return; }
+  if (!c.shift(out)) { card(`<h2>${tx('No he podido generar la siguiente capa')}</h2><div class="row"><button class="btn primary big" id="b1">${tx('Inicio')}</button></div>`); $('b1').onclick = home; return; }
   enterWindow();
   Tel.track('endless_layer', { depth: c.top + 1 });
-  $('sr').textContent = `Capa ${c.top + 1}`;
+  $('sr').textContent = tr(`Capa ${c.top + 1}`, `Layer ${c.top + 1}`);
 }
 function gameOver() {
   const reached = endless.chain.top + 1, record = reached > best;
   lvEnd('out', { depth: reached });
   best = Math.max(best, reached);
-  card(`<h2>${record ? '¡Nuevo récord!' : 'Fin de la partida'}</h2><p>Te has quedado sin movimientos en la <b>capa ${reached}</b>.${record ? '' : ` Tu récord: capa ${best}.`}</p>
-    <div class="row"><button class="btn" id="b2">${ICON.home} Inicio</button><button class="btn primary big" id="b1">${ICON.retry} Otra vez</button></div>`);
+  card(`<h2>${tx(record ? '¡Nuevo récord!' : 'Fin de la partida')}</h2><p>${tr(`Te has quedado sin movimientos en la <b>capa ${reached}</b>.${record ? '' : ` Tu récord: capa ${best}.`}`, `You ran out of moves on <b>layer ${reached}</b>.${record ? '' : ` Your record: layer ${best}.`}`)}</p>
+    <div class="row"><button class="btn" id="b2">${ICON.home} ${tx('Inicio')}</button><button class="btn primary big" id="b1">${ICON.retry} ${tx('Otra vez')}</button></div>`);
   $('b1').onclick = startEndless; $('b2').onclick = () => { closeOv(); survey(home); };
 }
 
@@ -1120,7 +1123,7 @@ function playMusic(k) {
 }
 function setMuted(m) {
   muted = m;
-  $('muteBtn').setAttribute('aria-pressed', String(m)); $('muteBtn').setAttribute('aria-label', m ? 'Activar sonido' : 'Silenciar');
+  $('muteBtn').setAttribute('aria-pressed', String(m)); $('muteBtn').setAttribute('aria-label', tx(m ? 'Activar sonido' : 'Silenciar'));
   $('muteBtn').innerHTML = m ? ICON.mute : ICON.sound;
   if (m) { if (music) fadeVol(music, 0, 350, () => music.pause()); }
   else if (music) { music.volume = 0; music.play().then(() => fadeVol(music, .28, 600)).catch(() => {}); }
@@ -1190,11 +1193,11 @@ async function showCoach() {
   b.hidden = !st.text;
   if (st.text) {
     const last = coach.n === coach.steps.length - 1, multi = coach.steps.length > 1;
-    b.innerHTML = `<p>${st.text}</p><div class="bar">
+    b.innerHTML = `<p>${tx(st.text)}</p><div class="bar">
       <div class="dots" aria-hidden="true">${multi ? coach.steps.map((_, j) => `<i class="${j === coach.n ? 'on' : ''}"></i>`).join('') : ''}</div>
       <div class="row" style="gap:4px">
-        ${!last ? '<button class="btn ghostbtn" id="cSkip">Saltar</button>' : ''}
-        ${st.act === 'tap' ? '' : `<button class="btn primary" id="cNext">${last ? 'Entendido' : 'Siguiente'}</button>`}
+        ${!last ? `<button class="btn ghostbtn" id="cSkip">${tx('Saltar')}</button>` : ''}
+        ${st.act === 'tap' ? '' : `<button class="btn primary" id="cNext">${tx(last ? 'Entendido' : 'Siguiente')}</button>`}
       </div></div>`;
     $('cNext')?.addEventListener('click', nextCoach);
     $('cSkip')?.addEventListener('click', () => { Tel.track('tutorial_done', { key: coach.key, skipped: true }); endCoach(); });
@@ -1325,7 +1328,8 @@ const firstOf = (space) => ROOMS.findIndex((r) => r[0] === space);
 // En Safari del iPhone (no instalada), cómo jugar a pantalla completa: añadirla a la pantalla de inicio.
 function fsTip() {
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent), standalone = navigator.standalone || matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches;
-  return ios && !standalone && window.top === window ? `<p class="fstip">Para jugar a <b>pantalla completa</b>: toca Compartir <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/></svg> y luego <b>Añadir a pantalla de inicio</b>.</p>` : '';
+  const SH = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/></svg>`;
+  return ios && !standalone && window.top === window ? `<p class="fstip">${tr(`Para jugar a <b>pantalla completa</b>: toca Compartir ${SH} y luego <b>Añadir a pantalla de inicio</b>.`, `To play <b>full screen</b>: tap Share ${SH}, then <b>Add to Home Screen</b>.`)}</p>` : '';
 }
 const TIERS = [
   { name: 'Primeros pasos', what: 'Una capa: color y dirección', from: 0, to: 3 },
@@ -1368,9 +1372,9 @@ const ART = {
 };
 function story(k = 0) {
   const st = STORY[k], last = k === STORY.length - 1;
-  card(`${st.art === 'room' ? scene(0, 'gray') : ART[st.art]}<h2>${st.title}</h2><p>${st.text}</p>
+  card(`${st.art === 'room' ? scene(0, 'gray') : ART[st.art]}<h2>${tx(st.title)}</h2><p>${tx(st.text)}</p>
     <div class="dotsrow" aria-hidden="true">${STORY.map((_, j) => `<i class="${j === k ? 'on' : ''}"></i>`).join('')}</div>
-    <div class="row"><button class="btn ghostbtn" id="sSkip">Saltar</button><button class="btn primary big" id="sNext">${last ? 'Empezar' : 'Siguiente'}</button></div>`);
+    <div class="row"><button class="btn ghostbtn" id="sSkip">${tx('Saltar')}</button><button class="btn primary big" id="sNext">${tx(last ? 'Empezar' : 'Siguiente')}</button></div>`);
   $('sNext').onclick = () => (last ? startGame() : story(k + 1));
   $('sSkip').onclick = startGame;
 }
@@ -1379,20 +1383,20 @@ function survey(then, asked = false) {
   if (!asked && !Tel.once('encuesta')) return then();
   Tel.track('scene_open', { name: 'encuesta' });
   let keep = '';
-  card(`<h2>Dos preguntas rápidas</h2>
-    <label class="q" for="qSame">¿En qué se parece o se diferencia de otros juegos de flechas que conozcas?</label>
-    <textarea id="qSame" rows="3" maxlength="280" placeholder="Si no conoces ninguno, dinos qué te ha parecido"></textarea>
-    <p class="q" id="qK">¿Seguirías jugando?</p>
-    <div class="row seg" role="radiogroup" aria-labelledby="qK">${['Sí', 'Quizá', 'No'].map((t) => `<button class="btn" role="radio" aria-checked="false" data-v="${t.toLowerCase()}">${t}</button>`).join('')}</div>
-    <div class="row"><button class="btn ghostbtn" id="sNo">Ahora no</button><button class="btn primary big" id="sOk" disabled>Enviar</button></div>`);
+  card(`<h2>${tx('Dos preguntas rápidas')}</h2>
+    <label class="q" for="qSame">${tx('¿En qué se parece o se diferencia de otros juegos de flechas que conozcas?')}</label>
+    <textarea id="qSame" rows="3" maxlength="280" placeholder="${tx('Si no conoces ninguno, dinos qué te ha parecido')}"></textarea>
+    <p class="q" id="qK">${tx('¿Seguirías jugando?')}</p>
+    <div class="row seg" role="radiogroup" aria-labelledby="qK">${['Sí', 'Quizá', 'No'].map((t) => `<button class="btn" role="radio" aria-checked="false" data-v="${t.toLowerCase()}">${tx(t)}</button>`).join('')}</div>
+    <div class="row"><button class="btn ghostbtn" id="sNo">${tx('Ahora no')}</button><button class="btn primary big" id="sOk" disabled>${tx('Enviar')}</button></div>`);
   const ok = $('sOk');
   $('card').querySelectorAll('.seg .btn').forEach((b) => (b.onclick = () => {
     keep = b.dataset.v;
     $('card').querySelectorAll('.seg .btn').forEach((x) => { x.setAttribute('aria-checked', x === b); x.classList.toggle('primary', x === b); });
     ok.disabled = false;
   }));
-  ok.onclick = () => { Tel.track('survey', { same: $('qSame').value.trim().slice(0, 280), keep }); Tel.flush();
-    card('<h2>¡Gracias!</h2><p>Nos ayuda mucho.</p><div class="row"><button class="btn primary big" id="b1">Seguir</button></div>'); $('b1').onclick = then; };
+  ok.onclick = () => { Tel.track('survey', { same: $('qSame').value.trim().slice(0, 280), keep, lang: LANG }); Tel.flush();
+    card(`<h2>${tx('¡Gracias!')}</h2><p>${tx('Nos ayuda mucho.')}</p><div class="row"><button class="btn primary big" id="b1">${tx('Seguir')}</button></div>`); $('b1').onclick = then; };
   $('sNo').onclick = () => { Tel.track('survey_skip'); then(); };
 }
 function startGame() { Tel.track('scene_open', { name: 'campana' }); document.querySelector('header').classList.remove('gone'); $('ov').classList.remove('welcome'); load(0); }
@@ -1400,8 +1404,9 @@ function startGame() { Tel.track('scene_open', { name: 'campana' }); document.qu
 // Rótulo de sala al empezar cada nivel: dónde estás y qué toca (se toca para seguir)
 function chapter(then) {
   const t = tierOf(li), T = TIERS[t], ch = $('chapter');
-  ch.innerHTML = `<small>Nivel ${t + 1} · ${T.name}</small><b>Prueba ${li - T.from + 1} de ${T.to - T.from + 1}</b>${scene(li, 'target')}
-    <span>Saca la pintura para devolverle el color a <b>${ROOMS[li][3]}</b>.${L.layers.length > 1 ? `<br>${L.layers.length} plantas: vacíala de arriba abajo.` : ''}</span>`;
+  const nL = L.layers.length, thing = tx(ROOMS[li][3]);
+  ch.innerHTML = `<small>${tr('Nivel', 'Level')} ${t + 1} · ${tx(T.name)}</small><b>${tr(`Prueba ${li - T.from + 1} de ${T.to - T.from + 1}`, `Stage ${li - T.from + 1} of ${T.to - T.from + 1}`)}</b>${scene(li, 'target')}
+    <span>${tr(`Saca la pintura para devolverle el color a <b>${thing}</b>.${nL > 1 ? `<br>${nL} plantas: vacíala de arriba abajo.` : ''}`, `Get the paint out to bring the color back to <b>${thing}</b>.${nL > 1 ? `<br>${nL} floors: empty it from top to bottom.` : ''}`)}</span>`;
   ch.hidden = false;
   markTarget(ch);
   let done = false;
@@ -1431,7 +1436,7 @@ function closeOv() { // se desvanece y luego se quita
 
 function starsSVG(n) {
   const st = (on, k) => `<svg class="star${on ? ' on' : ''}" style="animation-delay:${.15 + k * .15}s" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>`;
-  return `<div class="stars" role="img" aria-label="${n} de 3 estrellas">${[0, 1, 2].map((k) => st(k < n, k)).join('')}</div>`;
+  return `<div class="stars" role="img" aria-label="${tr(`${n} de 3 estrellas`, `${n} of 3 stars`)}">${[0, 1, 2].map((k) => st(k < n, k)).join('')}</div>`;
 }
 function showWin() {
   sfx('victoria', .8);
@@ -1440,14 +1445,15 @@ function showWin() {
   const stars = fails <= 0 ? 3 : fails <= 2 ? 2 : 1;
   lvEnd('win', { stars });
   const tutoEnd = L.id === TUTO_N, tierEnd = li === TIERS[tierOf(li)].to;
-  card(`${scene(li, 'new')}${starsSVG(stars)}<div class="left" aria-label="Te sobran ${moves} movimientos">${$('moves').querySelector('svg').outerHTML}<b>+${moves}</b></div>${words() ? (tutoEnd ? `<h2>${ROOMS[li][2]}</h2><p><b>Tutorial completado.</b> Ya sabes lo básico: desde aquí juegas sin ayudas y solo te aviso cuando aparezca algo nuevo.</p>`
-    : tierEnd ? `<h2>¡Nivel ${tierOf(li) + 1} completado!</h2><p>${ROOMS[li][2]} ${ROOMS[li][0]} ha recuperado todo su color.${last ? ' Fin del prototipo.' : ` Siguiente: <b>${TIERS[tierOf(li) + 1].name}</b>.`}</p>`
-    : `<h2>${ROOMS[li][2]}</h2><p>${last ? 'Has devuelto el color a todo el edificio. Fin del prototipo.' : fails <= 0 ? 'Sin un solo choque.' : `${fails} ${fails === 1 ? 'choque' : 'choques'}: sin chocar, 3 estrellas.`}</p>`) : ''}
-    <div class="row">${last ? `<button class="btn" id="b1" aria-label="Jugar otra vez">${ICON.retry}</button>`
-      : `<button class="btn primary big" id="b1" aria-label="Siguiente nivel">${ICON.next}${words() ? 'Siguiente' : ''}</button>`}</div>`);
+  const line = tx(ROOMS[li][2]), space = tx(ROOMS[li][0]), nextT = TIERS[tierOf(li) + 1] && tx(TIERS[tierOf(li) + 1].name);
+  card(`${scene(li, 'new')}${starsSVG(stars)}<div class="left" aria-label="${tr(`Te sobran ${moves} movimientos`, `${moves} moves to spare`)}">${$('moves').querySelector('svg').outerHTML}<b>+${moves}</b></div>${words() ? (tutoEnd ? `<h2>${line}</h2><p>${tr('<b>Tutorial completado.</b> Ya sabes lo básico: desde aquí juegas sin ayudas y solo te aviso cuando aparezca algo nuevo.', '<b>Tutorial complete.</b> You know the basics: from here you play without help, and I’ll only tell you when something new shows up.')}</p>`
+    : tierEnd ? `<h2>${tr(`¡Nivel ${tierOf(li) + 1} completado!`, `Level ${tierOf(li) + 1} complete!`)}</h2><p>${line} ${tr(`${space} ha recuperado todo su color.`, `${space} has all its color back.`)}${last ? tx(' Fin del prototipo.') : tr(` Siguiente: <b>${nextT}</b>.`, ` Next: <b>${nextT}</b>.`)}</p>`
+    : `<h2>${line}</h2><p>${last ? tx('Has devuelto el color a todo el edificio. Fin del prototipo.') : fails <= 0 ? tx('Sin un solo choque.') : tr(`${fails} ${fails === 1 ? 'choque' : 'choques'}: sin chocar, 3 estrellas.`, `${fails} ${fails === 1 ? 'bump' : 'bumps'}: no bumps, 3 stars.`)}</p>`) : ''}
+    <div class="row">${last ? `<button class="btn" id="b1" aria-label="${tx('Jugar otra vez')}">${ICON.retry}</button>`
+      : `<button class="btn primary big" id="b1" aria-label="${tx('Siguiente nivel')}">${ICON.next}${words() ? tx('Siguiente') : ''}</button>`}</div>`);
   const next = () => load(last ? 0 : li + 1);
   $('b1').onclick = li === TIERS[1].to || last ? () => survey(next) : next; // tras los portales (ya ha visto lo que lo hace distinto), 2 preguntas
-  $('sr').textContent = 'Nivel superado. ' + ROOMS[li][2];
+  $('sr').textContent = tx('Nivel superado. ') + line;
   setTimeout(() => $('card').querySelector('.el.new')?.classList.add('lit'), reduced ? 0 : 450); // la pintura llega a la sala
   celebrate();
 }
@@ -1464,16 +1470,16 @@ function showOut() {
   sfx('fin', .7);
   if (endless) return gameOver();
   lvEnd('out');
-  card(`${words() ? '<h2>Sin movimientos</h2>' : ''}<div class="row"><button class="btn" id="b1" aria-label="Reintentar nivel">${ICON.retry}${words() ? 'Reintentar' : ''}</button></div>`);
+  card(`${words() ? `<h2>${tx('Sin movimientos')}</h2>` : ''}<div class="row"><button class="btn" id="b1" aria-label="${tx('Reintentar nivel')}">${ICON.retry}${words() ? tx('Reintentar') : ''}</button></div>`);
   $('b1').onclick = () => load(li);
 }
 function showDead() {
   sfx('fin', .6);
   $('rewindBtn').classList.add('pulse');
   lvEnd('dead');
-  card(`${words() ? '<h2>Así ya no sale</h2><p>Con lo que ha caído, la capa de abajo no se puede vaciar.</p>' : ''}
-    <div class="row"><button class="btn" id="b1" aria-label="Rebobinar capa">${ICON.rewind}${words() ? 'Rebobinar capa' : ''}</button>
-    <button class="btn" id="b2" aria-label="Ver la capa de abajo">${words() ? 'Ver la capa de abajo' : '👁'}</button></div>`);
+  card(`${words() ? `<h2>${tx('Así ya no sale')}</h2><p>${tx('Con lo que ha caído, la capa de abajo no se puede vaciar.')}</p>` : ''}
+    <div class="row"><button class="btn" id="b1" aria-label="${tx('Rebobinar capa')}">${ICON.rewind}${words() ? tx('Rebobinar capa') : ''}</button>
+    <button class="btn" id="b2" aria-label="${tx('Ver la capa de abajo')}">${words() ? tx('Ver la capa de abajo') : '👁'}</button></div>`);
   $('b1').onclick = rewind;
   $('b2').onclick = () => { closeOv(); if (board.layer + 1 < L.layers.length) setView(board.layer + 1); };
 }
@@ -1485,9 +1491,9 @@ function rewind() {
 }
 
 function menu() {
-  card(`<h2>Niveles</h2>${TIERS.map((T, t) => `<section class="tier"><h3>Nivel ${t + 1} · ${T.name}</h3><p>${T.what}</p><div class="grid10">${
-    NIVELES.slice(T.from, T.to + 1).map((n, k) => { const i = T.from + k; return `<button class="btn${n.level.layers.length > 1 ? ' two' : ''}${i === li ? ' cur' : ''}" data-l="${i}" aria-label="Nivel ${t + 1}, prueba ${k + 1}">${k + 1}</button>`; }).join('')}</div></section>`).join('')}
-    <div class="row"><button class="btn" id="goHome">${ICON.home} Inicio</button><button class="btn ghostbtn" id="reTuto">Repetir tutorial</button></div>`);
+  card(`<h2>${tx('Niveles')}</h2>${TIERS.map((T, t) => `<section class="tier"><h3>${tr('Nivel', 'Level')} ${t + 1} · ${tx(T.name)}</h3><p>${tx(T.what)}</p><div class="grid10">${
+    NIVELES.slice(T.from, T.to + 1).map((n, k) => { const i = T.from + k; return `<button class="btn${n.level.layers.length > 1 ? ' two' : ''}${i === li ? ' cur' : ''}" data-l="${i}" aria-label="${tr(`Nivel ${t + 1}, prueba ${k + 1}`, `Level ${t + 1}, stage ${k + 1}`)}">${k + 1}</button>`; }).join('')}</div></section>`).join('')}
+    <div class="row"><button class="btn" id="goHome">${ICON.home} ${tx('Inicio')}</button><button class="btn ghostbtn" id="reTuto">${tx('Repetir tutorial')}</button></div>`);
   $('card').querySelectorAll('[data-l]').forEach((b) => (b.onclick = () => load(+b.dataset.l)));
   $('reTuto').onclick = () => { MEM.clear(); closeOv(); home(); };
   $('goHome').onclick = () => { closeOv(); home(); };
@@ -1569,16 +1575,20 @@ function home() {
       ${slab(52, '<rect x="-28" y="-30" width="20" height="44" rx="8" fill="var(--i-red)"/><rect x="6" y="-4" width="20" height="20" rx="7" fill="var(--i-blue)"/>')}
     </svg>
     <h1 class="title">Paint Out</h1>
-    <p>4 niveles · 14 pruebas. Saca cada flecha por la puerta de su color.</p>${fsTip()}
-    <div class="row" style="flex-direction:column;align-items:center"><button class="btn primary big" id="play">Jugar</button>
-    <button class="btn big" id="inf">∞ Modo infinito${best ? ` · récord ${best}` : ''}</button>
-    <button class="btn ghostbtn" id="op">Danos tu opinión</button></div>
-    <label class="optout"><input type="checkbox" id="tel" ${Tel.enabled() ? 'checked' : ''}> Enviar datos de juego anónimos</label>`);
+    <p>${tr('4 niveles · 14 pruebas. Saca cada flecha por la puerta de su color.', '4 levels · 14 stages. Get each arrow out through the door of its color.')}</p>${fsTip()}
+    <div class="row" style="flex-direction:column;align-items:center"><button class="btn primary big" id="play">${tx('Jugar')}</button>
+    <button class="btn big" id="inf">∞ ${tx('Modo infinito')}${best ? tr(` · récord ${best}`, ` · record ${best}`) : ''}</button>
+    <button class="btn ghostbtn" id="op">${tx('Danos tu opinión')}</button></div>
+    <label class="optout"><input type="checkbox" id="tel" ${Tel.enabled() ? 'checked' : ''}> ${tx('Enviar datos de juego anónimos')}</label>
+    <div class="row lang" role="radiogroup" aria-label="Language / Idioma">${[['en', 'English'], ['es', 'Español']].map(([l, n]) => `<button class="btn${l === LANG ? ' primary' : ''}" role="radio" aria-checked="${l === LANG}" data-lang="${l}">${n}</button>`).join('')}</div>`);
+  $('card').querySelectorAll('[data-lang]').forEach((b) => (b.onclick = () => { if (b.dataset.lang !== LANG) I18N.set(b.dataset.lang); }));
   $('inf').onclick = startEndless;
   $('op').onclick = () => survey(home, true);
   $('tel').onchange = (e) => Tel.setEnabled(e.target.checked);
   $('play').onclick = startGame;
 }
+[['menuBtn', 'Niveles'], ['muteBtn', 'Silenciar'], ['rewindBtn', 'Rebobinar capa'], ['layers', 'Capas'], ['board', 'Tablero'], ['v3d', 'Todas las capas en 3D']]
+  .forEach(([id, es]) => $(id).setAttribute('aria-label', tx(es)));
 if (new URLSearchParams(location.search).get('modo') === 'infinito') startEndless();
 else if (q) load(Math.max(0, Math.min(NIVELES.length - 1, +q - 1)));
 else home(); // siempre desde la portada
