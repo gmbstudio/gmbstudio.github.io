@@ -4,7 +4,7 @@
 // paint-out entra SIN token desde gmbstudio.cc y Dash (CORS del Worker, store-monitor f6b2e09); props como strings, ≤500 car.
 (function (root) {
   const URL_E = 'https://eventos.gmbstudio.cc/e';
-  const VERSION = '0.58+58';
+  const VERSION = '0.59+59';
   const KEY = 'po-install';
   const store = (() => { try { return localStorage; } catch { return null; } })();
   let install = store?.getItem(KEY);
@@ -34,5 +34,7 @@
     track, flush,
     once(k) { if (store?.getItem('po-' + k)) return false; store?.setItem('po-' + k, '1'); return true; },
   };
-  track('app_open', { ref: document.referrer ? new URL(document.referrer).hostname : 'directo' });
+  // src: de qué vídeo o sitio llega (enlaces con ?v=yt1…yt7, ?v=reddit…); se guarda para toda la visita
+  const src = (new URLSearchParams(location.search).get('v') || '').slice(0, 24);
+  track('app_open', { ref: document.referrer ? new URL(document.referrer).hostname : 'directo', ...(src ? { src } : {}) });
 })(this);
