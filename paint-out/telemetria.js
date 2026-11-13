@@ -4,7 +4,7 @@
 // paint-out entra SIN token desde gmbstudio.cc y Dash (CORS del Worker, store-monitor f6b2e09); props como strings, ≤500 car.
 (function (root) {
   const URL_E = 'https://eventos.gmbstudio.cc/e';
-  const VERSION = '0.60+60';
+  const VERSION = '0.61+61';
   const KEY = 'po-install';
   const store = (() => { try { return localStorage; } catch { return null; } })();
   let install = store?.getItem(KEY);
