@@ -1,10 +1,11 @@
-// Telemetría propia gmb-events (regla 12 del estudio): anónima, con ID de instalación aleatorio y opt-out.
+// Telemetría propia gmb-events (regla 12 del estudio): anónima, con ID de instalación aleatorio.
+// Sin opción de desactivarla: es un prototipo web, no una app de tienda (decisión del admin, 2026-11-13).
 // Lotes al receptor de config/telemetry.json; se envía al llegar a 10 eventos y al pasar a segundo plano.
 // paint-out entra SIN token desde gmbstudio.cc y Dash (CORS del Worker, store-monitor f6b2e09); props como strings, ≤500 car.
 (function (root) {
   const URL_E = 'https://eventos.gmbstudio.cc/e';
-  const VERSION = '0.55+55';
-  const KEY = 'po-install', OFF = 'po-tel-off';
+  const VERSION = '0.56+56';
+  const KEY = 'po-install';
   const store = (() => { try { return localStorage; } catch { return null; } })();
   let install = store?.getItem(KEY);
   if (!install) { install = crypto.randomUUID?.() || String(Math.random()).slice(2); store?.setItem(KEY, install); }
@@ -15,15 +16,13 @@
   const region = (navigator.language.split('-')[1] || '').toUpperCase() || undefined;
   let q = [];
 
-  const enabled = () => store?.getItem(OFF) !== '1';
   function flush() {
-    if (!q.length || !enabled()) { if (!enabled()) q = []; return; }
+    if (!q.length) return;
     const body = JSON.stringify({ app: 'paint-out', install, platform: 'Web', version: VERSION, region, env, os, events: q });
     q = [];
     fetch(URL_E, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body }).catch(() => {});
   }
   function track(name, props = {}) {
-    if (!enabled()) return;
     q.push({ name, ts: Date.now(), props: Object.fromEntries(Object.entries(props).map(([k, v]) => [k, String(v)])) });
     if (root.PO_DEBUG) console.log('[tel]', name, props);
     if (q.length >= 10) flush();
@@ -32,8 +31,7 @@
   addEventListener('error', (e) => track('error', { kind: 'js', code: 'uncaught', detail: String(e.message).slice(0, 120) }));
 
   root.Tel = {
-    track, flush, enabled,
-    setEnabled(on) { on ? store?.removeItem(OFF) : store?.setItem(OFF, '1'); if (!on) q = []; },
+    track, flush,
     once(k) { if (store?.getItem('po-' + k)) return false; store?.setItem('po-' + k, '1'); return true; },
   };
   track('app_open', { ref: document.referrer ? new URL(document.referrer).hostname : 'directo' });

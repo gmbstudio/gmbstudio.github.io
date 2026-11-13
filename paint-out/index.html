@@ -172,8 +172,6 @@
   .card textarea { font: inherit; font-size: 1rem; width: 100%; max-width: 320px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--cellline); background: var(--panel); color: var(--ink); padding: 10px 12px; resize: none; }
   .card .seg .btn { min-width: 80px; }
   .card .lang .btn { min-width: 110px; font-size: .9375rem; }
-  .card .optout { font-size: .875rem; color: var(--ink2); display: flex; gap: 8px; align-items: center; min-height: 48px; }
-  .card .optout input { width: 22px; height: 22px; accent-color: var(--focus); }
   .card .title { font-size: 2.25rem; font-weight: 800; letter-spacing: -.02em; margin: 0; }
   .card .hero { width: 200px; height: 167px; }
   .card .scene { max-width: 260px; }
@@ -1579,12 +1577,10 @@ function home() {
     <div class="row" style="flex-direction:column;align-items:center"><button class="btn primary big" id="play">${tx('Jugar')}</button>
     <button class="btn big" id="inf">∞ ${tx('Modo infinito')}${best ? tr(` · récord ${best}`, ` · record ${best}`) : ''}</button>
     <button class="btn ghostbtn" id="op">${tx('Danos tu opinión')}</button></div>
-    <label class="optout"><input type="checkbox" id="tel" ${Tel.enabled() ? 'checked' : ''}> ${tx('Enviar datos de juego anónimos')}</label>
     <div class="row lang" role="radiogroup" aria-label="Language / Idioma">${[['en', 'English'], ['es', 'Español']].map(([l, n]) => `<button class="btn${l === LANG ? ' primary' : ''}" role="radio" aria-checked="${l === LANG}" data-lang="${l}">${n}</button>`).join('')}</div>`);
   $('card').querySelectorAll('[data-lang]').forEach((b) => (b.onclick = () => { if (b.dataset.lang !== LANG) I18N.set(b.dataset.lang); }));
   $('inf').onclick = startEndless;
   $('op').onclick = () => survey(home, true);
-  $('tel').onchange = (e) => Tel.setEnabled(e.target.checked);
   $('play').onclick = startGame;
 }
 [['menuBtn', 'Niveles'], ['muteBtn', 'Silenciar'], ['rewindBtn', 'Rebobinar capa'], ['layers', 'Capas'], ['board', 'Tablero'], ['v3d', 'Todas las capas en 3D']]
