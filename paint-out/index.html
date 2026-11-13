@@ -1480,8 +1480,10 @@ function showDead() {
   sfx('fin', .6);
   $('rewindBtn').classList.add('pulse');
   lvEnd('dead');
-  card(`${words() ? `<h2>${tx('Así ya no sale')}</h2><p>${tx('Con lo que ha caído, la capa de abajo no se puede vaciar.')}</p>` : ''}
-    <div class="row"><button class="btn" id="b1" aria-label="${tx('Rebobinar capa')}">${ICON.rewind}${words() ? tx('Rebobinar capa') : ''}</button>
+  // en niveles de orden (portal blanco o puerta con secuencia), el porqué: es la regla que más cuesta (telemetría, 3-2)
+  const order = L.layers.some((l) => l.doors.some((d) => d.colors.length > 1 || d.colors[0] === WHITE));
+  card(`${words() ? `<h2>${tx('Así ya no sale')}</h2><p>${tx('Con lo que ha caído, la capa de abajo no se puede vaciar.')}</p>${order ? `<p>${tr('<b>El orden importa:</b> lo que entra por un portal blanco llega abajo en ese mismo orden, y las puertas de abajo piden sus colores en el suyo. Rebobina y mira antes la capa de abajo.', '<b>Order matters:</b> what goes through a white portal arrives below in that same order, and the doors below ask for their colors in theirs. Rewind and look at the layer below first.')}</p>` : ''}` : ''}
+    <div class="row"><button class="btn primary" id="b1" aria-label="${tx('Rebobinar capa')}">${ICON.rewind}${words() ? tx('Rebobinar capa') : ''}</button>
     <button class="btn" id="b2" aria-label="${tx('Ver la capa de abajo')}">${words() ? tx('Ver la capa de abajo') : '👁'}</button></div>`);
   $('b1').onclick = rewind;
   $('b2').onclick = () => { closeOv(); if (board.layer + 1 < L.layers.length) setView(board.layer + 1); };

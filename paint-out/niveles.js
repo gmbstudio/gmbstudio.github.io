@@ -353,7 +353,7 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 17,
+      "moves" : 15,
       "name" : "Cuatro puertas"
     },
     "report" : {
@@ -534,7 +534,7 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 17,
+      "moves" : 15,
       "name" : "Puertas estrechas"
     },
     "report" : {
@@ -723,7 +723,7 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 20,
+      "moves" : 18,
       "name" : "La caída"
     },
     "report" : {
@@ -934,7 +934,7 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 23,
+      "moves" : 21,
       "name" : "Carril justo"
     },
     "report" : {
@@ -1224,7 +1224,7 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 33,
+      "moves" : 31,
       "name" : "Cuatro portales"
     },
     "report" : {
@@ -1471,7 +1471,7 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 27,
+      "moves" : 25,
       "name" : "Cruce"
     },
     "report" : {
