@@ -310,6 +310,83 @@ const NIVELES = [
               "len" : 2,
               "x" : 5,
               "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 1,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 1,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 2,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 4,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 3
             }
           ],
           "doors" : [
@@ -353,20 +430,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 15,
+      "moves" : 26,
       "name" : "Cuatro puertas"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.5345932576195734,
+      "failRate" : 0.7360362802114027,
       "fillings" : [
 
       ],
-      "minMoves" : 14,
-      "randomWin" : 1,
+      "minMoves" : 25,
+      "randomWin" : 1.0000000000000002,
       "solvable" : true,
-      "states" : 38,
+      "states" : 1588,
       "winnableFillings" : [
 
       ]
@@ -475,6 +552,90 @@ const NIVELES = [
               "len" : 1,
               "x" : 1,
               "y" : 6
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 3,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 3,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 2,
+              "y" : 1
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 5,
+              "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 2
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 1
             }
           ],
           "doors" : [
@@ -534,20 +695,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 15,
+      "moves" : 27,
       "name" : "Puertas estrechas"
     },
     "report" : {
       "deadEnds" : 0,
-      "difficulty" : "fácil",
-      "failRate" : 0.2929247206086907,
+      "difficulty" : "media",
+      "failRate" : 0.5454041785374852,
       "fillings" : [
 
       ],
-      "minMoves" : 14,
-      "randomWin" : 1.0000000000000002,
+      "minMoves" : 26,
+      "randomWin" : 0.9999999999999999,
       "solvable" : true,
-      "states" : 1984,
+      "states" : 45488,
       "winnableFillings" : [
 
       ]
@@ -593,6 +754,125 @@ const NIVELES = [
               "len" : 1,
               "x" : 3,
               "y" : 5
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 3,
+              "x" : 0,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 3,
+              "x" : 0,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 4,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 4,
+              "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 3,
+              "x" : 0,
+              "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 3
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 4,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 1,
+              "y" : 5
             }
           ],
           "doors" : [
@@ -613,6 +893,22 @@ const NIVELES = [
               "from" : 1,
               "len" : 3,
               "portal" : 1
+            },
+            {
+              "colors" : [
+                "green"
+              ],
+              "edge" : "left",
+              "from" : 6,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "blue"
+              ],
+              "edge" : "left",
+              "from" : 3,
+              "len" : 3
             }
           ],
           "h" : 9,
@@ -671,6 +967,160 @@ const NIVELES = [
               "len" : 1,
               "x" : 1,
               "y" : 5
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 1,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 1
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 5
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 5
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 1
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 0
             }
           ],
           "doors" : [
@@ -723,20 +1173,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 18,
+      "moves" : 57,
       "name" : "La caída"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.36170580808080816,
+      "failRate" : 0.7021923719827136,
       "fillings" : [
         1
       ],
-      "minMoves" : 17,
-      "randomWin" : 1,
+      "minMoves" : 56,
+      "randomWin" : 0.9999999999999998,
       "solvable" : true,
-      "states" : 200,
+      "states" : 11932,
       "winnableFillings" : [
         1
       ]
@@ -789,6 +1239,90 @@ const NIVELES = [
               "len" : 1,
               "x" : 4,
               "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 0,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 1
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 3,
+              "x" : 1,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 6
             }
           ],
           "doors" : [
@@ -809,6 +1343,30 @@ const NIVELES = [
               "from" : 1,
               "len" : 3,
               "portal" : 1
+            },
+            {
+              "colors" : [
+                "red"
+              ],
+              "edge" : "left",
+              "from" : 1,
+              "len" : 3
+            },
+            {
+              "colors" : [
+                "yellow"
+              ],
+              "edge" : "down",
+              "from" : 3,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "green"
+              ],
+              "edge" : "left",
+              "from" : 6,
+              "len" : 2
             }
           ],
           "h" : 9,
@@ -874,6 +1432,97 @@ const NIVELES = [
               "len" : 2,
               "x" : 5,
               "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 4,
+              "y" : 3
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 4
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 2,
+              "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 4
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 3
             }
           ],
           "doors" : [
@@ -934,20 +1583,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 21,
+      "moves" : 46,
       "name" : "Carril justo"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.5254683993126821,
+      "failRate" : 0.48840737752359187,
       "fillings" : [
         5
       ],
-      "minMoves" : 20,
-      "randomWin" : 1,
+      "minMoves" : 45,
+      "randomWin" : 1.0000000000000002,
       "solvable" : true,
-      "states" : 1233,
+      "states" : 37878,
       "winnableFillings" : [
         5
       ]
@@ -1035,6 +1684,139 @@ const NIVELES = [
               "len" : 1,
               "x" : 4,
               "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 3,
+              "x" : 2,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 1,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 4,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 4,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 0,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 1,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 1
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 2,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 1,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 6
             }
           ],
           "doors" : [
@@ -1073,6 +1855,30 @@ const NIVELES = [
               "from" : 3,
               "len" : 2,
               "portal" : 3
+            },
+            {
+              "colors" : [
+                "blue"
+              ],
+              "edge" : "left",
+              "from" : 0,
+              "len" : 3
+            },
+            {
+              "colors" : [
+                "red"
+              ],
+              "edge" : "up",
+              "from" : 2,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "red"
+              ],
+              "edge" : "right",
+              "from" : 6,
+              "len" : 2
             }
           ],
           "h" : 9,
@@ -1138,6 +1944,90 @@ const NIVELES = [
               "len" : 1,
               "x" : 0,
               "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 0,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 1,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 1,
+              "y" : 8
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 3,
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 4
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 0,
+              "y" : 8
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 4
             }
           ],
           "doors" : [
@@ -1224,20 +2114,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 31,
+      "moves" : 62,
       "name" : "Cuatro portales"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.5049756953854073,
+      "failRate" : 0.6091437013901891,
       "fillings" : [
         18
       ],
-      "minMoves" : 30,
+      "minMoves" : 61,
       "randomWin" : 1,
       "solvable" : true,
-      "states" : 6744,
+      "states" : 10784,
       "winnableFillings" : [
         18
       ]
@@ -1304,6 +2194,146 @@ const NIVELES = [
               "len" : 1,
               "x" : 4,
               "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 3,
+              "x" : 2,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 3,
+              "x" : 3,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 2,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 2,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 0,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 4,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 0,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 4,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
             }
           ],
           "doors" : [
@@ -1333,6 +2363,30 @@ const NIVELES = [
               "from" : 4,
               "len" : 1,
               "portal" : 2
+            },
+            {
+              "colors" : [
+                "blue"
+              ],
+              "edge" : "right",
+              "from" : 1,
+              "len" : 3
+            },
+            {
+              "colors" : [
+                "red"
+              ],
+              "edge" : "down",
+              "from" : 2,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "blue"
+              ],
+              "edge" : "left",
+              "from" : 6,
+              "len" : 3
             }
           ],
           "h" : 9,
@@ -1398,6 +2452,90 @@ const NIVELES = [
               "len" : 2,
               "x" : 5,
               "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 1,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 4
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 5,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 8
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 8
             }
           ],
           "doors" : [
@@ -1471,20 +2609,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 25,
+      "moves" : 57,
       "name" : "Cruce"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.5363253906233848,
+      "failRate" : 0.6577796938618751,
       "fillings" : [
         2
       ],
-      "minMoves" : 24,
-      "randomWin" : 1,
+      "minMoves" : 56,
+      "randomWin" : 1.0000000000000002,
       "solvable" : true,
-      "states" : 349,
+      "states" : 15248,
       "winnableFillings" : [
         2
       ]
@@ -1523,6 +2661,146 @@ const NIVELES = [
               "len" : 1,
               "x" : 3,
               "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 4,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 4,
+              "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 2,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 5
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 4,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 5,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 1,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 4,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "right",
+              "len" : 3,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 1,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
             }
           ],
           "doors" : [
@@ -1534,6 +2812,30 @@ const NIVELES = [
               "from" : 1,
               "len" : 3,
               "portal" : 0
+            },
+            {
+              "colors" : [
+                "blue"
+              ],
+              "edge" : "right",
+              "from" : 4,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "green"
+              ],
+              "edge" : "left",
+              "from" : 5,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "green"
+              ],
+              "edge" : "right",
+              "from" : 0,
+              "len" : 2
             }
           ],
           "h" : 9,
@@ -1592,6 +2894,118 @@ const NIVELES = [
               "len" : 1,
               "x" : 4,
               "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 4
+            },
+            {
+              "color" : "yellow",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 0,
+              "y" : 2
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 3,
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 0,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 4
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 2
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 6
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 5
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 0
             }
           ],
           "doors" : [
@@ -1621,6 +3035,14 @@ const NIVELES = [
               "edge" : "up",
               "from" : 4,
               "len" : 1
+            },
+            {
+              "colors" : [
+                "yellow"
+              ],
+              "edge" : "down",
+              "from" : 0,
+              "len" : 2
             }
           ],
           "h" : 9,
@@ -1634,20 +3056,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 18,
+      "moves" : 52,
       "name" : "Portal blanco"
     },
     "report" : {
-      "deadEnds" : 121,
-      "difficulty" : "muy difícil",
-      "failRate" : 0.5908610522130923,
+      "deadEnds" : 4302,
+      "difficulty" : "difícil",
+      "failRate" : 0.6745322909808686,
       "fillings" : [
-        5
+        3
       ],
-      "minMoves" : 15,
-      "randomWin" : 0.2777777777777778,
+      "minMoves" : 51,
+      "randomWin" : 0.3506944444444445,
       "solvable" : true,
-      "states" : 196,
+      "states" : 11598,
       "winnableFillings" : [
         1
       ]
@@ -1714,6 +3136,132 @@ const NIVELES = [
               "len" : 2,
               "x" : 3,
               "y" : 4
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 5,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 3,
+              "x" : 4,
+              "y" : 4
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 4,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 5,
+              "y" : 4
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 3,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 8
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 4,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 5,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 2,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 4,
+              "y" : 7
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 3,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
             }
           ],
           "doors" : [
@@ -1734,6 +3282,30 @@ const NIVELES = [
               "from" : 3,
               "len" : 3,
               "portal" : 1
+            },
+            {
+              "colors" : [
+                "green"
+              ],
+              "edge" : "down",
+              "from" : 4,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "blue"
+              ],
+              "edge" : "right",
+              "from" : 6,
+              "len" : 3
+            },
+            {
+              "colors" : [
+                "yellow"
+              ],
+              "edge" : "down",
+              "from" : 2,
+              "len" : 2
             }
           ],
           "h" : 9,
@@ -1792,6 +3364,55 @@ const NIVELES = [
               "len" : 1,
               "x" : 2,
               "y" : 2
+            },
+            {
+              "color" : "yellow",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 1
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 2,
+              "x" : 0,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 3
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
             }
           ],
           "doors" : [
@@ -1830,6 +3451,14 @@ const NIVELES = [
               "edge" : "up",
               "from" : 2,
               "len" : 1
+            },
+            {
+              "colors" : [
+                "red"
+              ],
+              "edge" : "left",
+              "from" : 6,
+              "len" : 3
             }
           ],
           "h" : 9,
@@ -1848,20 +3477,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 28,
+      "moves" : 49,
       "name" : "El orden manda"
     },
     "report" : {
-      "deadEnds" : 1056,
+      "deadEnds" : 48684,
       "difficulty" : "muy difícil",
-      "failRate" : 0.5322454700093224,
+      "failRate" : 0.4487551460225248,
       "fillings" : [
         30
       ],
-      "minMoves" : 23,
-      "randomWin" : 0.13888888888888887,
+      "minMoves" : 48,
+      "randomWin" : 0.1665556802626315,
       "solvable" : true,
-      "states" : 1516,
+      "states" : 59980,
       "winnableFillings" : [
         3
       ]
@@ -2026,6 +3655,41 @@ const NIVELES = [
               "len" : 1,
               "x" : 5,
               "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 2,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 3
             }
           ],
           "doors" : [
@@ -2117,20 +3781,20 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 26,
+      "moves" : 28,
       "name" : "Giros"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.5509962477899368,
+      "failRate" : 0.5526522820108748,
       "fillings" : [
 
       ],
-      "minMoves" : 22,
-      "randomWin" : 0.9999999999999998,
+      "minMoves" : 27,
+      "randomWin" : 0.9999999999999999,
       "solvable" : true,
-      "states" : 6184,
+      "states" : 23032,
       "winnableFillings" : [
 
       ]
@@ -2232,6 +3896,97 @@ const NIVELES = [
               "len" : 1,
               "x" : 3,
               "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 4,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 4
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 5,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 2,
+              "y" : 5
+            },
+            {
+              "color" : "yellow",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
             }
           ],
           "doors" : [
@@ -2260,6 +4015,14 @@ const NIVELES = [
               ],
               "edge" : "down",
               "from" : 3,
+              "len" : 3
+            },
+            {
+              "colors" : [
+                "yellow"
+              ],
+              "edge" : "up",
+              "from" : 2,
               "len" : 3
             }
           ],
@@ -2371,6 +4134,104 @@ const NIVELES = [
               "len" : 1,
               "x" : 0,
               "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 3,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 5,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 2,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 5
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 1
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 4,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 7
             }
           ],
           "doors" : [
@@ -2521,6 +4382,97 @@ const NIVELES = [
               "len" : 2,
               "x" : 2,
               "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 1,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 6
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 5
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 1,
+              "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 2
+            },
+            {
+              "color" : "yellow",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 1,
+              "y" : 8
             }
           ],
           "doors" : [
@@ -2598,21 +4550,21 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 48,
+      "moves" : 85,
       "name" : "Salto de capa"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.3875933545595872,
+      "failRate" : 0.5889383568689178,
       "fillings" : [
         2,
         1
       ],
-      "minMoves" : 44,
-      "randomWin" : 0.9999999999999998,
+      "minMoves" : 84,
+      "randomWin" : 0.9999999999999999,
       "solvable" : true,
-      "states" : 2106,
+      "states" : 39137,
       "winnableFillings" : [
         2,
         1
@@ -2708,6 +4660,48 @@ const NIVELES = [
               "len" : 1,
               "x" : 4,
               "y" : 4
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 3,
+              "x" : 0,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 3,
+              "x" : 0,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 3,
+              "x" : 1,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 4
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 5,
+              "y" : 0
             }
           ],
           "doors" : [
@@ -2736,6 +4730,14 @@ const NIVELES = [
               ],
               "edge" : "up",
               "from" : 4,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "red"
+              ],
+              "edge" : "down",
+              "from" : 0,
               "len" : 2
             }
           ],
@@ -2847,6 +4849,90 @@ const NIVELES = [
               "len" : 1,
               "x" : 3,
               "y" : 8
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 2
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 1,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 4,
+              "y" : 5
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 5,
+              "y" : 5
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 5,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 6
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 2,
+              "x" : 0,
+              "y" : 8
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 3,
+              "y" : 2
             }
           ],
           "doors" : [
@@ -2997,6 +5083,62 @@ const NIVELES = [
               "len" : 1,
               "x" : 3,
               "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 8
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 4,
+              "y" : 8
+            },
+            {
+              "color" : "green",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 3,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 1,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 3,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 1,
+              "y" : 6
             }
           ],
           "doors" : [
@@ -3083,21 +5225,21 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 47,
+      "moves" : 70,
       "name" : "El orden de lejos"
     },
     "report" : {
-      "deadEnds" : 1062,
+      "deadEnds" : 16624,
       "difficulty" : "difícil",
-      "failRate" : 0.5126846978103198,
+      "failRate" : 0.5654460760254544,
       "fillings" : [
         2,
         4
       ],
-      "minMoves" : 43,
-      "randomWin" : 0.5,
+      "minMoves" : 69,
+      "randomWin" : 0.4999999999999999,
       "solvable" : true,
-      "states" : 3622,
+      "states" : 59614,
       "winnableFillings" : [
         1,
         2
@@ -3186,6 +5328,111 @@ const NIVELES = [
               "len" : 1,
               "x" : 1,
               "y" : 7
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 2,
+              "y" : 5
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 0,
+              "y" : 3
+            },
+            {
+              "color" : "blue",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 2,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 3,
+              "y" : 5
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 3,
+              "x" : 5,
+              "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 1
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 8
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 1,
+              "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 4
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 3,
+              "y" : 2
             }
           ],
           "doors" : [
@@ -3215,6 +5462,14 @@ const NIVELES = [
               "edge" : "left",
               "from" : 3,
               "len" : 3
+            },
+            {
+              "colors" : [
+                "red"
+              ],
+              "edge" : "right",
+              "from" : 0,
+              "len" : 2
             }
           ],
           "h" : 9,
@@ -3311,6 +5566,69 @@ const NIVELES = [
               "len" : 2,
               "x" : 5,
               "y" : 3
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 3,
+              "x" : 0,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 3,
+              "x" : 1,
+              "y" : 0
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 3,
+              "x" : 2,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 4,
+              "y" : 0
+            },
+            {
+              "color" : "blue",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 4,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 2,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 8
+            },
+            {
+              "color" : "yellow",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 0,
+              "y" : 6
             }
           ],
           "doors" : [
@@ -3447,6 +5765,62 @@ const NIVELES = [
               "len" : 1,
               "x" : 0,
               "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 0,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 1,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 2
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 2,
+              "x" : 5,
+              "y" : 1
+            },
+            {
+              "color" : "blue",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 3,
+              "y" : 1
             }
           ],
           "doors" : [
@@ -3473,6 +5847,14 @@ const NIVELES = [
               ],
               "edge" : "down",
               "from" : 0,
+              "len" : 2
+            },
+            {
+              "colors" : [
+                "blue"
+              ],
+              "edge" : "right",
+              "from" : 1,
               "len" : 2
             }
           ],
@@ -3555,6 +5937,55 @@ const NIVELES = [
               "dir" : "down",
               "len" : 2,
               "x" : 1,
+              "y" : 2
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 2,
+              "x" : 0,
+              "y" : 2
+            },
+            {
+              "color" : "yellow",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 5,
+              "y" : 7
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
+              "y" : 3
+            },
+            {
+              "color" : "red",
+              "dir" : "right",
+              "len" : 1,
+              "x" : 5,
+              "y" : 5
+            },
+            {
+              "color" : "red",
+              "dir" : "up",
+              "len" : 1,
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "color" : "green",
+              "dir" : "down",
+              "len" : 1,
+              "x" : 5,
+              "y" : 6
+            },
+            {
+              "color" : "red",
+              "dir" : "left",
+              "len" : 1,
+              "x" : 2,
               "y" : 2
             }
           ],
@@ -3654,22 +6085,22 @@ const NIVELES = [
           "w" : 6
         }
       ],
-      "moves" : 55,
+      "moves" : 91,
       "name" : "Cuatro capas"
     },
     "report" : {
       "deadEnds" : 0,
       "difficulty" : "media",
-      "failRate" : 0.4724515210902419,
+      "failRate" : 0.5477235654034764,
       "fillings" : [
         2,
         6,
         12
       ],
-      "minMoves" : 51,
-      "randomWin" : 0.9999999999999998,
+      "minMoves" : 90,
+      "randomWin" : 0.9999999999999999,
       "solvable" : true,
-      "states" : 8852,
+      "states" : 58396,
       "winnableFillings" : [
         2,
         6,

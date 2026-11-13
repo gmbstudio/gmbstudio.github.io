@@ -66,6 +66,8 @@
   .moves { display: flex; align-items: center; gap: 6px; font-size: 1.75rem; font-weight: 700; font-variant-numeric: tabular-nums; }
   .moves svg { width: 26px; height: 26px; }
   .moves.low { color: var(--alert); }
+  .moves.tick { animation: tick 1s ease-in-out infinite; }
+  @keyframes tick { 50% { transform: scale(1.12); } }
   .center { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   #tuto { display: flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 600; color: var(--ink2); }
   #tuto[hidden] { display: none; }
@@ -241,7 +243,7 @@
 <script src="i18n.js"></script>
 <script>
 const { tx, tr, LANG } = I18N;
-const { DIRS, cells, laneCell, makeBoard, probe, apply, isEmpty, doorColor, Solver, WHITE } = Reglas;
+const { DIRS, cells, laneCell, makeBoard, probe, apply, isEmpty, doorColor, Solver, WHITE, reach } = Reglas;
 const S = 100;                                // casilla, en unidades del viewBox
 let M = { x: 82, y: 82 };                     // margen para las puertas, por eje (ver margin())
 // Tablero lo más grande posible: margen mínimo en cada eje según lo que haya fuera de ese borde (puertas, portales, secuencias).
@@ -446,8 +448,7 @@ function render() {
   renderLayers();
   if (on3d) build3d();
   document.body.style.setProperty('--life', Math.min(1, exits / REP.minMoves).toFixed(3));
-  $('movesN').textContent = moves;
-  $('moves').classList.toggle('low', moves <= 3);
+  if (endless?.timed) clockUI(); else { $('movesN').textContent = moves; $('moves').classList.toggle('low', moves <= 3); }
   $('moves').setAttribute('aria-label', tr(`${moves} movimientos`, `${moves} moves`));
   $('lvl').textContent = endless ? `∞ ${endless.chain.top + board.layer + 1}` : tag(li);
   const t = $('tuto'); t.hidden = !!endless || L.id > TUTO_N;    // niveles 1–5: tutorial, con su progreso a la vista
@@ -683,6 +684,7 @@ let stat = { level: '', t0: 0, taps: 0, fails: 0 }; // para la telemetría de ca
 const lvStart = (level) => { stat = { level, t0: Date.now(), taps: 0, fails: 0 }; Tel.track('level_start', { level }); };
 const lvEnd = (result, extra = {}) => Tel.track('level_end', { level: stat.level, result, moves, taps: stat.taps, fails: stat.fails, secs: Math.round((Date.now() - stat.t0) / 1000), ...extra });
 function load(i) {
+  if (endless?.timed) { $('moves').querySelector('svg').innerHTML = HAND; $('moves').classList.remove('tick'); }
   endless = null; li = i; playMusic('campana'); lvStart(tag(i));
   setLevel(NIVELES[i].level, NIVELES[i].report);
   chapter(() => startCoach(String(L.id)));
@@ -690,18 +692,20 @@ function load(i) {
 
 // ---- Modo infinito: una sola pila que no se acaba. Juegas la capa de arriba, ves las dos siguientes (3 en el visor 3D);
 // al vaciarla bajas y aparece una nueva al fondo. Un solo contador: cada capa nueva añade lo que pide, los choques no se devuelven.
-function startEndless() {
-  playMusic('infinito'); Tel.track('scene_open', { name: 'infinito' }); lvStart('inf');
+function startEndless(timed = false) {
+  playMusic('infinito'); Tel.track('scene_open', { name: timed ? 'contrarreloj' : 'infinito' }); lvStart(timed ? 'crono' : 'inf');
   document.querySelector('header').classList.remove('gone'); $('ov').classList.remove('welcome');
   const chain = Infinito.Chain(Math.floor(Math.random() * 1e6) + 1);
   if (!chain.init()) { card(`<h2>${tx('No he podido generar la pila')}</h2><div class="row"><button class="btn primary big" id="b1">${tx('Inicio')}</button></div>`); $('b1').onclick = home; return; }
-  endless = { chain, spare: 3 }; // margen de choques al empezar
+  endless = { chain, spare: 3, timed, left: CLOCK.start, paused: true }; // margen de choques al empezar; el reloj espera al rótulo
   enterWindow();
-  const ch = $('chapter');
-  ch.innerHTML = `<small>${tx('Modo infinito')}</small><b>${tx('¿Hasta dónde bajas?')}</b><span>${tr('Vacía la capa de arriba y baja a la siguiente. La pila no se acaba. Cada capa te da un toque por flecha; los choques se pagan del margen (empiezas con 3 y ganas 1 cada 4 capas).', 'Empty the top layer and go down to the next. The stack never ends. Each layer gives you one tap per arrow; bumps are paid from your spare moves (you start with 3 and earn 1 every 4 layers).')}${best ? tr(`<br>Tu récord: capa ${best}.`, `<br>Your record: layer ${best}.`) : ''}</span>`;
+  const ch = $('chapter'), rec = timed ? bestT : best;
+  ch.innerHTML = timed
+    ? `<small>${tx('Contrarreloj')}</small><b>${tx('¿Hasta dónde bajas antes de que se acabe el tiempo?')}</b><span>${tr(`Cada capa te da ${CLOCK.perArrow} s por flecha. Cada choque te quita ${CLOCK.bump} s. Si el reloj llega a cero, se acaba.`, `Each layer gives you ${CLOCK.perArrow} s per arrow. Each bump costs ${CLOCK.bump} s. When the clock hits zero, it’s over.`)}${rec ? tr(`<br>Tu récord: capa ${rec}.`, `<br>Your record: layer ${rec}.`) : ''}</span>`
+    : `<small>${tx('Modo infinito')}</small><b>${tx('¿Hasta dónde bajas?')}</b><span>${tr('Vacía la capa de arriba y baja a la siguiente. La pila no se acaba. Cada capa te da un toque por flecha; los choques se pagan del margen (empiezas con 3 y ganas 1 cada 4 capas).', 'Empty the top layer and go down to the next. The stack never ends. Each layer gives you one tap per arrow; bumps are paid from your spare moves (you start with 3 and earn 1 every 4 layers).')}${rec ? tr(`<br>Tu récord: capa ${rec}.`, `<br>Your record: layer ${rec}.`) : ''}</span>`;
   ch.hidden = false;
   let done = false;
-  const go = () => { if (done) return; done = true; anim(ch, [{ opacity: 1 }, { opacity: 0 }], 300).then(() => { ch.hidden = true; }); };
+  const go = () => { if (done) return; done = true; if (endless) endless.paused = false; anim(ch, [{ opacity: 1 }, { opacity: 0 }], 300).then(() => { ch.hidden = true; }); };
   ch.onclick = go; setTimeout(go, 2600);
 }
 // Monta la ventana de tres capas actual: se juega la de arriba con lo que le llegó por sus portales.
@@ -711,6 +715,7 @@ function enterWindow() {
   board = makeBoard(L, 0, c.incoming);
   const need = board.live.filter(Boolean).length; // un toque por flecha de la capa que juegas
   moves = need + endless.spare; REP = { minMoves: need };
+  if (endless.timed) { moves = 999; addTime(need * CLOCK.perArrow); } // contrarreloj: cada capa nueva suma tiempo por flecha
   start = { board, moves, exits: 0 }; exits = 0; view = 0;
   closeOv(); coach = null; hideCoach(); render();
 }
@@ -725,12 +730,44 @@ function shiftWindow(out) {
   $('sr').textContent = tr(`Capa ${c.top + 1}`, `Layer ${c.top + 1}`);
 }
 function gameOver() {
-  const reached = endless.chain.top + 1, record = reached > best;
-  lvEnd('out', { depth: reached });
-  best = Math.max(best, reached);
-  card(`<h2>${tx(record ? '¡Nuevo récord!' : 'Fin de la partida')}</h2><p>${tr(`Te has quedado sin movimientos en la <b>capa ${reached}</b>.${record ? '' : ` Tu récord: capa ${best}.`}`, `You ran out of moves on <b>layer ${reached}</b>.${record ? '' : ` Your record: layer ${best}.`}`)}</p>
+  const timed = endless.timed, reached = endless.chain.top + 1, prev = timed ? bestT : best, record = prev > 0 && reached > prev;
+  endless.paused = true; endless.over = true;
+  lvEnd(timed ? 'time' : 'out', { depth: reached });
+  if (timed) bestT = Math.max(bestT, reached); else best = Math.max(best, reached);
+  const why = timed ? tr(`Se te ha acabado el tiempo en la <b>capa ${reached}</b>.`, `Time ran out on <b>layer ${reached}</b>.`) : tr(`Te has quedado sin movimientos en la <b>capa ${reached}</b>.`, `You ran out of moves on <b>layer ${reached}</b>.`);
+  card(`<h2>${tx(record ? '¡Nuevo récord!' : 'Fin de la partida')}</h2><p>${why}${record || !prev ? '' : tr(` Tu récord: capa ${prev}.`, ` Your record: layer ${prev}.`)}</p>
     <div class="row"><button class="btn" id="b2">${ICON.home} ${tx('Inicio')}</button><button class="btn primary big" id="b1">${ICON.retry} ${tx('Otra vez')}</button></div>`);
-  $('b1').onclick = startEndless; $('b2').onclick = () => { closeOv(); survey(home); };
+  $('b1').onclick = () => startEndless(timed); $('b2').onclick = () => { closeOv(); survey(home); };
+}
+
+// ---- Contrarreloj (variante del infinito): el reloj baja; cada capa nueva suma tiempo por flecha, cada choque resta.
+// ponytail: valores de prueba (CLOCK), a ajustar con la telemetría (level_end crono: depth y secs).
+const CLOCK = { start: 6, perArrow: 2.5, bump: 2, warn: 5 };
+let bestT = 0;
+function addTime(s) { endless.left += s; if (s > 0 && endless.chain.top > 0) pop($('moves')); }
+function penalty() { endless.left = Math.max(0, endless.left - CLOCK.bump); if (!reduced) $('moves').animate([{ transform: 'translateX(-4px)' }, { transform: 'translateX(4px)' }, { transform: 'none' }], 220); clockUI(); }
+const CLOCK_ICON = '<circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 9v4l2.5 2.5M9 2.5h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>';
+function clockUI() {
+  const t = Math.max(0, endless.left), m = Math.floor(t / 60), sec = Math.floor(t % 60);
+  $('movesN').textContent = `${m}:${String(sec).padStart(2, '0')}`;
+  $('moves').classList.toggle('low', t <= CLOCK.warn);
+  $('moves').classList.toggle('tick', t <= CLOCK.warn && !reduced);
+  $('moves').setAttribute('aria-label', tr(`${Math.ceil(t)} segundos`, `${Math.ceil(t)} seconds`));
+  const ic = $('moves').querySelector('svg'); if (ic.innerHTML !== CLOCK_ICON) ic.innerHTML = CLOCK_ICON;
+}
+{ let last = performance.now();
+  const tick = (now) => {
+    const dt = Math.min(0.25, (now - last) / 1000); last = now;
+    // el reloj corre mientras se juega; se para con los rótulos, las ventanas y la pestaña en segundo plano
+    if (endless?.timed && !endless.over && !endless.paused && !$('ov').classList.contains('on') && document.visibilityState === 'visible') {
+      const before = Math.ceil(endless.left);
+      endless.left -= dt; clockUI();
+      if (Math.ceil(endless.left) !== before && endless.left <= CLOCK.warn && endless.left > 0) sfx('uy', .15, 120);
+      if (endless.left <= 0 && !flying && !busy) { sfx('fin', .7); gameOver(); }
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 }
 
 const anim = (el, frames, ms, easing = 'cubic-bezier(.3,.7,.4,1)') => (reduced ? Promise.resolve() : el.animate(frames, { duration: ms, easing }).finished);
@@ -872,13 +909,14 @@ async function tap(i) {
   const r = probe(board, i);
   moves--; stat.taps++;
   if (r.door == null) { stat.fails++; Tel.track('tap_fail', { level: stat.level, reason: r.blockedBy || 'wall' }); }
-  $('movesN').textContent = moves;
+  if (!endless?.timed) $('movesN').textContent = moves;
   const el = svg.querySelector(`.arrow[data-i="${i}"]`);
   flying++;
   el.style.transformBox = 'fill-box'; el.style.transformOrigin = 'center';
   if (r.door == null) {
     // ¡uy!: golpe hasta el obstáculo (siguiendo los giros) y vuelta; el tablero no cambia
     navigator.vibrate?.(40); sfx('uy', .7);
+    if (endless?.timed) penalty();
     const msF = 90 + r.steps * 40 + 170;
     const trail = paintTrail(el, a.color);
     await toCapsule(el, true, 90);             // al arrancar, el rectángulo se vuelve cápsula
@@ -1151,7 +1189,7 @@ const TUTO = {
   '5': [
     { t: '#cur .door[data-k="0"]', text: '<b>Nuevo</b> · Esta puerta es un portal (la del contorno discontinuo que se mueve): lo que entra no se va, cae a la capa de abajo.' },
     { t: '#ghost .lane[data-k="0"]', view: 1, text: 'Cae aquí, en su carril. La primera que llega se queda al fondo y será la primera en salir.' },
-    { t: '.arrow[data-i="0"]', act: 'tap', i: 0, text: 'Mándala por el portal.' },
+    { t: () => `.arrow[data-i="${portalArrow(0)}"]`, text: 'Esta va al portal. Despeja su camino y mándala abajo.' },
     { t: '#layers .stack', text: 'Para mirar la capa de abajo, desliza hacia arriba o toca el 2. Para volver, desliza hacia abajo o toca el 1.' },
     { t: '#b3d', text: '<b>Vista 3D</b>: muestra todas las capas apiladas. Arrastra para girar la pila, pellizca para acercarla y toca una capa para entrar en ella. Vuelve a tocar este botón para salir.' },
   ],
@@ -1271,7 +1309,7 @@ function check() {
   if (isEmpty(board)) return showWin();
   const need = endless ? board.live.filter(Boolean).length : solver.minMoves(board);
   if (solver.minMoves(board) == null) return showDead();
-  if (moves < need) return showOut();
+  if (!endless?.timed && moves < need) return showOut(); // en contrarreloj manda el tiempo, no los toques
 }
 
 // ---- Historia: un edificio sin color; cada nivel es una sala; al vaciarla recupera la vida ----
@@ -1505,6 +1543,11 @@ function menu() {
 }
 
 // Una flecha que ahora mismo puede salir y cuyo recorrido pasa por un girador (para el tutorial).
+function portalArrow(p) { // una que apunta al portal `p` (libre si la hay)
+  const live = board.live.map((v, j) => (v ? j : -1)).filter((j) => j >= 0);
+  const toP = live.filter((j) => board.doors[reach(board.lay, board.arrows[j])]?.portal === p);
+  return toP.find((j) => probe(board, j).door != null) ?? toP[0] ?? 0;
+}
 function turningArrow() {
   const tc = new Set((board.lay.turners || []).map((t) => t.x + ',' + t.y));
   return board.live.map((v, j) => (v ? j : -1)).filter((j) => j >= 0).find((j) => { const r = probe(board, j); return r.door != null && r.path.some(([x, y]) => tc.has(x + ',' + y)); }) ?? 0;
@@ -1564,7 +1607,9 @@ if (ap) {
   if (!ap.muesca) $('sys').querySelector('.notch').remove();
 }
 const q = new URLSearchParams(location.search).get('nivel');
+const HAND = $('moves').querySelector('svg').innerHTML;
 function home() {
+  $('moves').querySelector('svg').innerHTML = HAND; $('moves').classList.remove('tick');
   Tel.track('scene_open', { name: 'portada' });
   playMusic('campana'); // en la portada suena el tema principal (si el navegador aún no deja, arranca al primer toque)
   endless = null; coach = null; hideCoach(); $('chapter').hidden = true; if (on3d) { on3d = false; $('v3d').hidden = true; $('board').style.display = ''; }
@@ -1583,16 +1628,19 @@ function home() {
     <p>${tr('4 niveles · 14 pruebas. Saca cada flecha por la puerta de su color.', '4 levels · 14 stages. Get each arrow out through the door of its color.')}</p>${fsTip()}
     <div class="row" style="flex-direction:column;align-items:center"><button class="btn primary big" id="play">${tx('Jugar')}</button>
     <button class="btn big" id="inf">∞ ${tx('Modo infinito')}${best ? tr(` · récord ${best}`, ` · record ${best}`) : ''}</button>
+    <button class="btn big" id="crono">⏱ ${tx('Contrarreloj')}${bestT ? tr(` · récord ${bestT}`, ` · record ${bestT}`) : ''}</button>
     <button class="btn ghostbtn" id="op">${tx('Danos tu opinión')}</button></div>
     <div class="row lang" role="radiogroup" aria-label="Language / Idioma">${[['en', 'English'], ['es', 'Español']].map(([l, n]) => `<button class="btn${l === LANG ? ' primary' : ''}" role="radio" aria-checked="${l === LANG}" data-lang="${l}">${n}</button>`).join('')}</div>`);
   $('card').querySelectorAll('[data-lang]').forEach((b) => (b.onclick = () => { if (b.dataset.lang !== LANG) I18N.set(b.dataset.lang); }));
-  $('inf').onclick = startEndless;
+  $('inf').onclick = () => startEndless(false);
+  $('crono').onclick = () => startEndless(true);
   $('op').onclick = () => survey(home, true);
   $('play').onclick = startGame;
 }
 [['menuBtn', 'Niveles'], ['muteBtn', 'Silenciar'], ['rewindBtn', 'Rebobinar capa'], ['layers', 'Capas'], ['board', 'Tablero'], ['v3d', 'Todas las capas en 3D']]
   .forEach(([id, es]) => $(id).setAttribute('aria-label', tx(es)));
-if (new URLSearchParams(location.search).get('modo') === 'infinito') startEndless();
+if (new URLSearchParams(location.search).get('modo') === 'infinito') startEndless(false);
+else if (new URLSearchParams(location.search).get('modo') === 'contrarreloj') startEndless(true);
 else if (q) load(Math.max(0, Math.min(NIVELES.length - 1, +q - 1)));
 else home(); // siempre desde la portada
 </script>

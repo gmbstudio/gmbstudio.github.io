@@ -115,7 +115,7 @@
         // a un portal blanco le llegan cada vez más flechas (de colores distintos): más orden que acertar abajo
         const wp = l.doors.find((d) => d.portal != null && d.colors[0] === 'white');
         if (wp) for (let k = 0, extra = Math.min(4, 1 + Math.floor((depth - 4) / 3)); k < extra; k++) addArrow(l, r, cols, check, wp);
-        const n = Math.min(9, 3 + Math.floor(depth / 2)) - (prev ? 1 : 0);
+        const n = Math.min(13, 7 + Math.floor(depth / 2)) - (prev ? 1 : 0); // tableros cargados desde el principio (admin, 2026-11-13)
         for (let k = l.arrows.length; k < n; k++) addArrow(l, r, cols, check);
         if (l.arrows.length + l.lanes.length === 0) continue;
         // ninguna puerta sin uso: o le apunta alguna flecha o es la salida de un carril (lo que llegue por él)
