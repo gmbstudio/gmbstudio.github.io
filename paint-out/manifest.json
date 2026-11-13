@@ -1,6 +1,6 @@
 {
-  "name": "Paint Out",
-  "short_name": "Paint Out",
+  "name": "Drip Down",
+  "short_name": "Drip Down",
   "display": "fullscreen",
   "orientation": "portrait",
   "start_url": "./index.html",
