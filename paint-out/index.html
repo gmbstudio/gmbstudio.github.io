@@ -1,0 +1,1581 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Paint Out · prototipo</title>
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<!-- pantalla completa en el iPhone de verdad: añadido a la pantalla de inicio se abre sin barras de Safari -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Paint Out">
+<style>
+  :root {
+    --bg: #e8e2d4; --bg-dead: #d4d5d6; --ink: #1b1c1f; --ink2: #45484f; --grid: #fbf9f4; --cellline: #d8d0bf; --panel: #ffffff; --edge: #c9bfa9;
+    /* juego en pastel (aprobado en «Icono del juego» v3): en claro, contorno oscuro y tinta oscura para el contraste */
+    --red: #f4a3a3; --blue: #a7c6f4; --yellow: #f6d77a; --green: #a3dbb4; --gray: #5f6368; --sym: #1b1c1f;
+    --outline: #3a3d45; --accent: #1d5bbf;
+    --s-red: #861a1a; --s-blue: #163f87; --s-yellow: #5c4100; --s-green: #1b5121; /* tinta de cada color sobre su pastel: ≥4,5:1 */
+    --d-red: #c42b2b; --d-blue: #1d5bbf; --d-yellow: #8a6200; --d-green: #2b7a33; --d-white: #1b1c1f; /* tono hondo de cada color: contornos ≥4:1 */
+    --o: 1; /* en claro, las piezas llevan contorno en su tono hondo */ --on-accent: #ffffff; --alert: #b3261e; --ok: #2b7a33;
+    /* colores del icono (saturados), para el logo */
+    --i-red: #c42b2b; --i-blue: #1d5bbf; --i-yellow: #8a6200; --i-green: #2b7a33; --i-plate: #f5f2ea; --i-line: #d6cfbd;
+    --focus: #1d5bbf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d0f12; --bg-dead: #0c0d0e; --ink: #f2f2f2; --ink2: #b8bcc4; --grid: #262a33; --cellline: #353a46; --panel: #1f232b; --edge: #454b59;
+      --red: #f4a3a3; --blue: #a7c6f4; --yellow: #f6d77a; --green: #a3dbb4; --gray: #9aa0a6; --sym: #121418;
+      --outline: transparent; --accent: #7fb0ff;
+      --d-red: #f4a3a3; --d-blue: #a7c6f4; --d-yellow: #f6d77a; --d-green: #a3dbb4; --d-white: #f2f2f2; --o: 0; --on-accent: #121418; --alert: #ff8a80; --ok: #5ad68a;
+      --focus: #7fb0ff;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+    font: 1rem/1.3 -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, system-ui, sans-serif; }
+  body { background: color-mix(in oklab, var(--bg) calc(var(--life, 1) * 100%), var(--bg-dead)); transition: background-color .8s;
+    display: flex; flex-direction: column; min-height: 100dvh;
+    padding: max(env(safe-area-inset-top), var(--sa-t, 0px)) env(safe-area-inset-right) max(env(safe-area-inset-bottom), var(--sa-b, 0px)) env(safe-area-inset-left); }
+  /* simulación del sistema cuando Dash lo muestra en un aparato (?aparato=): isla, barra de estado e indicador de inicio */
+  #sys { position: fixed; inset: 0; pointer-events: none; z-index: 9; }
+  #sys .status { position: absolute; top: 0; left: 0; right: 0; height: var(--sa-t); display: flex; align-items: center; justify-content: space-between;
+    padding: 0 30px 0 44px; font: 600 1.0625rem/1 -apple-system, system-ui, sans-serif; color: var(--ink); }
+  #sys .notch { position: absolute; top: 0; left: 50%; width: 162px; height: 33px; margin-left: -81px; border-radius: 0 0 20px 20px; background: #000; }
+  #sys .status { padding-top: 0; }
+  #sys .island { position: absolute; top: 11px; left: 50%; width: 126px; height: 37px; margin-left: -63px; border-radius: 20px; background: #000; }
+  #sys .home { position: absolute; bottom: 8px; left: 50%; width: 140px; height: 5px; margin-left: -70px; border-radius: 3px; background: var(--ink); }
+  #sys .icons { display: flex; gap: 6px; align-items: center; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; }
+  .btn { transition: background-color .25s, color .25s, box-shadow .25s, opacity .25s, outline-color .25s; }
+  header { transition: opacity .3s ease; } header.gone { opacity: 0; pointer-events: none; }
+  .moves { transition: color .3s; }
+  #pages i { transition: height .3s ease, background-color .3s; }
+  #coachHand { transition: left .3s ease, top .3s ease; } #coachBubble { transition: left .3s ease, top .3s ease; }
+  .btn { min-width: 48px; min-height: 48px; border-radius: 14px; border: 0; background: var(--panel); color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; font: inherit; font-weight: 600;
+    box-shadow: 0 1px 2px #0002; cursor: pointer; padding: 0 12px; }
+  .btn:focus-visible, [role=button]:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .btn svg { width: 24px; height: 24px; }
+  .btn[disabled] { opacity: .45; cursor: default; }
+  .moves { display: flex; align-items: center; gap: 6px; font-size: 1.75rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .moves svg { width: 26px; height: 26px; }
+  .moves.low { color: var(--alert); }
+  .center { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  #tuto { display: flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 600; color: var(--ink2); }
+  #tuto[hidden] { display: none; }
+  #tuto .segs { display: flex; gap: 3px; }
+  #tuto .segs i { width: 14px; height: 5px; border-radius: 3px; background: var(--cellline); }
+  #tuto .segs i.on { background: var(--accent); }
+  .lvl { font-weight: 700; font-size: 1.0625rem; color: var(--ink2); }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 0 4px; overflow: hidden; min-height: 0; }
+  #board { width: 100%; height: 100%; max-width: 640px; touch-action: none; user-select: none; } /* ocupa lo que deje main y encaja (viewBox) */
+  .arrow { cursor: pointer; }
+  .arrow, .anim { transform-box: view-box; }
+  .pulse { animation: pulse 1s ease-in-out infinite; }
+  .pline { animation: march 1.2s linear infinite; }
+  @keyframes march { to { stroke-dashoffset: -44; } }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .overlay { padding: var(--sa-t, env(safe-area-inset-top)) 0 var(--sa-b, env(safe-area-inset-bottom)); position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: #0007; z-index: 5; }
+  .overlay.on { display: flex; animation: fadein .22s ease; }
+  .overlay.closing { opacity: 0; transition: opacity .2s ease; }
+  @keyframes fadein { from { opacity: 0; } }
+  .overlay.welcome { background: var(--bg); }
+  .overlay.welcome .card { box-shadow: none; background: transparent; }
+  .card { background: var(--panel); color: var(--ink); border-radius: 24px; padding: 24px; min-width: 260px; max-width: 88vw;
+    display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+  .card .big { width: 72px; height: 72px; }
+  .card h2 { margin: 0; font-size: 1.375rem; }
+  .card p { margin: 0; color: var(--ink2); }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .grid10 { display: grid; grid-template-columns: repeat(4, 56px); gap: 10px; justify-content: center; }
+  .tier { display: flex; flex-direction: column; gap: 6px; align-items: center; } .tier h3 { margin: 4px 0 0; font-size: 1rem; } .tier p { margin: 0; font-size: .875rem; }
+  .grid10 .btn { width: 56px; height: 56px; font-size: 1.125rem; }
+  .grid10 .btn.two { box-shadow: inset 0 -4px 0 var(--accent), 0 1px 2px #0002; }
+  .grid10 .btn.cur { outline: 3px solid var(--ink); }
+  /* fila de capas alineada con la cabecera: capas a la izquierda y el 3D al borde derecho */
+  #layers { display: flex; align-items: center; gap: 8px; padding: 10px 12px 4px; min-height: 72px; }
+  #layers .stack { flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 10px; } /* capas a la izquierda, sin marco; el 3D a la derecha */
+  #layers[hidden] { display: none; }
+  #layers .btn { width: 64px; font-size: 1rem; padding: 0; }
+  #layers .sep { width: 10px; text-align: center; }
+  #layers.many .btn[data-k] { width: 52px; } #layers.many .stack { gap: 6px; } /* 4 capas o más: botones más estrechos, cabe todo */
+  #layers .btn[aria-current="true"] { background: var(--ink); color: var(--bg); }
+  #layers .btn[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: -3px; }
+  #layers .btn { position: relative; }
+  /* contador de flechas por capa: tono de acento, aro claro que lo separa del botón y número con contraste (≥6:1) */
+  #layers .badge { position: absolute; top: -9px; right: -9px; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px;
+    background: var(--accent); color: var(--on-accent); border: 2px solid var(--bg); box-sizing: border-box;
+    font-size: .75rem; font-weight: 800; font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; }
+  #pages { position: absolute; right: 4px; top: 4px; /* esquina: no pisa las puertas del borde */ display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+  #pages[hidden] { display: none; }
+  #pages i { width: 8px; height: 8px; border-radius: 4px; background: var(--edge); }
+  #pages i.on { height: 22px; background: var(--ink); }
+  #pages i.done { background: var(--ok); }
+  main { position: relative; }
+  #layers .sep { color: var(--ink2); font-size: 1.25rem; }
+  #plegend { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 12px; margin: 2px 12px 0; font-size: .8125rem; font-weight: 600; color: var(--ink2); }
+  #plegend[hidden] { display: none; }
+  #plegend b { display: inline-flex; width: 22px; height: 22px; border-radius: 11px; border: 2px solid var(--ink); align-items: center; justify-content: center; color: var(--ink); margin-right: 4px; }
+  #peekHint { text-align: center; color: var(--ink2); font-size: .9375rem; min-height: 1.3em; margin: 0 12px; }
+  /* perspectiva suave: al girar, la pila se ve sólida en vez de cizallarse (la proyección ortográfica pura «deformaba») */
+  #v3d { perspective: 2600px; flex: 1; align-self: stretch; display: flex; align-items: center; justify-content: center; touch-action: none; overflow: hidden;
+    user-select: none; -webkit-user-select: none; cursor: grab; }
+  #v3d[hidden] { display: none; }
+  #stage { position: relative; flex-shrink: 0; transform-style: preserve-3d; }
+  .plane { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .plane svg { width: 100%; height: 100%; display: block; }
+  .plane .ptag { transition: opacity .3s ease; } .plane .ptag.off { opacity: 0; }
+  .plane .ptag { position: absolute; left: 0; top: 0; padding: 8px 24px; border-radius: 20px; font-weight: 700;
+    background: var(--ink); color: var(--bg); font-size: 2rem; } /* a doble tamaño: la pila se pinta a 2× (RES) */
+  .plane.here .ptag { background: var(--accent); color: var(--on-accent); }
+  .plane.done { opacity: .45; }
+  /* tutorial: foco con máscara, mano y bocadillo */
+  #coach { position: fixed; inset: 0; z-index: 4; pointer-events: none; }
+  #coach[hidden] { display: none; }
+  #coachMask { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #coach.block #coachMask { pointer-events: auto; }
+  #coachHand { position: absolute; width: 56px; height: 56px; pointer-events: none; filter: drop-shadow(0 2px 3px #0006); }
+  #coachHand svg { width: 100%; height: 100%; animation: tapme 1.1s ease-in-out infinite; transform-origin: 24px 9px; }
+  @keyframes tapme { 0%, 100% { transform: translate(10px, 14px); } 45% { transform: translate(0, 0) scale(.92); } 60% { transform: translate(0, 0) scale(1); } }
+  #coachBubble { position: absolute; max-width: min(340px, calc(100vw - 24px)); background: var(--panel); color: var(--ink);
+    border-radius: 20px; padding: 14px 16px; box-shadow: 0 8px 28px #0005; pointer-events: auto;
+    display: flex; flex-direction: column; gap: 10px; animation: pop .25s ease-out; border: 1px solid var(--cellline); }
+  #coachBubble[hidden] { display: none; }
+  #coachBubble p { margin: 0; font-size: 1.0625rem; line-height: 1.35; }
+  #coachBubble .bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; }
+  #coachBubble .bar .btn { margin: 0; } #coachBubble p { align-self: stretch; }
+  #coachBubble .bar:has(.dots:empty):not(:has(.btn)) { display: none; } /* sin botones ni puntos: la caja es solo el texto, centrado */
+  #coachBubble .dots { display: flex; gap: 6px; }
+  #coachBubble .dots i { width: 8px; height: 8px; border-radius: 4px; background: var(--cellline); }
+  #coachBubble .dots i.on { background: var(--ink); width: 20px; }
+  .btn.primary { background: var(--accent); color: var(--on-accent); }
+  .btn.ghostbtn { background: transparent; box-shadow: none; color: var(--ink2); font-weight: 500; }
+  .nudge { animation: nudge .35s; }
+  @keyframes nudge { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  @keyframes pop { from { transform: scale(.92); opacity: 0; } }
+  .card { animation: pop .25s ease-out; }
+  .stars { display: flex; gap: 6px; align-items: flex-end; }
+  .stars .star { width: 52px; height: 52px; fill: var(--cellline); animation: starpop .45s both cubic-bezier(.3,1.6,.5,1); }
+  .stars .star:nth-child(2) { width: 68px; height: 68px; }
+  .stars .star.on { fill: #f5b400; stroke: #8a6200; stroke-width: 1.2; }
+  @keyframes starpop { from { transform: scale(0) rotate(-40deg); opacity: 0; } }
+  .card .left { display: flex; align-items: center; gap: 4px; font-size: 1.375rem; color: var(--ink2); }
+  .card .left svg { width: 24px; height: 24px; }
+  .card .fstip { font-size: .875rem; color: var(--ink2); max-width: 300px; } .card .fstip svg { vertical-align: -3px; }
+  .card .q { font-weight: 600; margin: 4px 0 0; max-width: 320px; text-align: left; align-self: stretch; }
+  .card textarea { font: inherit; font-size: 1rem; width: 100%; max-width: 320px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--cellline); background: var(--panel); color: var(--ink); padding: 10px 12px; resize: none; }
+  .card .seg .btn { min-width: 80px; }
+  .card .optout { font-size: .875rem; color: var(--ink2); display: flex; gap: 8px; align-items: center; min-height: 48px; }
+  .card .optout input { width: 22px; height: 22px; accent-color: var(--focus); }
+  .card .title { font-size: 2.25rem; font-weight: 800; letter-spacing: -.02em; margin: 0; }
+  .card .hero { width: 200px; height: 167px; }
+  .card .scene { max-width: 260px; }
+  .card .btn.big { min-height: 56px; min-width: 200px; font-size: 1.125rem; border-radius: 18px; }
+  .card .btn.big svg { width: 32px; height: 32px; }
+  #chapter { padding-top: var(--sa-t, env(safe-area-inset-top)); padding-bottom: var(--sa-b, env(safe-area-inset-bottom)); position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    background: var(--bg); text-align: center; padding-left: 24px; padding-right: 24px; animation: pop .35s ease-out; cursor: pointer; }
+  #chapter[hidden] { display: none; }
+  #chapter small { font-size: .9375rem; font-weight: 600; color: var(--ink2); letter-spacing: .02em; }
+  #chapter > b { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; }
+  #chapter .scene { margin: 8px 0; }
+  #chapter span { color: var(--ink2); }
+  .dotsrow { display: flex; gap: 6px; } .dotsrow i { width: 8px; height: 8px; border-radius: 4px; background: var(--cellline); }
+  .dotsrow i.on { width: 22px; background: var(--ink); }
+  .scene { width: 100%; max-width: 300px; height: auto; display: block; }
+  .scene .base, .scene .ln { fill: none; stroke: var(--ink2); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .scene [data-k=f] { fill: var(--cellline); stroke: var(--edge); stroke-width: 1.5; transition: fill .9s ease, stroke .9s ease; }
+  .scene [data-k=s] { stroke: var(--edge); transition: stroke .9s ease; }
+  .scene .lit [data-k=f] { fill: var(--c); stroke: var(--cs); }
+  .scene .lit [data-k=s] { stroke: var(--c); }
+  .scene .tmark { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 5 4; animation: march 1.2s linear infinite; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media (prefers-reduced-motion: reduce) { .stars .star, .pline, .pulse, #coachHand svg, #coachBubble, .card, .nudge { animation: none; } }
+</style>
+</head>
+<body>
+<header>
+  <button class="btn" id="menuBtn" aria-label="Niveles">
+    <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+    <span class="lvl" id="lvl"></span>
+  </button>
+  <div class="center"><div class="moves" id="moves" role="status" aria-live="polite">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10h.5V8.5a1.5 1.5 0 0 1 3 0V10h.5a1.5 1.5 0 0 1 3 0v5a7 7 0 0 1-7 7h-.6a6 6 0 0 1-4.6-2.2L4 16.3a1.5 1.5 0 0 1 2.3-1.9L8 16.2V11z"/></svg>
+    <span id="movesN"></span>
+  </div><div id="tuto" hidden><span class="lab">Tutorial</span><span class="segs" aria-hidden="true"></span></div></div>
+  <div class="row" style="gap:8px;flex-wrap:nowrap"><button class="btn" id="muteBtn" aria-label="Silenciar" aria-pressed="false"></button>
+  <button class="btn" id="rewindBtn" aria-label="Rebobinar capa">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v5h5"/></svg>
+  </button></div>
+</header>
+<nav id="layers" aria-label="Capas" hidden></nav>
+<p id="peekHint" aria-live="polite"></p>
+<main><svg id="board" role="application" aria-label="Tablero"></svg>
+  <div id="pages" aria-hidden="true" hidden></div>
+  <div id="v3d" hidden role="img" aria-label="Todas las capas en 3D"><div id="stage"></div></div></main>
+
+<div id="sys" hidden aria-hidden="true"><div class="status"><span>9:41</span><span class="icons">
+  <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+  <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A10.4 10.4 0 0 0 8 .6 10.4 10.4 0 0 0 .7 3.5L2 4.9a8.4 8.4 0 0 1 6-2.4zm0 3.7c1.3 0 2.5.5 3.4 1.3l1.3-1.4A6.6 6.6 0 0 0 8 4.3a6.6 6.6 0 0 0-4.7 1.8l1.3 1.4c.9-.8 2.1-1.3 3.4-1.3zM8 9.6l1.9-1.8A2.8 2.8 0 0 0 8 7.1c-.7 0-1.4.3-1.9.7z"/></svg>
+  <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"/></svg>
+  </span></div><div class="island"></div><div class="notch"></div><div class="home"></div></div>
+<div id="chapter" hidden role="status" aria-live="polite"></div>
+<div id="coach" hidden>
+  <svg id="coachMask" aria-hidden="true"></svg>
+  <div id="coachHand" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="#fff" stroke="#1b1c1f" stroke-width="1.1" stroke-linejoin="round" d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10h.5V8.5a1.5 1.5 0 0 1 3 0V10h.5a1.5 1.5 0 0 1 3 0v5a7 7 0 0 1-7 7h-.6a6 6 0 0 1-4.6-2.2L4 16.3a1.5 1.5 0 0 1 2.3-1.9L8 16.2V11z"/></svg></div>
+  <div id="coachBubble" role="dialog" aria-live="polite" hidden></div>
+</div>
+<div class="overlay" id="ov"><div class="card" id="card"></div></div>
+<p class="sr" id="sr" aria-live="assertive"></p>
+
+<script src="niveles.js"></script>
+<script src="reglas.js"></script>
+<script src="infinito.js"></script>
+<script src="telemetria.js"></script>
+<script>
+const { DIRS, cells, laneCell, makeBoard, probe, apply, isEmpty, doorColor, Solver, WHITE } = Reglas;
+const S = 100;                                // casilla, en unidades del viewBox
+let M = { x: 82, y: 82 };                     // margen para las puertas, por eje (ver margin())
+// Tablero lo más grande posible: margen mínimo en cada eje según lo que haya fuera de ese borde (puertas, portales, secuencias).
+function margin() {
+  return { x: 70, y: 70 }; // puertas (34) + cola de secuencia (6 + 26): reservado siempre, en todas las capas
+}
+const NAME = { red: 'roja', blue: 'azul', yellow: 'amarilla', green: 'verde', white: 'blanca' };
+const DIRNAME = { up: 'arriba', down: 'abajo', left: 'izquierda', right: 'derecha' };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = (id) => document.getElementById(id);
+const svg = $('board');
+
+let L, li, board, moves, start, solver, view = 0, busy = false, on3d = false, exits = 0;
+let REP;            // informe del solucionador de la prueba en curso (mínimo de movimientos…)
+let endless = null; // modo infinito: { depth (capa de arriba de la prueba actual), seed }
+let best = 0;       // capa más honda alcanzada en esta sesión
+
+// Símbolo por color (daltonismo): rojo círculo, azul cuadrado, amarillo estrella, verde rombo, blanco anillo.
+function symbol(color, cx, cy, r, fill) {
+  switch (color) {
+    case 'red': return `<circle cx="${cx}" cy="${cy}" r="${r * .8}" fill="${fill}"/>`;
+    case 'blue': return `<rect x="${cx - r * .72}" y="${cy - r * .72}" width="${r * 1.44}" height="${r * 1.44}" fill="${fill}"/>`;
+    case 'yellow': { // estrella de 5 puntas (no triángulo: se confundía con una flecha)
+      const R = r * 1.1, q = R * .45;
+      const pts = Array.from({ length: 10 }, (_, k) => {
+        const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? q : R;
+        return `${(cx + rr * Math.cos(a)).toFixed(1)},${(cy + rr * Math.sin(a)).toFixed(1)}`;
+      });
+      return `<polygon points="${pts.join(' ')}" fill="${fill}"/>`;
+    }
+    case 'green': return `<path d="M${cx} ${cy - r} L${cx + r} ${cy} L${cx} ${cy + r} L${cx - r} ${cy}Z" fill="${fill}"/>`;
+    default: return `<circle cx="${cx}" cy="${cy}" r="${r * .7}" fill="none" stroke="${fill}" stroke-width="${r * .35}"/>`;
+  }
+}
+const col = (c) => (c === WHITE ? 'var(--ink)' : `var(--${c})`);
+const deep = (c) => `var(--d-${c})`; // el mismo color, más hondo: contorno sin negro
+const ink = (c) => (c === WHITE ? 'var(--ink)' : `var(--s-${c})`); // chevrón y símbolo: la tinta de su color
+
+function arrowSVG(a, i, ox, oy, interactive) {
+  const cs = cells(a), [dx, dy] = DIRS[a.dir];
+  const xs = cs.map((c) => c[0]), ys = cs.map((c) => c[1]);
+  const x0 = Math.min(...xs), y0 = Math.min(...ys), x1 = Math.max(...xs), y1 = Math.max(...ys);
+  const pad = 9;
+  const hx = ox + a.x * S + S / 2, hy = oy + a.y * S + S / 2;
+  const tail = cs[cs.length - 1], tx = ox + tail[0] * S + S / 2, ty = oy + tail[1] * S + S / 2;
+  // cabeza: chevrón hacia la dirección; cola: el símbolo del color
+  const f = a.len === 1 ? 14 : 0, b = a.len === 1 ? 20 : 0;
+  const cx = hx + dx * f, cy = hy + dy * f, px = -dy, py = dx;
+  const chev = `M${cx - dx * 14 + px * 20} ${cy - dy * 14 + py * 20} L${cx + dx * 12} ${cy + dy * 12} L${cx - dx * 14 - px * 20} ${cy - dy * 14 - py * 20}`;
+  const label = `Flecha ${NAME[a.color]} hacia ${DIRNAME[a.dir]}${a.len > 1 ? `, ${a.len} casillas` : ''}`;
+  const attrs = interactive ? `class="arrow" data-i="${i}" role="button" tabindex="0" aria-label="${label}"` : 'aria-hidden="true"';
+  return `<g ${attrs}>
+    <rect x="${ox + x0 * S}" y="${oy + y0 * S}" width="${(x1 - x0 + 1) * S}" height="${(y1 - y0 + 1) * S}" fill="transparent"/>
+    <rect x="${ox + x0 * S + pad}" y="${oy + y0 * S + pad}" width="${(x1 - x0 + 1) * S - 2 * pad}" height="${(y1 - y0 + 1) * S - 2 * pad}"
+      rx="26" fill="${col(a.color)}" stroke="${deep(a.color)}" stroke-width="5" stroke-opacity="var(--o)"/>
+    <g class="ac"><path d="${chev}" fill="none" stroke="${ink(a.color)}" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    ${symbol(a.color, tx - dx * b, ty - dy * b, a.len === 1 ? 11 : 16, ink(a.color))}</g>
+  </g>`;
+}
+
+// Rayas de una puerta de secuencia: una por color que falta, repartiéndose el largo de la píldora (fuera del tablero).
+// Cola de una puerta de secuencia: una cápsula por color que falta, del mismo alto que la puerta, repartiéndose su largo;
+// la unidad más pequeña es una esfera (largo = alto). Si no caben, la fila se centra sobre la puerta y la sobrepasa.
+function seqSegs(d, x, y, W, H, exits) {
+  const rest = d.colors.slice(exits + 1), n = rest.length, t = 26, off = 6, gap = 4;
+  if (!n) return [];
+  const vert = d.edge === 'up' || d.edge === 'down', len = vert ? W : H;
+  const seg = Math.max(t, (len - gap * (n - 1)) / n), total = n * seg + gap * (n - 1);
+  const start = (vert ? x : y) + (len - total) / 2;
+  return rest.map((c, i) => {
+    const a = start + i * (seg + gap);
+    if (vert) return { c, x: a, y: d.edge === 'down' ? y + H + off : y - off - t, w: seg, h: t };
+    return { c, x: d.edge === 'right' ? x + W + off : x - off - t, y: a, w: t, h: seg };
+  });
+}
+
+function doorSVG(d, k, b, ox, oy, w, h, ghost, tag) { // tag: letra del portal, dentro de la píldora
+  const exits = b ? b.doorExits[k] : 0;
+  const c = doorColor(d, exits);
+  let full = false;
+  if (b && d.portal != null && !ghost) {
+    const j = (d.to || 1) - 1, used = b.sent[j][d.portal].reduce((s, p) => s + p.len, 0);
+    full = used >= b.caps[j][d.portal];
+  }
+  const T = 26, gap = 8;
+  let x, y, W, H;
+  if (d.edge === 'up' || d.edge === 'down') {
+    x = ox + d.from * S + 6; W = d.len * S - 12; H = T;
+    y = d.edge === 'up' ? oy - gap - T : oy + h * S + gap;
+  } else {
+    y = oy + d.from * S + 6; H = d.len * S - 12; W = T;
+    x = d.edge === 'left' ? ox - gap - T : ox + w * S + gap;
+  }
+  const fill = full ? 'var(--gray)' : col(c);
+  let out = `<rect class="bar" x="${x}" y="${y}" width="${W}" height="${H}" rx="${T / 2}" fill="${c === WHITE && !full ? 'var(--bg)' : fill}"
+    stroke="${c === WHITE ? fill : full ? 'var(--outline)' : deep(c)}" stroke-width="${c === WHITE ? 6 : 4}" ${c === WHITE ? 'stroke-dasharray="14 8"' : `stroke-opacity="var(--o)"`}/>`;
+  const mx = x + W / 2, my = y + H / 2;
+  if (full) out += `<g fill="var(--bg)"><rect x="${mx - 9}" y="${my - 3}" width="18" height="12" rx="2"/><path d="M${mx - 6} ${my - 3} v-4 a6 6 0 0 1 12 0 v4" fill="none" stroke="var(--bg)" stroke-width="3"/></g>`;
+  else if (tag) { // portal: la letra en el centro (la misma que sus huecos de llegada) y el símbolo de color al principio
+    const vert = d.edge === 'up' || d.edge === 'down';
+    out += symbol(c, vert ? x + 16 : mx, vert ? my : y + 16, 8, ink(c));
+    out += `<text x="${mx}" y="${my}" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="900" fill="${ink(c)}" aria-hidden="true">${tag}</text>`;
+  } else out += symbol(c, mx, my, 9, ink(c));
+  if (b && d.portal != null && !ghost && !full) { // casillas que quedan libres en su carril (al llegar a 0: candado)
+    const j = (d.to || 1) - 1, free = b.caps[j][d.portal] - b.sent[j][d.portal].reduce((s, p) => s + p.len, 0);
+    const vert = d.edge === 'up' || d.edge === 'down', fx = vert ? x + W - 18 : mx, fy = vert ? my : y + H - 18;
+    out += `<text x="${fx}" y="${fy}" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="800" fill="${ink(c)}" aria-hidden="true">${free}</text>`;
+  }
+  if (d.portal != null) { // marca de portal: segundo contorno a la misma distancia, envolviendo la píldora entera
+    const g = 8;
+    out += `<rect class="pline" x="${x - g}" y="${y - g}" width="${W + 2 * g}" height="${H + 2 * g}" rx="${T / 2 + g}" fill="none"
+      stroke="${full ? 'var(--gray)' : deep(c)}" stroke-width="4" stroke-dasharray="12 9" stroke-linecap="round"/>`;
+  }
+  if (d.colors.length > 1) // secuencia: los colores que vienen, como rayas planas en paralelo a la puerta, en orden de lectura
+    seqSegs(d, x, y, W, H, exits).forEach((g, i) => {
+      const cx = g.x + g.w / 2, cy = g.y + g.h / 2, r = Math.min(g.w, g.h) / 2;
+      out += `<g class="seg" data-i="${i}" aria-hidden="true"><rect x="${g.x}" y="${g.y}" width="${g.w}" height="${g.h}" rx="${r}" fill="${col(g.c)}" stroke="${deep(g.c)}" stroke-width="2.5"/>${symbol(g.c, cx, cy, 7, ink(g.c))}</g>`;
+    });
+  return out;
+}
+
+// Letras de portal: cada portal y su carril de llegada llevan la misma (A, B, C…), para saber dónde sale cada uno.
+let PORTALS = { out: {}, in: {} };
+// Código de cada portal: los de color se reconocen por su icono (● ■ ★ ◆); solo los blancos llevan letra.
+// En el infinito la letra viene de la pila (d.tag) y no se repite mientras la capa que la usa siga a la vista.
+function indexPortals() {
+  PORTALS = { out: {}, in: {} }; let n = 0;
+  L.layers.forEach((l, li) => l.doors.forEach((d, k) => {
+    if (d.portal == null) return;
+    const white = d.colors[0] === WHITE, ch = white ? (d.tag || String.fromCharCode(65 + n++)) : null, to = li + (d.to || 1);
+    const info = { ch, color: white ? null : d.colors[0], to, from: li };
+    PORTALS.out[li + ':' + k] = info; PORTALS.in[to + ':' + d.portal] = info;
+  }));
+}
+const portalTag = (layerIdx, k, isLane) => (isLane ? PORTALS.in : PORTALS.out)[layerIdx + ':' + k]?.ch;
+const portalInfo = (layerIdx, k) => PORTALS.in[layerIdx + ':' + k];
+
+function layerSVG(layerIdx, b, ghost, only) { // only: flechas a dibujar tal cual (vista 3D)
+  const l = L.layers[layerIdx];
+  const VW = vw(), VH = vh();
+  const ox = (VW - l.w * S) / 2, oy = (VH - l.h * S) / 2;
+  // la capa actual deja ver la de abajo por sus casillas vacías
+  let s = `<rect x="${ox}" y="${oy}" width="${l.w * S}" height="${l.h * S}" rx="18" fill="var(--grid)" fill-opacity="${layerIdx === view && view > board.layer && !on3d ? .6 : only ? .92 : ghost ? 1 : .6}" stroke="var(--edge)" stroke-width="4"/>`;
+  for (let x = 1; x < l.w; x++) s += `<line x1="${ox + x * S}" y1="${oy}" x2="${ox + x * S}" y2="${oy + l.h * S}" stroke="var(--cellline)" stroke-width="2"/>`;
+  for (let y = 1; y < l.h; y++) s += `<line x1="${ox}" y1="${oy + y * S}" x2="${ox + l.w * S}" y2="${oy + y * S}" stroke="var(--cellline)" stroke-width="2"/>`;
+  l.lanes.forEach((lane, lk) => { // carril: casillas discontinuas con el código del portal que las llenará
+    const tag = portalTag(layerIdx, lk, true), pin = portalInfo(layerIdx, lk);
+    s += `<g class="lane" data-k="${lk}">`;
+    // lo que ya ha llegado (o está mandado) a este carril ocupa sus casillas desde el fondo: esos huecos ya no se dibujan
+    const got = layerIdx === board.layer ? board.incoming[lk] : layerIdx > board.layer ? board.sent[layerIdx - board.layer - 1]?.[lk] : null;
+    const filled = (got || []).reduce((t, p) => t + p.len, 0);
+    for (let d = 0; d < lane.len - filled; d++) {
+      const [x, y] = laneCell(lane, d, l.w, l.h), cx = ox + x * S + S / 2, cy = oy + y * S + S / 2;
+      s += `<rect x="${ox + x * S + 5}" y="${oy + y * S + 5}" width="${S - 10}" height="${S - 10}" rx="16" fill="none"
+        stroke="var(--ink2)" stroke-width="4" stroke-dasharray="10 9"/>`;
+      if (tag) s += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="40" font-weight="800" fill="var(--ink2)" opacity=".55" aria-hidden="true">${tag}</text>`;
+      else if (pin?.color) s += `<g opacity=".55" aria-hidden="true">${symbol(pin.color, cx, cy, 15, 'var(--ink2)')}</g>`; // portal de color: su icono, en el mismo gris que las letras
+    }
+    s += '</g>';
+  });
+  (l.turners || []).forEach((t, ti) => { // girador: casilla con una flecha curva hacia donde tuerce
+    const cx = ox + t.x * S + S / 2, cy = oy + t.y * S + S / 2;
+    // dibujado apuntando a la derecha y girado: entra por cualquier lado (flechitas finas) y sale por uno (flecha gruesa)
+    s += `<g class="turner" data-i="${ti}" aria-hidden="true"><rect x="${cx - 42}" y="${cy - 42}" width="84" height="84" rx="20" fill="var(--panel)" stroke="var(--ink)" stroke-width="3"/>
+      <g transform="translate(${cx} ${cy}) rotate(${ANG[t.dir]})" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <g stroke="var(--ink2)" stroke-width="4"><path d="M-36 0H-20M-26 -5l6 5-6 5"/><path d="M0 -36V-20M-5 -26l5 6 5-6"/><path d="M0 36V20M-5 26l5-6 5 6"/></g>
+        <path d="M-10 0H30" stroke="var(--ink)" stroke-width="9"/><path d="M18 -12L32 0L18 12" stroke="var(--ink)" stroke-width="9"/><circle cx="-10" cy="0" r="7" fill="var(--ink)"/></g></g>`;
+  });
+  const real = !ghost || (only && layerIdx === board.layer); // puertas con su estado real (secuencia, lleno)
+  l.doors.forEach((d, k) => {
+    const tag = d.portal != null ? portalTag(layerIdx, k, false) : null;
+    s += `<g class="door" data-k="${k}">${doorSVG(d, k, real ? b : null, ox, oy, l.w, l.h, !real, tag)}</g>`;
+  });
+  const cid = `clip${layerIdx}${only ? 'p' : ghost ? 'g' : 'c'}`;
+  s += `<clipPath id="${cid}"><rect x="${ox}" y="${oy}" width="${l.w * S}" height="${l.h * S}"/></clipPath><g clip-path="url(#${cid})">`;
+  const arrows = only || (ghost ? makeBoard(L, layerIdx, b.outgoing).arrows : b.arrows);
+  arrows.forEach((a, i) => {
+    if (!ghost && !only && !b.live[i]) return;
+    s += arrowSVG(a, i, ox, oy, !ghost && !only);
+  });
+  return s + '</g>';
+}
+const vw = () => Math.max(...L.layers.map((l) => l.w)) * S + 2 * M.x;
+const vh = () => Math.max(...L.layers.map((l) => l.h)) * S + 2 * M.y;
+
+function render() {
+  svg.setAttribute('viewBox', `0 0 ${vw()} ${vh()}`);
+  const hasNext = board.layer + 1 < L.layers.length;
+  const cx = vw() / 2, cy = vh() / 2;
+  const peek = view > board.layer;   // asomarse a una capa de abajo
+  const gT = peek ? 'scale(1)' : 'scale(.86)', cT = peek ? 'scale(1.35)' : 'scale(1)';
+  const gl = peek ? view : board.layer + 1; // capa que se ve debajo (o la que se mira)
+  const ghostG = hasNext ? `<g id="ghost" class="anim" opacity="${peek ? 1 : .38}" style="transform-origin:${cx}px ${cy}px; transform: ${gT}">${layerSVG(gl, board, true, gl > board.layer + 1 ? arrowsOf(gl) : undefined)}</g>` : '';
+  // mirando una capa de abajo: la de arriba desaparece del todo; se ve la elegida y, debajo, se entrevé la siguiente
+  const under = peek && view + 1 < L.layers.length
+    ? `<g id="under" class="anim" opacity=".38" aria-hidden="true" style="transform-origin:${cx}px ${cy}px; transform: scale(.86); pointer-events:none">${layerSVG(view + 1, board, true, arrowsOf(view + 1))}</g>` : '';
+  const curG = peek ? '' : `<g id="cur" class="anim" style="transform-origin:${cx}px ${cy}px; transform: ${cT}">${layerSVG(board.layer, board, false)}</g>`;
+  const fx = fxLayer();
+  svg.innerHTML = peek ? under + ghostG : ghostG + curG; // la que se mira, siempre encima
+  svg.appendChild(fx);                                   // los efectos sobreviven al repintado
+  svg.querySelector('#cur g[clip-path]')?.prepend(paintLayer()); // la pintura, bajo las piezas y dentro del tablero
+  renderLayers();
+  if (on3d) build3d();
+  document.body.style.setProperty('--life', Math.min(1, exits / REP.minMoves).toFixed(3));
+  $('movesN').textContent = moves;
+  $('moves').classList.toggle('low', moves <= 3);
+  $('moves').setAttribute('aria-label', `${moves} movimientos`);
+  $('lvl').textContent = endless ? `∞ ${endless.chain.top + board.layer + 1}` : tag(li);
+  const t = $('tuto'); t.hidden = !!endless || L.id > TUTO_N;    // niveles 1–5: tutorial, con su progreso a la vista
+  if (!t.hidden) {
+    t.querySelector('.segs').innerHTML = Array.from({ length: TUTO_N }, (_, k) => `<i class="${k < L.id ? 'on' : ''}"></i>`).join('');
+    t.setAttribute('aria-label', `Tutorial, prueba ${L.id} de ${TUTO_N}`);
+  }
+  $('rewindBtn').disabled = start.board === board && start.moves === moves;
+  placeCoach();
+  transitions();
+}
+
+// Regla del prototipo: TODO cambio de estado se ve con transición. Como el tablero y la fila de capas se repintan enteros,
+// aquí se compara lo que se ve ahora con lo de antes y se anima cada diferencia (números, insignias, puertas, barras, tamaño).
+let prevUI = null;
+const pop = (el) => el && !reduced && el.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'ease-out' });
+const fadeIn = (el, ms = 260) => el && !reduced && el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: ms, easing: 'ease-out' });
+function uiSnapshot() {
+  const doors = {};
+  svg.querySelectorAll('#cur .door, #ghost .door').forEach((g) => { doors[(g.closest('#cur') ? 'c' : 'g') + g.dataset.k] = g.querySelector('.bar')?.getAttribute('fill') + '|' + g.textContent.trim() + '|' + g.querySelectorAll('.seg').length; });
+  const nav = {};
+  $('layers').querySelectorAll('[data-k]').forEach((b) => (nav[b.dataset.k] = { txt: b.firstChild?.textContent.trim(), badge: b.querySelector('.badge')?.textContent, st: b.getAttribute('aria-current') + b.getAttribute('aria-pressed') + b.disabled }));
+  return { key: (endless ? 'e' + endless.chain.top : 'l' + li) + ':' + board.layer + ':' + view, moves, lvl: $('lvl').textContent, navHidden: $('layers').hidden,
+    tuto: $('tuto').hidden ? -1 : $('tuto').querySelectorAll('.on').length, doors, nav, rect: $('board').getBoundingClientRect() };
+}
+function transitions() {
+  const now = uiSnapshot(), was = prevUI; prevUI = now;
+  if (!was || reduced) return;
+  if (now.moves !== was.moves) pop($('movesN'));
+  if (now.lvl !== was.lvl) fadeIn($('lvl'));
+  if (now.navHidden !== was.navHidden && !now.navHidden) $('layers').animate([{ opacity: 0, transform: 'translateY(-8px)' }, { opacity: 1, transform: 'none' }], 300);
+  if (now.tuto !== was.tuto) { if (was.tuto === -1) fadeIn($('tuto')); else pop($('tuto').querySelectorAll('.on')[now.tuto - 1]); }
+  $('layers').querySelectorAll('[data-k]').forEach((b) => {
+    const a = now.nav[b.dataset.k], o = was.nav[b.dataset.k];
+    if (!o || o.txt !== a.txt) fadeIn(b, 320);            // capa nueva o renumerada (bajar en el infinito)
+    else if (o.st !== a.st) fadeIn(b, 220);               // pasa a ser la que juegas / la que miras / vaciada
+    if (o && o.badge !== a.badge) { const bd = b.querySelector('.badge'); bd ? pop(bd) : null; }
+  });
+  if (now.key === was.key) Object.keys(now.doors).forEach((k) => { // misma vista: puertas que cambian de color, se llenan o gastan raya
+    if (was.doors[k] !== undefined && was.doors[k] !== now.doors[k]) {
+      const g = svg.querySelector(`${k[0] === 'c' ? '#cur' : '#ghost'} .door[data-k="${k.slice(1)}"]`);
+      if (g) { g.style.transformBox = 'fill-box'; g.style.transformOrigin = 'center'; g.animate([{ transform: 'scale(.85)', opacity: .5 }, { transform: 'scale(1.08)', opacity: 1, offset: .6 }, { transform: 'none' }], 320); }
+    }
+  });
+  // el tablero cambia de tamaño (aparece o se va la fila de capas): se reescala suave en vez de saltar
+  if (Math.abs(now.rect.height - was.rect.height) > 2 && was.rect.height) {
+    const sc = was.rect.height / now.rect.height;
+    $('board').animate([{ transform: `translateY(${was.rect.top - now.rect.top}px) scale(${sc})`, transformOrigin: 'top center' }, { transform: 'none', transformOrigin: 'top center' }], 320);
+  }
+}
+
+// flechas que quedan en la capa k (la de abajo cuenta lo que ya ha caído)
+const left = (k) => k < board.layer ? 0 : k === board.layer ? board.live.filter(Boolean).length
+  : makeBoard(L, k, board.sent[k - board.layer - 1] || L.layers[k].lanes.map(() => [])).arrows.length;
+function renderPages() {
+  const p = $('pages'), n = L.layers.length;
+  p.hidden = n < 2 || on3d;
+  p.innerHTML = L.layers.map((_, k) => `<i class="${k === view ? 'on' : ''}${k < board.layer ? ' done' : ''}"></i>`).join('');
+}
+function setHint(t) { // la pista cambia con un fundido corto, no de golpe
+  const h = $('peekHint'); if (h.textContent === t) return;
+  h.textContent = t; if (!reduced && t) h.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220 });
+}
+function renderLayers() {
+  renderPages();
+  const nav = $('layers'), n = L.layers.length;
+  nav.hidden = n < 2; nav.classList.toggle('many', n >= 4);
+  if (n < 2) { $('peekHint').textContent = ''; return; }
+  const base = endless ? endless.chain.top : 0; // en el infinito, las capas se numeran desde la superficie
+  nav.innerHTML = '<div class="stack">' + L.layers.map((_, k) => {
+    const done = k < board.layer, here = k === board.layer, next = k === board.layer + 1;
+    const label = `Capa ${base + k + 1}${done ? ', vaciada' : here ? ', la que juegas' : next ? ', ver lo que hay abajo' : ''}`;
+    return `${k ? '<span class="sep" aria-hidden="true">›</span>' : ''}<button class="btn" data-k="${k}" aria-label="${label}"
+      ${here ? 'aria-current="true"' : ''} ${k === view && !here ? 'aria-pressed="true"' : ''} ${done ? 'disabled' : ''}>
+      ${done ? '✓' : ''}${base + k + 1}${left(k) ? `<span class="badge" aria-hidden="true">${left(k)}</span>` : ''}</button>`;
+  }).join('') + `</div><button class="btn" id="b3d" aria-pressed="${on3d}" aria-label="Ver todas las capas en 3D">${ICON.layers}</button>`;
+  $('b3d').onclick = () => toggle3d();
+  nav.querySelectorAll('[data-k]').forEach((b) => (b.onclick = () => setView(+b.dataset.k)));
+  setHint(on3d ? 'Arrastra para girar · pellizca para acercar · toca una capa para entrar'
+    : view > board.layer ? 'Así va la capa de abajo · desliza hacia abajo o toca para volver'
+    : board.layer + 1 < L.layers.length ? 'Desliza hacia arriba para ver la capa de abajo' : '');
+}
+
+// Navegar entre capas, en los dos sentidos y saltando las que haga falta, con la misma transición:
+// bajar = atraviesas la capa que ves (se agranda y se desvanece) y la de abajo sube a su sitio;
+// subir = la que ves se aleja hacia abajo y la de arriba baja desde la cámara. Mientras dura, no se acepta otra.
+async function setView(k) {
+  if (busy || camBusy || k === view || k < board.layer || k >= L.layers.length || $('ghost') == null) return;
+  busy = true;
+  const down = k > view, steps = Math.abs(k - view), ms = 380 + 120 * (steps - 1);
+  const top = () => (view > board.layer ? $('ghost') : $('cur'));      // la capa que se ve delante
+  const old = top().cloneNode(true); old.removeAttribute('id'); old.setAttribute('aria-hidden', 'true');
+  old.style.pointerEvents = 'none';
+  view = k; render();
+  const now = top();
+  svg.insertBefore(old, svg.querySelector('#fxl'));                    // la vieja, encima mientras se va
+  const ease = 'cubic-bezier(.4,0,.2,1)';
+  const outF = down ? [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.35)', opacity: 0 }]
+    : [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(.86)', opacity: 0 }];
+  const inF = down ? [{ transform: 'scale(.86)', opacity: .38 }, { transform: 'scale(1)', opacity: 1 }]
+    : [{ transform: 'scale(1.35)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }];
+  await Promise.all([anim(old, outF, ms, ease), anim(now, inF, ms, ease)]);
+  old.remove();
+  busy = false;
+}
+
+// ---- Vista 3D axonométrica: todas las capas apiladas (proyección ortográfica: transform 3D sin perspective) ----
+const RES = 2; // la pila se pinta al doble y se reduce: al acercar sigue nítida
+const ZMIN = .5, ZMAX = 2;
+const cam0 = { tilt: 56, yaw: -32, zoom: .7, px: 0, py: 0, spread: 1 };
+let cam = { ...cam0 }, camBusy = false;
+
+function arrowsOf(k) {
+  if (k < board.layer) return [];                                       // ya vaciada
+  if (k === board.layer) return board.arrows.filter((_, i) => board.live[i]);
+  return makeBoard(L, k, board.sent[k - board.layer - 1] || L.layers[k].lanes.map(() => [])).arrows; // con lo que ya le ha llegado (también de portales que saltan)
+}
+
+function build3d() {
+  const main = document.querySelector('main').getBoundingClientRect();
+  const W = Math.min(main.width * .78, 420) * RES, H = W * vh() / vw();
+  const stage = $('stage');
+  stage.style.width = W + 'px'; stage.style.height = H + 'px';
+  stage.innerHTML = L.layers.map((_, k) => {
+    const cls = k < board.layer ? 'done' : k === board.layer ? 'here' : '';
+    return `<div class="plane ${cls}" data-k="${k}">
+      <svg viewBox="0 0 ${vw()} ${vh()}">${layerSVG(k, board, true, arrowsOf(k))}</svg>
+      <span class="ptag${camBusy ? ' off' : ''}">${(endless ? endless.chain.top : 0) + k + 1}</span></div>`;
+  }).join('');
+  applyCam();
+}
+function applyCam() {
+  const n = L.layers.length, gap = parseFloat($('stage').style.height) * .42 * cam.spread;
+  $('stage').style.transform = `translate(${cam.px}px, ${cam.py}px) scale(${cam.zoom / RES}) rotateX(${cam.tilt}deg) rotateZ(${cam.yaw}deg) translateZ(${(n - 1) * gap / 2}px)`;
+  $('stage').querySelectorAll('.plane').forEach((p, k) => (p.style.transform = `translateZ(${-k * gap}px)`));
+}
+function tweenCam(to, ms) {
+  const from = { ...cam };
+  if (reduced) { Object.assign(cam, to); applyCam(); return Promise.resolve(); }
+  return new Promise((res) => {
+    const t0 = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - t0) / ms), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      for (const k in to) cam[k] = from[k] + (to[k] - from[k]) * e;
+      applyCam();
+      t < 1 ? requestAnimationFrame(step) : res();
+    };
+    requestAnimationFrame(step);
+  });
+}
+// cámara plana que coincide con el tablero 2D: así el paso 2D ⇄ 3D es continuo
+function flatCam() {
+  const r = $('board').getBoundingClientRect(), W = parseFloat($('stage').style.width) / RES;
+  const s2d = Math.min(r.width / vw(), r.height / vh());
+  return { tilt: 0, yaw: Math.round(cam.yaw / 360) * 360, zoom: (s2d * vw()) / W, px: 0, py: 0, spread: 0 };
+}
+async function toggle3d(force, target) {
+  const on = force ?? !on3d;
+  if (camBusy || on === on3d) return;
+  camBusy = true;
+  if (on) {
+    view = board.layer;
+    render();                                   // 2D al día para medirlo
+    on3d = true;
+    $('v3d').hidden = false; build3d();
+    Object.assign(cam, flatCam(), { yaw: 0 }); applyCam();
+    $('board').style.display = 'none';
+    render();
+    $('stage').querySelectorAll('.ptag').forEach((t) => t.classList.add('off'));
+    await tweenCam({ ...cam0, zoom: Math.min(cam0.zoom, 2.1 / L.layers.length) }, 750); // se despliega la pila (más capas, algo más lejos)
+    $('stage').querySelectorAll('.ptag').forEach((t) => t.classList.remove('off')); // y luego asoman las etiquetas
+  } else {
+    const k = target ?? board.layer;
+    $('board').style.display = ''; const fc = flatCam(); $('board').style.display = 'none';
+    $('stage').querySelectorAll('.ptag').forEach((t) => t.classList.add('off')); // las etiquetas se van antes de plegar
+    $('stage').querySelectorAll('.plane').forEach((p, j) => { p.style.transition = 'opacity .5s'; p.style.opacity = j === k ? 1 : 0; });
+    await tweenCam(fc, 650);                    // se repliega sobre la capa elegida
+    on3d = false;
+    view = k;
+    $('v3d').hidden = true; $('board').style.display = '';
+    render();
+  }
+  camBusy = false;
+}
+
+{ // gestos: 1 dedo gira, 2 dedos pellizcan (zoom) y desplazan, doble toque reinicia, rueda = zoom
+  const v = $('v3d'), pts = new Map();
+  let g = null, moved = 0, lastTap = 0;
+  const two = () => { const [a, b] = [...pts.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; };
+  const begin = () => { if (camBusy) return; g = { cam: { ...cam }, p: pts.size === 2 ? two() : [...pts.values()][0] }; };
+  v.addEventListener('pointerdown', (e) => { try { v.setPointerCapture(e.pointerId); } catch {} pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0; begin(); });
+  v.addEventListener('pointermove', (e) => {
+    if (!pts.has(e.pointerId) || camBusy || !g) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 1) {
+      const p = pts.get(e.pointerId), dx = p.x - g.p.x, dy = p.y - g.p.y;
+      moved = Math.max(moved, Math.hypot(dx, dy));
+      cam.yaw = g.cam.yaw + dx * .4;
+      cam.tilt = Math.max(20, Math.min(70, g.cam.tilt - dy * .3)); // ni plano ni de canto: siempre se lee la pila
+    } else if (pts.size === 2) {
+      const t = two(); moved = 99;
+      cam.zoom = Math.max(ZMIN, Math.min(ZMAX, g.cam.zoom * t.d / g.p.d));
+      const lim = v.getBoundingClientRect();   // sin perder la pila de vista
+      cam.px = Math.max(-lim.width / 2, Math.min(lim.width / 2, g.cam.px + t.x - g.p.x));
+      cam.py = Math.max(-lim.height / 2, Math.min(lim.height / 2, g.cam.py + t.y - g.p.y));
+    }
+    applyCam();
+  });
+  const end = (e) => {
+    if (!pts.delete(e.pointerId)) return;
+    if (pts.size) return begin();
+    if (moved > 8) return;
+    const now = Date.now();
+    if (now - lastTap < 300) { tweenCam(cam0, 420); lastTap = 0; return; }
+    lastTap = now;
+    const hit = document.elementsFromPoint(e.clientX, e.clientY).map((el) => el.closest?.('.plane')).find(Boolean);
+    if (hit) setTimeout(() => { if (lastTap !== now) return; const k = +hit.dataset.k; toggle3d(false, k > board.layer ? k : board.layer); }, 300);
+  };
+  v.addEventListener('pointerup', end);
+  v.addEventListener('pointercancel', end);
+  v.addEventListener('wheel', (e) => { e.preventDefault(); cam.zoom = Math.max(ZMIN, Math.min(ZMAX, cam.zoom * Math.exp(-e.deltaY / 400))); applyCam(); }, { passive: false });
+}
+
+function setLevel(level, report) {
+  L = level; REP = report; solver = Solver(L); M = margin(); indexPortals();
+  board = makeBoard(L, 0, []); moves = L.moves; start = { board, moves, exits: 0 }; view = 0; exits = 0;
+  closeOv(); if (on3d) { on3d = false; $('v3d').hidden = true; $('board').style.display = ''; }
+  coach = null; hideCoach(); render();
+  if (!reduced) $('board').animate([{ opacity: 0, transform: 'scale(.97)' }, { opacity: 1, transform: 'none' }], 360);
+}
+let stat = { level: '', t0: 0, taps: 0, fails: 0 }; // para la telemetría de cada prueba
+const lvStart = (level) => { stat = { level, t0: Date.now(), taps: 0, fails: 0 }; Tel.track('level_start', { level }); };
+const lvEnd = (result, extra = {}) => Tel.track('level_end', { level: stat.level, result, moves, taps: stat.taps, fails: stat.fails, secs: Math.round((Date.now() - stat.t0) / 1000), ...extra });
+function load(i) {
+  endless = null; li = i; playMusic('campana'); lvStart(tag(i));
+  setLevel(NIVELES[i].level, NIVELES[i].report);
+  chapter(() => startCoach(String(L.id)));
+}
+
+// ---- Modo infinito: una sola pila que no se acaba. Juegas la capa de arriba, ves las dos siguientes (3 en el visor 3D);
+// al vaciarla bajas y aparece una nueva al fondo. Un solo contador: cada capa nueva añade lo que pide, los choques no se devuelven.
+function startEndless() {
+  playMusic('infinito'); Tel.track('scene_open', { name: 'infinito' }); lvStart('inf');
+  document.querySelector('header').classList.remove('gone'); $('ov').classList.remove('welcome');
+  const chain = Infinito.Chain(Math.floor(Math.random() * 1e6) + 1);
+  if (!chain.init()) { card('<h2>No he podido generar la pila</h2><div class="row"><button class="btn primary big" id="b1">Inicio</button></div>'); $('b1').onclick = home; return; }
+  endless = { chain, spare: 3 }; // margen de choques al empezar
+  enterWindow();
+  const ch = $('chapter');
+  ch.innerHTML = `<small>Modo infinito</small><b>¿Hasta dónde bajas?</b><span>Vacía la capa de arriba y baja a la siguiente. La pila no se acaba. Cada capa te da un toque por flecha; los choques se pagan del margen (empiezas con 3 y ganas 1 cada 4 capas).${best ? `<br>Tu récord: capa ${best}.` : ''}</span>`;
+  ch.hidden = false;
+  let done = false;
+  const go = () => { if (done) return; done = true; anim(ch, [{ opacity: 1 }, { opacity: 0 }], 300).then(() => { ch.hidden = true; }); };
+  ch.onclick = go; setTimeout(go, 2600);
+}
+// Monta la ventana de tres capas actual: se juega la de arriba con lo que le llegó por sus portales.
+function enterWindow() {
+  const c = endless.chain;
+  L = c.level(); M = margin(); indexPortals(); solver = Solver(c.solveLevel());
+  board = makeBoard(L, 0, c.incoming);
+  const need = board.live.filter(Boolean).length; // un toque por flecha de la capa que juegas
+  moves = need + endless.spare; REP = { minMoves: need };
+  start = { board, moves, exits: 0 }; exits = 0; view = 0;
+  closeOv(); coach = null; hideCoach(); render();
+}
+// La capa de arriba se ha vaciado (tras la caída): bajamos, aparece una capa nueva al fondo y el contador suma lo que pide.
+function shiftWindow(out) {
+  const c = endless.chain;
+  endless.spare = moves + ((c.top + 1) % 4 === 0 ? 1 : 0); // lo que te sobra pasa a la siguiente; +1 cada 4 capas
+  best = Math.max(best, c.top + 2);
+  if (!c.shift(out)) { card('<h2>No he podido generar la siguiente capa</h2><div class="row"><button class="btn primary big" id="b1">Inicio</button></div>'); $('b1').onclick = home; return; }
+  enterWindow();
+  Tel.track('endless_layer', { depth: c.top + 1 });
+  $('sr').textContent = `Capa ${c.top + 1}`;
+}
+function gameOver() {
+  const reached = endless.chain.top + 1, record = reached > best;
+  lvEnd('out', { depth: reached });
+  best = Math.max(best, reached);
+  card(`<h2>${record ? '¡Nuevo récord!' : 'Fin de la partida'}</h2><p>Te has quedado sin movimientos en la <b>capa ${reached}</b>.${record ? '' : ` Tu récord: capa ${best}.`}</p>
+    <div class="row"><button class="btn" id="b2">${ICON.home} Inicio</button><button class="btn primary big" id="b1">${ICON.retry} Otra vez</button></div>`);
+  $('b1').onclick = startEndless; $('b2').onclick = () => { closeOv(); survey(home); };
+}
+
+const anim = (el, frames, ms, easing = 'cubic-bezier(.3,.7,.4,1)') => (reduced ? Promise.resolve() : el.animate(frames, { duration: ms, easing }).finished);
+
+function playSeqFx() {
+  const fx = seqFx; seqFx = [];
+  if (reduced) return;
+  const ox = (vw() - board.w * S) / 2, oy = (vh() - board.h * S) / 2;
+  for (const { k, before } of fx) {
+    const d = board.doors[k], T = 26, gap = 8, vert = d.edge === 'up' || d.edge === 'down';
+    const x = vert ? ox + d.from * S + 6 : d.edge === 'left' ? ox - gap - T : ox + board.w * S + gap;
+    const y = vert ? (d.edge === 'up' ? oy - gap - T : oy + board.h * S + gap) : oy + d.from * S + 6;
+    const W = vert ? d.len * S - 12 : T, H = vert ? T : d.len * S - 12;
+    const old = seqSegs(d, x, y, W, H, before), now = svg.querySelectorAll(`#cur .door[data-k="${k}"] .seg`);
+    now.forEach((g, i) => { // cada raya viene de donde estaba (una posición más allá) y se estira a su nuevo largo
+      const o = old[i + 1], n = seqSegs(d, x, y, W, H, before + 1)[i];
+      if (!o || !n) return;
+      g.style.transformBox = 'view-box'; g.style.transformOrigin = `${n.x}px ${n.y}px`;
+      const tr = `translate(${o.x - n.x}px,${o.y - n.y}px) scale(${o.w / n.w},${o.h / n.h})`;
+      anim(g, [{ transform: tr }, { transform: 'none' }], 380);
+    });
+    if (old[0]) { // la raya gastada se mete en la píldora
+      const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      Object.entries({ x: old[0].x, y: old[0].y, width: old[0].w, height: old[0].h, rx: Math.min(old[0].w, old[0].h) / 2, fill: col(old[0].c) }).forEach(([a, v]) => r.setAttribute(a, v));
+      fxLayer().appendChild(r);
+      anim(r, [{ transform: 'none', opacity: 1 }, { transform: `translate(${x + W / 2 - (old[0].x + old[0].w / 2)}px,${y + H / 2 - (old[0].y + old[0].h / 2)}px) scale(.2)`, opacity: 0 }], 380)
+        .then(() => r.remove());
+      r.style.transformBox = 'fill-box'; r.style.transformOrigin = 'center';
+    }
+  }
+}
+
+// Fotogramas para mover una flecha por su recorrido: se desplaza casilla a casilla y gira (sobre su centro) en los giradores.
+// `extra`: lo que sigue de largo al final en la última dirección (salir del tablero o el golpe contra el obstáculo).
+const ANG = { right: 0, down: 90, left: 180, up: 270 };
+// ¿La pieza (de más de una casilla) tuerce en su recorrido? Entonces no puede girar rígida: se dibuja como una serpiente.
+function bends(a, path) {
+  if (a.len < 2) return false;
+  const tc = new Set((board.lay.turners || []).map((t) => t.x + ',' + t.y));
+  return path.some(([x, y]) => tc.has(x + ',' + y));
+}
+// Pieza larga por un recorrido con giros: la cabeza avanza por el camino y el cuerpo la sigue ocupando las casillas que deja
+// atrás, así que al pasar por un girador se dobla en L. Se dibuja como un trazo grueso (contorno + relleno + chevrón).
+function snake(el, a, path, extra, ms, bounce) {
+  const ox = (vw() - board.w * S) / 2, oy = (vh() - board.h * S) / 2, C = (x, y) => [ox + x * S + S / 2, oy + y * S + S / 2];
+  const body = cells(a).reverse().map(([x, y]) => C(x, y));                // de la cola a la cabeza
+  const pts = [...body, ...path.map(([x, y]) => C(x, y))];
+  const lay = board.lay, lastCell = path[path.length - 1];
+  const tEnd = lastCell && (lay.turners || []).find((t) => t.x === lastCell[0] && t.y === lastCell[1]);
+  const lastDir = tEnd ? tEnd.dir : lastCell ? lastCell[2] : a.dir, [ex, ey] = DIRS[lastDir], end = pts[pts.length - 1];
+  pts.push([end[0] + ex * extra, end[1] + ey * extra]);
+  const segL = pts.map((p, j) => (j ? Math.hypot(p[0] - pts[j - 1][0], p[1] - pts[j - 1][1]) : 0));
+  const cum = segL.reduce((acc, v) => (acc.push((acc[acc.length - 1] || 0) + v), acc), []);
+  const at = (d) => { // punto a distancia d del inicio y su dirección
+    let j = cum.findIndex((c) => c >= d); if (j <= 0) j = 1;
+    const f = (d - cum[j - 1]) / ((cum[j] - cum[j - 1]) || 1), p0 = pts[j - 1], p1 = pts[j];
+    return { x: p0[0] + (p1[0] - p0[0]) * f, y: p0[1] + (p1[1] - p0[1]) * f, ang: Math.atan2(p1[1] - p0[1], p1[0] - p0[0]), j };
+  };
+  const bodyLen = (a.len - 1) * S, d0 = bodyLen, d1 = cum[cum.length - 1];
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g'); g.setAttribute('aria-hidden', 'true'); g.setAttribute('pointer-events', 'none');
+  el.parentNode.insertBefore(g, el); el.style.opacity = 0;
+  const fill = col(a.color), edge = deep(a.color), inkc = ink(a.color);
+  const draw = (headD) => {
+    const tailD = Math.max(0, headD - bodyLen), tail = at(tailD), head = at(headD); el._tail = [tail.x, tail.y];
+    const mid = pts.slice(tail.j, head.j).filter((_, k, arr) => true);
+    const line = [[tail.x, tail.y], ...mid.filter((p) => { const d = cum[pts.indexOf(p)]; return d > tailD && d < headD; }), [head.x, head.y]];
+    const P = line.map((p) => p.join(',')).join(' '), c = Math.cos(head.ang), sn = Math.sin(head.ang), hx = head.x + c * 14, hy = head.y + sn * 14;
+    g.innerHTML = `<polyline points="${P}" fill="none" stroke="${edge}" stroke-width="82" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="var(--o)"/>
+      <polyline points="${P}" fill="none" stroke="${fill}" stroke-width="74" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M${hx - c * 14 - sn * 20} ${hy - sn * 14 + c * 20} L${hx + c * 12} ${hy + sn * 12} L${hx - c * 14 + sn * 20} ${hy - sn * 14 - c * 20}" fill="none" stroke="${inkc}" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>`;
+  };
+  return new Promise((res) => {
+    if (reduced) { g.remove(); if (bounce) el.style.opacity = 1; res(); return; }
+    const t0 = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - t0) / ms);
+      const k = bounce ? Math.sin(Math.PI * Math.min(1, t)) : t * t; // golpe: ida y vuelta; salida: acelera
+      draw(d0 + (d1 - d0) * k);
+      if (t < 1) requestAnimationFrame(step);
+      else { g.remove(); if (bounce) el.style.opacity = 1; res(); }
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+// La pieza se desplaza sin rotar su caja: en un girador solo giran su contenido (chevrón e icono), sobre el centro de la casilla.
+// Forma en movimiento: la pieza pasa de rectángulo redondeado (reposo) a cápsula de extremos redondos (moviéndose) y vuelve.
+function toCapsule(el, on, ms) {
+  const body = el?.querySelectorAll('rect')[1]; if (!body) return Promise.resolve();
+  const w = +body.getAttribute('width'), h = +body.getAttribute('height'), from = +body.getAttribute('rx'), to = on ? Math.min(w, h) / 2 : 26;
+  if (reduced || from === to) { body.setAttribute('rx', to); return Promise.resolve(); }
+  return new Promise((res) => { const t0 = performance.now();
+    const f = (now) => { const p = Math.min(1, (now - t0) / ms), e = 1 - (1 - p) * (1 - p); body.setAttribute('rx', from + (to - from) * e); p < 1 ? requestAnimationFrame(f) : res(); };
+    requestAnimationFrame(f); });
+}
+function moveTurning(el, a, frames, ms, easing) {
+  const move = frames.map((f) => ({ transform: f.transform.replace(/ rotate\([^)]*\)/, ''), offset: f.offset }));
+  const spin = frames.map((f) => ({ transform: (f.transform.match(/rotate\([^)]*\)/) || ['rotate(0deg)'])[0], offset: f.offset }));
+  const ac = el.querySelector('.ac');
+  if (ac && spin.some((f) => f.transform !== 'rotate(0deg)')) {
+    const ox = (vw() - board.w * S) / 2, oy = (vh() - board.h * S) / 2;
+    ac.style.transformBox = 'view-box'; ac.style.transformOrigin = `${ox + a.x * S + S / 2}px ${oy + a.y * S + S / 2}px`;
+    anim(ac, spin, ms, easing);
+  }
+  return anim(el, move, ms, easing);
+}
+
+function routeFrames(a, path, extra) {
+  const pts = [{ x: 0, y: 0, rot: 0 }];
+  let d = a.dir, rot = 0;
+  path.forEach(([x, y, dirIn], j) => {
+    if (dirIn !== d) { let dr = ANG[dirIn] - ANG[d]; dr = ((dr + 540) % 360) - 180; rot += dr; d = dirIn; }
+    const next = path[j + 1];
+    if (!next || next[2] !== dirIn) pts.push({ x: (x - a.x) * S, y: (y - a.y) * S, rot }); // esquinas y final
+  });
+  const [ex, ey] = DIRS[path.length ? path[path.length - 1][2] : a.dir];
+  const endTurn = path.length && (() => { const lay = board.lay || L.layers[board.layer]; const t = (lay.turners || []).find((u) => u.x === path[path.length - 1][0] && u.y === path[path.length - 1][1]); return t ? t.dir : null; })();
+  let fx = ex, fy = ey, frot = rot;
+  if (endTurn) { [fx, fy] = DIRS[endTurn]; let dr = ANG[endTurn] - ANG[d]; dr = ((dr + 540) % 360) - 180; frot += dr; }
+  const l0 = pts[pts.length - 1];
+  pts.push({ x: l0.x + fx * extra, y: l0.y + fy * extra, rot: frot });
+  const dist = pts.map((p, j) => (j ? Math.hypot(p.x - pts[j - 1].x, p.y - pts[j - 1].y) : 0)).reduce((acc, v) => (acc.push((acc[acc.length - 1] || 0) + v), acc), []);
+  const total = dist[dist.length - 1] || 1;
+  return pts.map((p, j) => ({ transform: `translate(${p.x}px,${p.y}px) rotate(${p.rot}deg)`, offset: dist[j] / total }));
+}
+
+// Toques encadenados: el estado cambia al tocar y la animación va por su cuenta; se puede tocar la siguiente flecha
+// sin esperar. El repintado y las llegadas de abajo se aplazan hasta que no queda nada en vuelo.
+let flying = 0, arrivals = [], coachAdvance = false, seqFx = [];
+async function tap(i) {
+  if (busy || !board.live[i] || moves <= 0) return;
+  if (coach) { // durante el tutorial solo vale la flecha señalada (y no gasta movimiento)
+    const st = coach.steps[coach.n];
+    if (st.act !== 'tap' || (typeof st.i === 'function' ? st.i() : st.i) !== i || flying) return nudgeCoach();
+    hideRoute();
+    hideCoach(); coachAdvance = true;
+  }
+  const a = board.arrows[i];
+  const r = probe(board, i);
+  moves--; stat.taps++;
+  if (r.door == null) { stat.fails++; Tel.track('tap_fail', { level: stat.level, reason: r.blockedBy || 'wall' }); }
+  $('movesN').textContent = moves;
+  const el = svg.querySelector(`.arrow[data-i="${i}"]`);
+  flying++;
+  el.style.transformBox = 'fill-box'; el.style.transformOrigin = 'center';
+  if (r.door == null) {
+    // ¡uy!: golpe hasta el obstáculo (siguiendo los giros) y vuelta; el tablero no cambia
+    navigator.vibrate?.(40); sfx('uy', .7);
+    const msF = 90 + r.steps * 40 + 170;
+    const trail = paintTrail(el, a.color);
+    await toCapsule(el, true, 90);             // al arrancar, el rectángulo se vuelve cápsula
+    if (bends(a, r.path.slice(0, r.steps + 1))) await snake(el, a, r.path.slice(0, r.steps), 22, msF, true); // pieza larga que gira: se dobla en L
+    else {
+      const go = routeFrames(a, r.path.slice(0, r.steps), 22);
+      const back = go.slice(0, -1).reverse().map((f) => ({ ...f }));
+      const frames = [...go, ...back].map((f, j, all) => ({ transform: f.transform, offset: j / (all.length - 1) }));
+      await moveTurning(el, a, frames, msF);
+    }
+    trail();
+    toCapsule(el, false, 140);                  // vuelve a su sitio y a su forma de reposo
+  } else {
+    navigator.vibrate?.(15); sfx('salida', .5);
+    const k = r.door, portal = board.doors[k].portal;
+    const ox = (vw() - board.w * S) / 2, oy = (vh() - board.h * S) / 2;
+    if (board.doors[k].colors.length > 1) seqFx.push({ k, before: board.doorExits[k] });
+    board = apply(board, i, k); exits++;
+    el.style.pointerEvents = 'none';
+    const hp = board.doors[k].to || 1;
+    if (portal != null && hp === 1) arrivals.push([portal, board.outgoing[portal].length - 1]); // [carril, puesto en el carril]
+    const ms = 110 + (r.steps + a.len) * 34;
+    const last = r.path.length ? r.path[r.path.length - 1] : [a.x, a.y], [ex, ey] = DIRS[r.edge];
+    const hx = ox + last[0] * S + S / 2 + ex * (S / 2 + 21), hy = oy + last[1] * S + S / 2 + ey * (S / 2 + 21); // centro de la puerta
+    const d = board.doors[k], tint = d.colors[0] === WHITE ? a.color : d.colors[0];
+    setTimeout(() => {                         // cuando la cabeza toca el borde
+      doorHit(k, r.edge);
+      particlesIn(hx, hy, a.color);             // toda puerta se traga la pintura (portal o salida)
+      sfx(portal != null ? 'portal' : 'puerta', portal != null ? .8 : .7);
+      if (portal != null) vortex(hx, hy, tint).close(500);
+    }, 80 + ms * Math.sqrt(r.steps / (r.steps + a.len + .12))); // 80 ms del cambio a cápsula; con la aceleración, el avance va más o menos como t²
+    const trail = paintTrail(el, a.color);    // estela de pintura que se va disipando
+    await toCapsule(el, true, 80);             // al arrancar, el rectángulo se vuelve cápsula
+    if (bends(a, r.path)) await snake(el, a, r.path, (a.len + .12) * S, ms, false); // pieza larga que gira: el cuerpo sigue a la cabeza y dibuja la L
+    else await moveTurning(el, a, routeFrames(a, r.path, (a.len + .12) * S), ms, 'cubic-bezier(.45,0,.9,.55)'); // acelera hacia la puerta
+    trail();
+    el.style.opacity = 0;
+  }
+  flying--;
+  settle();
+}
+// Cuando no queda nada en vuelo: repinta, hace llegar lo que cayó por los portales y decide (caída, fin, tutorial).
+async function settle() {
+  if (flying || busy) return;
+  render();
+  playSeqFx();
+  const arr = arrivals; arrivals = [];
+  arr.forEach(([p, pos]) => arrive(p, pos)); // sin esperar: se puede seguir tocando mientras llegan
+  if (isEmpty(board) && board.layer + 1 < L.layers.length) {
+    busy = true;
+    if (arr.length) await new Promise((r) => setTimeout(r, 450));
+    await fall();
+    busy = false;
+  }
+  if (coachAdvance) { coachAdvance = false; nextCoach(); }
+  check();
+}
+async function arrive(portal, pos) {
+  sfx('llegada', .45);
+  const nl = board.layer + 1, layer = L.layers[nl], lane = layer.lanes[portal];
+  if (!layer || view > board.layer + 1) return; // se está mirando otra capa: lo que llega a la siguiente no está a la vista
+  const idx = layer.arrows.length + board.outgoing.slice(0, portal).flat().length + pos;
+  const node = svg.querySelectorAll('#ghost g[aria-hidden]')[idx];
+  const a = makeBoard(L, nl, board.outgoing).arrows[idx];
+  if (!node || !a) return;
+  const ox = (vw() - layer.w * S) / 2, oy = (vh() - layer.h * S) / 2;
+  const [ex, ey] = laneCell(lane, 0, layer.w, layer.h), [ddx, ddy] = DIRS[lane.edge];
+  const entry = [ox + ex * S + S / 2 + ddx * S / 2, oy + ey * S + S / 2 + ddy * S / 2];  // borde de entrada, en coordenadas de la capa
+  const cs = cells(a), mid = [ox + (cs[0][0] + cs[cs.length - 1][0] + 1) * S / 2, oy + (cs[0][1] + cs[cs.length - 1][1] + 1) * S / 2];
+  const peek = view > board.layer, sc = peek ? 1 : .86, cx = vw() / 2, cy = vh() / 2;
+  const ex2 = cx + (entry[0] - cx) * sc, ey2 = cy + (entry[1] - cy) * sc, dim = peek ? {} : { scale: sc, opacity: .5 };
+  const v = vortex(ex2, ey2, a.color, peek ? {} : { scale: sc, opacity: .45 }); // atenuado: está en la capa de abajo
+  particles(ex2, ey2, -ddx, -ddy, a.color, dim); // abajo, el portal escupe la pintura hacia dentro del tablero
+  node.style.transformBox = 'fill-box'; node.style.transformOrigin = 'center';
+  if (!peek && $('ghost')) anim($('ghost'), [{ opacity: .38 }, { opacity: .9, offset: .3 }, { opacity: .9, offset: .7 }, { opacity: .38 }], 1000); // la capa de abajo se ilumina al recibir
+  await anim(node, [{ transform: `translate(${entry[0] - mid[0]}px,${entry[1] - mid[1]}px) rotate(-300deg) scale(.08)`, opacity: 0 },
+    { transform: `translate(${(entry[0] - mid[0]) * .5}px,${(entry[1] - mid[1]) * .5}px) scale(1)`, opacity: 1, offset: .45 },
+    { transform: 'none', opacity: 1 }], 620);
+  v.close();
+}
+
+// Capa de efectos (remolinos, chispas): fuera del repintado del tablero.
+function fxLayer() {
+  let g = svg.querySelector('#fxl');
+  if (!g) { g = document.createElementNS('http://www.w3.org/2000/svg', 'g'); g.id = 'fxl'; g.setAttribute('pointer-events', 'none'); }
+  return g;
+}
+
+// Pintura: la pieza deja un rastro de su color que se va disipando. Capa bajo las piezas que sobrevive al repintado.
+let paintG;
+function paintLayer() {
+  if (!paintG) {
+    paintG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    paintG.setAttribute('aria-hidden', 'true'); paintG.setAttribute('pointer-events', 'none'); paintG.setAttribute('filter', 'url(#paintF)');
+    paintG.innerHTML = `<filter id="paintF" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3"/>
+      <feDisplacementMap in="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter>`;
+  }
+  return paintG;
+}
+// Muestrea el centro de la pieza (o la cola, si va doblada en L) en cada fotograma y pinta tramos que se desvanecen y adelgazan.
+// Devuelve la función que para el muestreo; los tramos acaban de disiparse solos.
+function paintTrail(el, color) {
+  if (reduced || !el) return () => {};
+  const g = paintLayer(), bb = el.getBBox(), c0 = [bb.x + bb.width / 2, bb.y + bb.height / 2], fill = col(color), w = S * .68;
+  let prev = null, on = true; el._tail = null;
+  const pos = () => {
+    if (el._tail) return el._tail;
+    const m = new DOMMatrix(getComputedStyle(el).transform);
+    return [c0[0] + m.e, c0[1] + m.f];
+  };
+  const dab = (x1, y1, x2, y2, sw, life) => {
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+    l.setAttribute('stroke', fill); l.setAttribute('stroke-linecap', 'round');
+    g.appendChild(l);
+    l.animate([{ strokeWidth: sw, opacity: .8 }, { strokeWidth: sw * .9, opacity: .55, offset: .3 }, { strokeWidth: sw * .25, opacity: 0 }], { duration: life, fill: 'forwards' }).finished.then(() => l.remove());
+  };
+  const step = () => {
+    if (!on || !el.isConnected) return;
+    const p = pos();
+    if (prev && Math.hypot(p[0] - prev[0], p[1] - prev[1]) > 1) {
+      dab(prev[0], prev[1], p[0], p[1], w * (.85 + Math.random() * .3), 1500 + Math.random() * 400);
+      if (Math.random() < .25) { // gotas sueltas a los lados
+        const a = Math.random() * Math.PI * 2, r = w * (.5 + Math.random() * .5), x = p[0] + Math.cos(a) * r, y = p[1] + Math.sin(a) * r;
+        dab(x, y, x + .1, y, S * (.08 + Math.random() * .1), 1300);
+      }
+    }
+    prev = p;
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  return () => { on = false; el._tail = null; };
+}
+
+// La puerta encaja el golpe: se estira hacia fuera y vuelve.
+function doorHit(k, edge) {
+  const g = svg.querySelector(`#cur .door[data-k="${k}"] .bar`);
+  if (!g) return;
+  const vert = edge === 'up' || edge === 'down';
+  g.style.transformBox = 'fill-box';
+  g.style.transformOrigin = { up: 'center bottom', down: 'center top', left: 'right center', right: 'left center' }[edge];
+  const big = vert ? 'scale(1.06, 1.9)' : 'scale(1.9, 1.06)';
+  anim(g, [{ transform: 'none' }, { transform: big, offset: .3 }, { transform: vert ? 'scale(.98, .85)' : 'scale(.85, .98)', offset: .6 }, { transform: 'none' }], 420);
+}
+
+// Chispas de pintura que salen de la puerta hacia fuera, en abanico.
+// Partículas que el portal se traga: llegan en espiral al centro y desaparecen.
+function particlesIn(x, y, color, { scale = 1, opacity = 1 } = {}) {
+  if (reduced) return;
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('pointer-events', 'none'); g.setAttribute('opacity', opacity);
+  const n = 18;
+  g.innerHTML = Array.from({ length: n }, (_, j) => `<circle cx="${x}" cy="${y}" r="${(4 + (j % 3) * 2.5) * scale}" fill="${col(color)}" stroke="${deep(color)}" stroke-width="1.5"/>`).join('');
+  fxLayer().appendChild(g);
+  Promise.all([...g.children].map((c, j) => {
+    const a0 = (j / n) * Math.PI * 2 + Math.random() * .4, r0 = (70 + Math.random() * 50) * scale;
+    const kf = [0, .35, .7, 1].map((t) => { const a = a0 + t * 2.6, r = r0 * (1 - t); return { transform: `translate(${Math.cos(a) * r}px,${Math.sin(a) * r}px) scale(${1 - .8 * t})`, opacity: t < .9 ? 1 : 0 }; });
+    return c.animate(kf, { duration: 520 + Math.random() * 200, easing: 'cubic-bezier(.5,0,.8,.6)' }).finished;
+  })).then(() => g.remove());
+}
+
+function particles(x, y, dx, dy, color, { scale = 1, opacity = 1 } = {}) {
+  if (reduced) return;
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('pointer-events', 'none');
+  const n = 14, base = Math.atan2(dy, dx);
+  g.setAttribute('opacity', opacity);
+  g.innerHTML = Array.from({ length: n }, (_, j) => `<circle cx="${x}" cy="${y}" r="${(6 + (j % 3) * 3) * scale}" fill="${col(color)}"/>`).join('');
+  fxLayer().appendChild(g);
+  const done = [...g.children].map((c, j) => {
+    c.style.transformBox = 'fill-box'; c.style.transformOrigin = 'center';
+    const ang = base + (Math.random() - .5) * 2.2, len = (60 + Math.random() * 90) * scale;
+    const tx = Math.cos(ang) * len, ty = Math.sin(ang) * len;
+    return c.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${tx}px,${ty}px) scale(.2)`, opacity: 0 }],
+      { duration: 380 + Math.random() * 260, easing: 'cubic-bezier(.2,.8,.4,1)' }).finished;
+  });
+  Promise.all(done).then(() => g.remove());
+}
+
+// Remolino de portal: anillos discontinuos que giran en sentidos opuestos y un núcleo que late.
+function vortex(x, y, color, { scale = 1, opacity = 1 } = {}) {
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('opacity', opacity);
+  const c = col(color);
+  g.setAttribute('pointer-events', 'none');
+  g.innerHTML = [72, 52, 32].map((r0, j) => r0 * scale).map((r, j) => `<circle class="vr" cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}"
+    stroke-width="${9 - j * 2}" stroke-dasharray="${r * .9} ${r * .5}" stroke-linecap="round"/>`).join('') +
+    `<circle class="vc" cx="${x}" cy="${y}" r="${14 * scale}" fill="${c}"/>`;
+  fxLayer().appendChild(g);
+  const spin = [...g.querySelectorAll('.vr')].map((n, j) => {
+    n.style.transformBox = 'fill-box'; n.style.transformOrigin = 'center';
+    return reduced ? null : n.animate([{ transform: 'rotate(0) scale(.2)', opacity: 0 }, { transform: `rotate(${j % 2 ? -540 : 540}deg) scale(1)`, opacity: 1 }],
+      { duration: 650, easing: 'ease-out', fill: 'forwards' });
+  });
+  const core = g.querySelector('.vc'); core.style.transformBox = 'fill-box'; core.style.transformOrigin = 'center';
+  if (!reduced) core.animate([{ transform: 'scale(.3)' }, { transform: 'scale(1.3)' }, { transform: 'scale(.6)' }], { duration: 500, iterations: 2 });
+  return { close(after = 0) { setTimeout(() => anim(g, [{ opacity }, { opacity: 0 }], 350).then(() => g.remove()), after); } };
+}
+
+// Llegada al carril de abajo: remolino en la entrada y la flecha sale de él hasta su casilla.
+
+async function fall() { // la cámara cae a la capa siguiente
+  sfx('caida', .7, 1100);
+  const cur = $('cur'), ghost = $('ghost');
+  await Promise.all([
+    anim(cur, [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.35)', opacity: 0 }], 650),
+    anim(ghost, [{ transform: 'scale(.86)', opacity: .38 }, { transform: 'scale(1)', opacity: 1 }], 650),
+  ]);
+  if (endless) return shiftWindow(board.outgoing);
+  board = makeBoard(L, board.layer + 1, board.outgoing, board.sent.slice(1)); // con lo que ya mandaron los portales que saltan
+  start = { board, moves, exits }; view = board.layer;
+  Tel.track('layer_down', { level: stat.level, layer: board.layer + 1 });
+  render();
+  startCoach(L.id + 'b');
+}
+
+// ---- Sonido (ElevenLabs): efectos cortos y dos temas en bucle; el navegador solo deja sonar tras el primer toque ----
+const SND = {}; let muted = false, music = null;
+['salida', 'uy', 'puerta', 'portal', 'llegada', 'caida', 'victoria', 'fin'].forEach((k) => { SND[k] = new Audio(`audio/${k}.mp3`); SND[k].preload = 'auto'; });
+const TRACKS = { campana: new Audio('audio/tema-campana.mp3'), infinito: new Audio('audio/tema-infinito.mp3') };
+Object.values(TRACKS).forEach((a) => { a.loop = true; a.volume = .28; });
+function sfx(k, vol = .8, maxMs = 0) {
+  if (muted || !SND[k]) return;
+  const a = SND[k].cloneNode(); a.volume = vol; a.play().catch(() => {});
+  if (maxMs) setTimeout(() => { const t0 = performance.now(); const f = () => { const p = (performance.now() - t0) / 300; a.volume = Math.max(0, vol * (1 - p)); p < 1 ? requestAnimationFrame(f) : a.pause(); }; f(); }, maxMs);
+}
+function fadeVol(a, to, ms = 600, then) { // la música nunca entra ni se corta de golpe
+  const from = a.volume, t0 = performance.now();
+  const f = (now) => { const p = Math.min(1, Math.max(0, (now - t0) / ms)); a.volume = Math.min(1, Math.max(0, from + (to - from) * p)); p < 1 ? requestAnimationFrame(f) : then?.(); };
+  requestAnimationFrame(f);
+}
+function playMusic(k) {
+  const t = TRACKS[k];
+  if (music && music !== t) { const old = music; fadeVol(old, 0, 700, () => old.pause()); }
+  if (music === t && !t.paused) return;
+  music = t;
+  if (!muted) { t.volume = 0; t.play().then(() => fadeVol(t, .28, 900)).catch(() => {}); }
+}
+function setMuted(m) {
+  muted = m;
+  $('muteBtn').setAttribute('aria-pressed', String(m)); $('muteBtn').setAttribute('aria-label', m ? 'Activar sonido' : 'Silenciar');
+  $('muteBtn').innerHTML = m ? ICON.mute : ICON.sound;
+  if (m) { if (music) fadeVol(music, 0, 350, () => music.pause()); }
+  else if (music) { music.volume = 0; music.play().then(() => fadeVol(music, .28, 600)).catch(() => {}); }
+  if (!reduced) $('muteBtn').animate([{ transform: 'scale(.85)' }, { transform: 'none' }], 220);
+}
+
+// ---- Tutorial paso a paso ----
+// Cada paso: t = qué se ilumina (selector), text = qué se dice (sin texto en el nivel 1), act = 'tap' si hay que tocar
+// la flecha i, view = capa que debe verse. Lo visto vale para esta carga; «Repetir tutorial» en el menú.
+const TUTO = {
+  // nivel 1: primera interacción explicada; después la mano acompaña hasta la última flecha
+  '1': NIVELES[0].level.layers[0].arrows.map((_, i) => ({ t: `.arrow[data-i="${i}"]`, act: 'tap', i,
+    text: i === 0 ? 'Esto es pintura atrapada. Toca la flecha: corre hacia donde apunta y sale por la puerta de su color.'
+      : i === 1 ? '¿Ves? La sala recupera un poco de color. Esta va hacia abajo: a la puerta azul.'
+      : i === NIVELES[0].level.layers[0].arrows.length - 1 ? 'La última. Vacía la sala.' : undefined })),
+  '2': [
+    { t: '.arrow[data-i="0"]', text: 'Esta flecha está tapada: si la tocas, choca y no sale.' },
+    { t: '#moves', text: 'Y cada toque gasta un movimiento, salga o no la flecha.' },
+    { t: '.arrow[data-i="1"]', act: 'tap', i: 1, text: 'Primero, libera el camino.' },
+    { t: '.arrow[data-i="0"]', act: 'tap', i: 0, text: 'Ahora sí: sale por su puerta.' },
+    { t: '#cur > rect', text: '¡Eso es! Ahora saca las que quedan tú solo. Antes de tocar, mira si el camino hasta su puerta está libre.' },
+  ],
+  '3': [{ t: '#cur .door[data-k="1"] .bar', text: 'Cada flecha sale solo por la puerta de su color. El símbolo también lo dice: ● rojo, ■ azul, ★ amarillo, ◆ verde.' }],
+  '4': [{ t: '#cur .door[data-k="1"] .bar', text: 'Ahora las puertas son más cortas: la flecha tiene que apuntar justo a una de su color.' }],
+  '5': [
+    { t: '#cur .door[data-k="0"]', text: '<b>Nuevo</b> · Esta puerta es un portal (la del contorno discontinuo que se mueve): lo que entra no se va, cae a la capa de abajo.' },
+    { t: '#ghost .lane[data-k="0"]', view: 1, text: 'Cae aquí, en su carril. La primera que llega se queda al fondo y será la primera en salir.' },
+    { t: '.arrow[data-i="0"]', act: 'tap', i: 0, text: 'Mándala por el portal.' },
+    { t: '#layers .stack', text: 'Para mirar la capa de abajo, desliza hacia arriba o toca el 2. Para volver, desliza hacia abajo o toca el 1.' },
+    { t: '#b3d', text: '<b>Vista 3D</b>: muestra todas las capas apiladas. Arrastra para girar la pila, pellizca para acercarla y toca una capa para entrar en ella. Vuelve a tocar este botón para salir.' },
+  ],
+  '5b': [{ t: '#cur > rect', text: 'Ya estás abajo: juegas con lo que mandaste desde arriba, más las piezas de esta capa.' }],
+  '9': [
+    { t: '#cur .door[data-k="0"]', text: '<b>Nuevo</b> · Portal blanco: acepta flechas de cualquier color.' },
+    { t: '#ghost .door[data-k="0"]', view: 1, text: 'Esta puerta pide el color de su píldora; las rayas de al lado son los que vendrán, en orden. Cada flecha que sale gasta una raya y la puerta toma el color de la siguiente.' },
+    { t: '#ghost .lane[data-k="0"]', view: 1, text: 'Abajo sale primero la que llegó primero. Así que manda las de arriba en el mismo orden que pide la puerta.' },
+    { t: '#rewindBtn', text: 'Si te equivocas y ya no hay salida, rebobina la capa: vuelve a como estaba al empezarla.' },
+  ],
+  '11': [
+    { t: '#cur .turner[data-i="0"]', text: '<b>Nuevo</b> · Esto es un girador. Venga de donde venga (flechas finas), la flecha que pasa por encima sale hacia donde marca la flecha gruesa.' },
+    { t: () => `.arrow[data-i="${turningArrow()}"]`, act: 'tap', i: () => turningArrow(), route: true, text: 'Mira su recorrido (la línea de puntos): entra en el girador y tuerce hasta su puerta. Tócala.' },
+    { t: '#cur > rect', text: 'Truco: <b>mantén pulsada</b> una flecha para ver su recorrido sin moverla.' },
+  ],
+  '12': [{ t: () => `#cur .door[data-k="${L.layers[0].doors.findIndex((d) => (d.to || 1) > 1)}"]`, text: '<b>Nuevo</b> · Este portal salta capas: lo que entra no cae en la siguiente, sino más abajo. La letra te dice dónde sale: busca la misma letra en la otra capa (y en la leyenda de arriba).' }],
+  '10': [{ t: '#ghost .door[data-k="0"]', view: 1, text: '<b>Nuevo</b> · Las flechas de abajo que salen por esta puerta también gastan sus rayas. Cuenta con ellas antes de mandar las de arriba.' }],
+};
+let coach = null;
+const TUTO_N = 4; // el tutorial es el nivel 1 (pruebas 1–4); después solo se avisa de lo nuevo
+const MEM = new Set(); // lo visto en esta carga: al abrir de nuevo, todo empieza desde la portada
+const seen = (k) => MEM.has('tuto-' + k);
+const markSeen = (k) => MEM.add('tuto-' + k);
+
+function startCoach(key) {
+  if (!TUTO[key] || seen(key)) return;
+  coach = { key, steps: TUTO[key], n: 0 };
+  showCoach();
+}
+async function showCoach() {
+  const st = coach.steps[coach.n];
+  const want = board.layer + (st.view ?? 0);
+  if (view !== want) await setView(want);
+  if (!coach || coach.steps[coach.n] !== st) return; // se cerró o avanzó mientras bajaba la cámara
+  const cc = $('coach'); delete cc.dataset.hiding; cc.getAnimations().forEach((x) => x.cancel()); // si se estaba yendo, se queda
+  if (cc.hidden) { cc.hidden = false; if (!reduced) anim(cc, [{ opacity: 0 }, { opacity: 1 }], 200); }
+  $('coach').classList.toggle('block', st.act !== 'tap');    // en los pasos de leer, el tablero no responde
+  const b = $('coachBubble');
+  b.hidden = !st.text;
+  if (st.text) {
+    const last = coach.n === coach.steps.length - 1, multi = coach.steps.length > 1;
+    b.innerHTML = `<p>${st.text}</p><div class="bar">
+      <div class="dots" aria-hidden="true">${multi ? coach.steps.map((_, j) => `<i class="${j === coach.n ? 'on' : ''}"></i>`).join('') : ''}</div>
+      <div class="row" style="gap:4px">
+        ${!last ? '<button class="btn ghostbtn" id="cSkip">Saltar</button>' : ''}
+        ${st.act === 'tap' ? '' : `<button class="btn primary" id="cNext">${last ? 'Entendido' : 'Siguiente'}</button>`}
+      </div></div>`;
+    $('cNext')?.addEventListener('click', nextCoach);
+    $('cSkip')?.addEventListener('click', () => { Tel.track('tutorial_done', { key: coach.key, skipped: true }); endCoach(); });
+    $('cNext')?.focus();
+  }
+  placeCoach();
+}
+function placeCoach() {
+  if (!coach || $('coach').hidden) return;
+  const st = coach.steps[coach.n];
+  const el = document.querySelector(typeof st.t === 'function' ? st.t() : st.t);
+  if (!el) return;
+  // encuadre exacto: en una flecha, su pieza de color (no la casilla entera); hueco con el mismo margen alrededor
+  const shape = el.matches('.arrow') ? el.querySelectorAll('rect')[1] : el;
+  const W = innerWidth, H = innerHeight, r = shape.getBoundingClientRect(), pad = 6;
+  const x = r.left - pad, y = r.top - pad, w = r.width + 2 * pad, h = r.height + 2 * pad, rr = Math.min(18, w / 2, h / 2);
+  const hole = `M${x + rr} ${y}h${w - 2 * rr}a${rr} ${rr} 0 0 1 ${rr} ${rr}v${h - 2 * rr}a${rr} ${rr} 0 0 1 -${rr} ${rr}h-${w - 2 * rr}a${rr} ${rr} 0 0 1 -${rr} -${rr}v-${h - 2 * rr}a${rr} ${rr} 0 0 1 ${rr} -${rr}z`;
+  $('coachMask').setAttribute('viewBox', `0 0 ${W} ${H}`);
+  if (placeCoach.last !== st && !reduced) $('coachMask').animate([{ opacity: .4 }, { opacity: 1 }], 260);
+  placeCoach.last = st;
+  $('coachMask').innerHTML = `<path fill-rule="evenodd" fill="#000" fill-opacity=".55" d="M0 0H${W}V${H}H0Z ${hole}"/>
+    <path d="${hole}" fill="none" stroke="#fff" stroke-width="3"/>`;
+  const hand = $('coachHand');
+  hand.style.display = st.act === 'tap' ? '' : 'none';
+  if (st.route) showRoute(typeof st.i === 'function' ? st.i() : st.i); // el tutorial enseña el recorrido
+  hand.style.left = (r.left + r.width / 2 - 24) + 'px'; hand.style.top = (r.top + r.height / 2 - 9) + 'px';
+  const b = $('coachBubble');
+  if (b.hidden) return;
+  // el bocadillo no pisa la isla, la barra de estado ni el indicador de inicio
+  const cs = getComputedStyle(document.body), top0 = parseFloat(cs.paddingTop) + 8, bot0 = H - parseFloat(cs.paddingBottom) - 8;
+  // centrado en el eje Y de la zona útil; si así taparía lo señalado, se centra en el hueco libre más grande (arriba o abajo)
+  const bw = b.offsetWidth, bh = b.offsetHeight, gapB = st.act === 'tap' ? 56 : 14;
+  let top = (top0 + bot0) / 2 - bh / 2;
+  if (top < y + h + gapB && top + bh > y - 14) {
+    const upA = [top0, y - 14], dnA = [y + h + gapB, bot0];
+    const [a0, a1] = (upA[1] - upA[0]) >= (dnA[1] - dnA[0]) ? upA : dnA;
+    top = (a1 - a0) >= bh ? (a0 + a1) / 2 - bh / 2 : (a0 === upA[0] ? a1 - bh : a0);
+  }
+  b.style.top = Math.max(top0, Math.min(bot0 - bh, top)) + 'px';
+  b.style.left = (W - bw) / 2 + 'px'; // y centrado en X
+}
+function hideCoach() {
+  hideRoute();
+  const c = $('coach'); if (c.hidden) return;
+  if (reduced) { c.hidden = true; return; }
+  anim(c, [{ opacity: 1 }, { opacity: 0 }], 180).then(() => { if (c.dataset.hiding) c.hidden = true; delete c.dataset.hiding; }).catch(() => {});
+  c.dataset.hiding = '1';
+}
+function nudgeCoach() {
+  const b = $('coachHand');
+  b.classList.remove('nudge'); void b.offsetWidth; b.classList.add('nudge');
+  navigator.vibrate?.(20);
+}
+function nextCoach() {
+  if (!coach) return;
+  coach.n++;
+  Tel.track('tutorial_step', { step: coach.key + ':' + coach.n });
+  if (coach.n >= coach.steps.length) return endCoach();
+  showCoach();
+}
+function endCoach() {
+  if (!coach) return;
+  if (coach.n >= coach.steps.length) Tel.track('tutorial_done', { key: coach.key, skipped: false });
+  markSeen(coach.key);
+  coach = null; hideCoach();
+  if (view !== board.layer) setTimeout(() => setView(board.layer), busy ? 520 : 0); // si la cámara aún se mueve, espera
+}
+addEventListener('resize', placeCoach);
+
+function check() {
+  if (isEmpty(board)) return showWin();
+  const need = endless ? board.live.filter(Boolean).length : solver.minMoves(board);
+  if (solver.minMoves(board) == null) return showDead();
+  if (moves < need) return showOut();
+}
+
+// ---- Historia: un edificio sin color; cada nivel es una sala; al vaciarla recupera la vida ----
+// [espacio, sala, frase al recuperarla, lo que se restaura (se ve en la escena del espacio)]
+const ROOMS = [
+  ['La oficina', 'Recepción', 'Se encienden las luces de la recepción.', 'la lámpara'],
+  ['La oficina', 'El pasillo', 'El pasillo vuelve a oler a café.', 'la cafetera'],
+  ['La oficina', 'Sala de reuniones', 'Alguien ha dejado flores en la mesa.', 'las flores'],
+  ['La oficina', 'El archivo', 'Las carpetas vuelven a tener color.', 'las carpetas'],
+  ['El centro comercial', 'Las escaleras mecánicas', 'Las escaleras vuelven a moverse.', 'las escaleras'],
+  ['El centro comercial', 'La fuente', 'La fuente vuelve a sonar.', 'la fuente'],
+  ['El centro comercial', 'El patio de comidas', 'Huele a pan recién hecho.', 'el puesto de comida'],
+  ['El centro comercial', 'El aparcamiento', 'Los coches tienen adónde volver.', 'el coche'],
+  ['La piscina cubierta', 'Los vestuarios', 'Hay toallas de colores en los bancos.', 'las toallas'],
+  ['La piscina cubierta', 'La piscina', 'El agua vuelve a ser azul.', 'el agua'],
+  ['El laboratorio', 'La mesa de giros', 'Se encienden las lámparas de la mesa.', 'la lámpara'],
+  ['El laboratorio', 'El salto', 'Los matraces vuelven a burbujear.', 'los matraces'],
+  ['El laboratorio', 'El orden de lejos', 'La planta del rincón reverdece.', 'la planta'],
+  ['El laboratorio', 'Cuatro capas', 'La máquina del fondo se enciende.', 'la máquina'],
+];
+// Escenas: lo que la pintura que sacas va devolviendo. Cada nivel colorea su elemento; el resto sigue gris.
+// f(c) = relleno del color c; s(c) = trazo del color c. Lo estructural va en línea fina.
+const f = (c) => `data-k="f" style="--c:var(--${c});--cs:var(--d-${c})"`, sk = (c) => `data-k="s" style="--c:var(--d-${c})"`;
+const SCENES = {
+  'La oficina': { base: '<path d="M8 112h224M14 112V20h212v92" /><rect x="18" y="82" width="74" height="30" rx="3"/><path d="M118 96h58M124 96v16M170 96v16"/><rect x="184" y="28" width="44" height="84" rx="2"/><path d="M184 58h44M184 86h44"/>',
+    els: [
+      `<path ${f('yellow')} d="M30 82 22 82 38 60h10l16 22z" opacity=".55"/><path ${f('yellow')} d="M36 52h14l-3-10h-8z"/><path d="M43 52v30" class="ln"/>`,
+      `<rect ${f('red')} x="70" y="66" width="14" height="16" rx="3"/><path ${sk('red')} d="M84 70c6 0 6 8 0 8" fill="none" stroke-width="3"/><path class="ln" d="M74 60c-3-4 3-6 0-10M80 60c-3-4 3-6 0-10"/>`,
+      `<rect ${f('blue')} x="141" y="80" width="10" height="16" rx="2"/><path ${sk('green')} d="M146 80v-12M146 80l-6-9M146 80l6-9" fill="none" stroke-width="2.5"/><circle ${f('red')} cx="146" cy="65" r="5"/><circle ${f('yellow')} cx="139" cy="70" r="4.5"/><circle ${f('red')} cx="153" cy="70" r="4.5"/>`,
+      `<rect ${f('red')} x="188" y="34" width="8" height="22" rx="1"/><rect ${f('blue')} x="198" y="34" width="8" height="22" rx="1"/><rect ${f('yellow')} x="208" y="38" width="8" height="18" rx="1"/><rect ${f('green')} x="188" y="62" width="8" height="22" rx="1"/><rect ${f('blue')} x="198" y="64" width="8" height="20" rx="1"/><rect ${f('red')} x="210" y="62" width="8" height="22" rx="1"/>`,
+    ] },
+  'El centro comercial': { base: '<path d="M8 112h224M14 112V20h212v92"/><path d="M150 112V84h56v28"/>',
+    els: [
+      `<path ${f('blue')} d="M20 112h18l52-70H72z"/><path class="ln" d="M38 100h10M48 86h10M58 72h10M68 58h10"/>`,
+      `<ellipse ${f('blue')} cx="118" cy="106" rx="24" ry="6"/><path ${sk('blue')} d="M104 104c0-18 14-24 14-30M132 104c0-18-14-24-14-30M118 74v-8" fill="none" stroke-width="3"/>`,
+      `<path ${f('red')} d="M148 70h12l-2 12h-8z"/><path ${f('yellow')} d="M160 70h12l-2 12h-8z"/><path ${f('red')} d="M172 70h12l-2 12h-8z"/><path ${f('yellow')} d="M184 70h12l-2 12h-8z"/><path ${f('red')} d="M196 70h12l-2 12h-8z"/>`,
+      `<rect ${f('green')} x="186" y="98" width="40" height="11" rx="4"/><rect ${f('green')} x="194" y="90" width="22" height="10" rx="4"/><circle class="ln" cx="196" cy="110" r="3.5"/><circle class="ln" cx="216" cy="110" r="3.5"/>`,
+    ] },
+  'La piscina cubierta': { base: '<path d="M8 112h224M14 112V20h212v92"/><rect x="24" y="86" width="192" height="24" rx="4"/><path d="M196 86V64M206 86V64M196 72h10M196 80h10"/><path d="M30 58h64M36 58v10M88 58v10"/>',
+    els: [
+      `<rect ${f('red')} x="36" y="40" width="14" height="18" rx="2"/><rect ${f('yellow')} x="56" y="40" width="14" height="18" rx="2"/><rect ${f('green')} x="76" y="40" width="14" height="18" rx="2"/>`,
+      `<rect ${f('blue')} x="26" y="88" width="188" height="20" rx="3"/><path class="ln" d="M40 96c8-4 16 4 24 0s16 4 24 0M110 100c8-4 16 4 24 0s16 4 24 0"/>`,
+    ] },
+  'El laboratorio': { base: '<path d="M8 112h224M14 112V20h212v92"/><path d="M20 84h120M28 84v28M132 84v28"/><rect x="168" y="40" width="50" height="72" rx="4"/>',
+    els: [
+      `<path ${f('yellow')} d="M40 84 30 84 44 62h10l14 22z" opacity=".55"/><path ${f('yellow')} d="M42 56h12l-3-9h-6z"/><path class="ln" d="M48 56v28"/>`,
+      `<path ${f('blue')} d="M84 84h18l-5-14v-12h-8v12z"/><path ${f('red')} d="M108 84h14l-3-10v-14h-8v14z"/><circle class="ln" cx="94" cy="54" r="2"/><circle class="ln" cx="114" cy="52" r="2"/>`,
+      `<path ${f('green')} d="M150 112c-10-14-6-28 4-36 4 10 2 24-4 36zM154 112c4-12 14-20 24-20-4 10-14 18-24 20z"/>`,
+      `<rect ${f('blue')} x="176" y="50" width="34" height="22" rx="3"/><circle ${f('red')} cx="184" cy="88" r="5"/><circle ${f('green')} cx="198" cy="88" r="5"/>`,
+    ] },
+};
+const firstOf = (space) => ROOMS.findIndex((r) => r[0] === space);
+// Niveles por dificultad, cada uno con sus pruebas (y su espacio que restaurar)
+// En Safari del iPhone (no instalada), cómo jugar a pantalla completa: añadirla a la pantalla de inicio.
+function fsTip() {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent), standalone = navigator.standalone || matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches;
+  return ios && !standalone && window.top === window ? `<p class="fstip">Para jugar a <b>pantalla completa</b>: toca Compartir <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/></svg> y luego <b>Añadir a pantalla de inicio</b>.</p>` : '';
+}
+const TIERS = [
+  { name: 'Primeros pasos', what: 'Una capa: color y dirección', from: 0, to: 3 },
+  { name: 'Portales', what: 'Dos capas: lo que sale de arriba cae abajo', from: 4, to: 7 },
+  { name: 'El orden manda', what: 'Portales blancos y puertas que cambian de color', from: 8, to: 9 },
+  { name: 'Laboratorio', what: 'Giradores, portales que saltan capas y hasta 4 capas', from: 10, to: 13 },
+];
+const tierOf = (i) => TIERS.findIndex((t) => i >= t.from && i <= t.to);
+const tag = (i) => { const t = tierOf(i); return `${t + 1}-${i - TIERS[t].from + 1}`; };
+// escena del espacio de la sala `upto`: colorea lo recuperado antes; `mode`: 'new' anima el de esta sala, 'target' lo marca
+function scene(upto, mode) {
+  const space = ROOMS[upto][0], sc = SCENES[space], k0 = firstOf(space);
+  return `<svg class="scene" viewBox="0 0 240 120" aria-hidden="true"><g class="base">${sc.base}</g>${sc.els.map((e, j) => {
+    const lvl = k0 + j, cls = lvl < upto ? 'lit' : lvl === upto ? (mode === 'new' ? 'new' : mode === 'lit' ? 'lit' : 'target') : '';
+    return `<g class="el ${cls}">${e}</g>`;
+  }).join('')}</svg>`;
+}
+// marca con un recuadro discontinuo lo que esta sala tiene que recuperar
+function markTarget(root) {
+  root.querySelectorAll('.el.target').forEach((g) => {
+    const b = g.getBBox(), r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    Object.entries({ x: b.x - 5, y: b.y - 5, width: b.width + 10, height: b.height + 10, rx: 6, class: 'tmark' }).forEach(([k, v]) => r.setAttribute(k, v));
+    g.appendChild(r);
+  });
+}
+const STORY = [
+  { art: 'room', title: 'Se fue el color', text: 'Un día, el edificio se quedó en silencio: la oficina, el centro comercial, la piscina… todo gris.' },
+  { art: 'arrow', title: 'Queda pintura', text: 'El color está atrapado en flechas. Cada tablero es el suelo de una sala: saca las flechas por su puerta y lo que había en ella recupera su color.' },
+  { art: 'stack', title: 'Hacia abajo', text: 'Algunas puertas no dan a la calle: dan a la sala de abajo. Lo que mandas cae allí. Baja, capa a capa.' },
+];
+const ART = {
+  room: `<svg class="hero" viewBox="0 0 200 140" aria-hidden="true" fill="none" stroke="var(--ink2)" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M40 30h120v70H40z"/><path d="M40 100 10 132M160 100l30 32M10 132h180"/><path d="M90 100V62h22v38"/><path d="M60 30v-8M140 30v-8M52 22h16M132 22h16" opacity=".6"/></svg>`,
+  arrow: `<svg class="hero" viewBox="0 0 200 140" aria-hidden="true"><rect x="40" y="40" width="80" height="44" rx="18" fill="var(--i-red)"/>
+    <path d="M92 50l14 12-14 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="60" cy="62" r="6" fill="#fff"/>
+    <rect x="168" y="22" width="12" height="80" rx="6" fill="var(--i-red)"/><path d="M128 62h26" stroke="var(--i-red)" stroke-width="4" stroke-dasharray="6 6" stroke-linecap="round"/></svg>`,
+  stack: `<svg class="hero" viewBox="0 0 180 150" aria-hidden="true">${[104, 78, 52].map((y, k) => `<g transform="translate(90 ${y}) scale(1 .55) rotate(45)">
+    <rect x="-40" y="-40" width="80" height="80" rx="10" fill="var(--i-plate)" stroke="var(--i-line)" stroke-width="3" opacity="${k === 2 ? 1 : .85}"/></g>`).join('')}
+    <path d="M90 40v62" stroke="var(--i-blue)" stroke-width="4" stroke-dasharray="7 7" stroke-linecap="round"/><path d="M82 94l8 10 8-10" fill="none" stroke="var(--i-blue)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
+function story(k = 0) {
+  const st = STORY[k], last = k === STORY.length - 1;
+  card(`${st.art === 'room' ? scene(0, 'gray') : ART[st.art]}<h2>${st.title}</h2><p>${st.text}</p>
+    <div class="dotsrow" aria-hidden="true">${STORY.map((_, j) => `<i class="${j === k ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="row"><button class="btn ghostbtn" id="sSkip">Saltar</button><button class="btn primary big" id="sNext">${last ? 'Empezar' : 'Siguiente'}</button></div>`);
+  $('sNext').onclick = () => (last ? startGame() : story(k + 1));
+  $('sSkip').onclick = startGame;
+}
+// Dos preguntas, una vez por aparato (o cuando se piden desde la portada). Mide «se siente distinto» y «seguiría jugando».
+function survey(then, asked = false) {
+  if (!asked && !Tel.once('encuesta')) return then();
+  Tel.track('scene_open', { name: 'encuesta' });
+  let keep = '';
+  card(`<h2>Dos preguntas rápidas</h2>
+    <label class="q" for="qSame">¿En qué se parece o se diferencia de otros juegos de flechas que conozcas?</label>
+    <textarea id="qSame" rows="3" maxlength="280" placeholder="Si no conoces ninguno, dinos qué te ha parecido"></textarea>
+    <p class="q" id="qK">¿Seguirías jugando?</p>
+    <div class="row seg" role="radiogroup" aria-labelledby="qK">${['Sí', 'Quizá', 'No'].map((t) => `<button class="btn" role="radio" aria-checked="false" data-v="${t.toLowerCase()}">${t}</button>`).join('')}</div>
+    <div class="row"><button class="btn ghostbtn" id="sNo">Ahora no</button><button class="btn primary big" id="sOk" disabled>Enviar</button></div>`);
+  const ok = $('sOk');
+  $('card').querySelectorAll('.seg .btn').forEach((b) => (b.onclick = () => {
+    keep = b.dataset.v;
+    $('card').querySelectorAll('.seg .btn').forEach((x) => { x.setAttribute('aria-checked', x === b); x.classList.toggle('primary', x === b); });
+    ok.disabled = false;
+  }));
+  ok.onclick = () => { Tel.track('survey', { same: $('qSame').value.trim().slice(0, 280), keep }); Tel.flush();
+    card('<h2>¡Gracias!</h2><p>Nos ayuda mucho.</p><div class="row"><button class="btn primary big" id="b1">Seguir</button></div>'); $('b1').onclick = then; };
+  $('sNo').onclick = () => { Tel.track('survey_skip'); then(); };
+}
+function startGame() { Tel.track('scene_open', { name: 'campana' }); document.querySelector('header').classList.remove('gone'); $('ov').classList.remove('welcome'); load(0); }
+
+// Rótulo de sala al empezar cada nivel: dónde estás y qué toca (se toca para seguir)
+function chapter(then) {
+  const t = tierOf(li), T = TIERS[t], ch = $('chapter');
+  ch.innerHTML = `<small>Nivel ${t + 1} · ${T.name}</small><b>Prueba ${li - T.from + 1} de ${T.to - T.from + 1}</b>${scene(li, 'target')}
+    <span>Saca la pintura para devolverle el color a <b>${ROOMS[li][3]}</b>.${L.layers.length > 1 ? `<br>${L.layers.length} plantas: vacíala de arriba abajo.` : ''}</span>`;
+  ch.hidden = false;
+  markTarget(ch);
+  let done = false;
+  const go = () => { if (done) return; done = true; anim(ch, [{ opacity: 1 }, { opacity: 0 }], 300).then(() => { ch.hidden = true; then(); }); };
+  ch.onclick = go;
+  setTimeout(go, reduced ? 3200 : 2800);
+}
+
+const ICON = {
+  sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/></svg>',
+  layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3.5 20.5 8 12 12.5 3.5 8Z"/><path d="M3.5 12.5 12 17l8.5-4.5"/><path d="M3.5 17 12 21.5l8.5-4.5"/><path d="M9.6 8.6 11.2 7.2l1.6 1.4" stroke-width="1.6"/></svg>',
+  ok: '<svg class="big" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7 12.5l3.2 3L17 9"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  retry: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg>',
+  rewind: $('rewindBtn').innerHTML,
+};
+const words = () => true; // el admin pidió instrucciones desde el primer fotograma (2026-11-12): el nivel 1 ya lleva texto
+let closeT = 0;
+function card(html) { clearTimeout(closeT); $('ov').classList.remove('closing'); $('card').innerHTML = html; $('ov').classList.add('on'); ($('card').querySelector('.primary') || $('card').querySelector('button'))?.focus(); }
+function closeOv() { // se desvanece y luego se quita
+  const ov = $('ov'); if (!ov.classList.contains('on') || ov.classList.contains('closing')) return;
+  ov.classList.add('closing'); clearTimeout(closeT);
+  closeT = setTimeout(() => ov.classList.remove('on', 'closing'), reduced ? 0 : 200);
+}
+
+function starsSVG(n) {
+  const st = (on, k) => `<svg class="star${on ? ' on' : ''}" style="animation-delay:${.15 + k * .15}s" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>`;
+  return `<div class="stars" role="img" aria-label="${n} de 3 estrellas">${[0, 1, 2].map((k) => st(k < n, k)).join('')}</div>`;
+}
+function showWin() {
+  sfx('victoria', .8);
+  const last = li + 1 >= NIVELES.length;
+  const fails = (L.moves - moves) - REP.minMoves; // toques que chocaron
+  const stars = fails <= 0 ? 3 : fails <= 2 ? 2 : 1;
+  lvEnd('win', { stars });
+  const tutoEnd = L.id === TUTO_N, tierEnd = li === TIERS[tierOf(li)].to;
+  card(`${scene(li, 'new')}${starsSVG(stars)}<div class="left" aria-label="Te sobran ${moves} movimientos">${$('moves').querySelector('svg').outerHTML}<b>+${moves}</b></div>${words() ? (tutoEnd ? `<h2>${ROOMS[li][2]}</h2><p><b>Tutorial completado.</b> Ya sabes lo básico: desde aquí juegas sin ayudas y solo te aviso cuando aparezca algo nuevo.</p>`
+    : tierEnd ? `<h2>¡Nivel ${tierOf(li) + 1} completado!</h2><p>${ROOMS[li][2]} ${ROOMS[li][0]} ha recuperado todo su color.${last ? ' Fin del prototipo.' : ` Siguiente: <b>${TIERS[tierOf(li) + 1].name}</b>.`}</p>`
+    : `<h2>${ROOMS[li][2]}</h2><p>${last ? 'Has devuelto el color a todo el edificio. Fin del prototipo.' : fails <= 0 ? 'Sin un solo choque.' : `${fails} ${fails === 1 ? 'choque' : 'choques'}: sin chocar, 3 estrellas.`}</p>`) : ''}
+    <div class="row">${last ? `<button class="btn" id="b1" aria-label="Jugar otra vez">${ICON.retry}</button>`
+      : `<button class="btn primary big" id="b1" aria-label="Siguiente nivel">${ICON.next}${words() ? 'Siguiente' : ''}</button>`}</div>`);
+  const next = () => load(last ? 0 : li + 1);
+  $('b1').onclick = li === TIERS[1].to || last ? () => survey(next) : next; // tras los portales (ya ha visto lo que lo hace distinto), 2 preguntas
+  $('sr').textContent = 'Nivel superado. ' + ROOMS[li][2];
+  setTimeout(() => $('card').querySelector('.el.new')?.classList.add('lit'), reduced ? 0 : 450); // la pintura llega a la sala
+  celebrate();
+}
+// Celebración: salpicadura de pintura de todos los colores desde el centro del tablero.
+function celebrate() {
+  if (reduced) return;
+  const cx = vw() / 2, cy = vh() / 2;
+  ['red', 'blue', 'yellow', 'green'].forEach((c, j) => setTimeout(() => {
+    for (let k = 0; k < 4; k++) particles(cx, cy, Math.cos(k * Math.PI / 2 + j), Math.sin(k * Math.PI / 2 + j), c);
+  }, j * 90));
+}
+
+function showOut() {
+  sfx('fin', .7);
+  if (endless) return gameOver();
+  lvEnd('out');
+  card(`${words() ? '<h2>Sin movimientos</h2>' : ''}<div class="row"><button class="btn" id="b1" aria-label="Reintentar nivel">${ICON.retry}${words() ? 'Reintentar' : ''}</button></div>`);
+  $('b1').onclick = () => load(li);
+}
+function showDead() {
+  sfx('fin', .6);
+  $('rewindBtn').classList.add('pulse');
+  lvEnd('dead');
+  card(`${words() ? '<h2>Así ya no sale</h2><p>Con lo que ha caído, la capa de abajo no se puede vaciar.</p>' : ''}
+    <div class="row"><button class="btn" id="b1" aria-label="Rebobinar capa">${ICON.rewind}${words() ? 'Rebobinar capa' : ''}</button>
+    <button class="btn" id="b2" aria-label="Ver la capa de abajo">${words() ? 'Ver la capa de abajo' : '👁'}</button></div>`);
+  $('b1').onclick = rewind;
+  $('b2').onclick = () => { closeOv(); if (board.layer + 1 < L.layers.length) setView(board.layer + 1); };
+}
+function rewind() {
+  board = start.board; moves = start.moves; exits = start.exits ?? exits; view = board.layer;
+  $('rewindBtn').classList.remove('pulse');
+  closeOv(); render();
+  if (!reduced) $('cur')?.animate([{ opacity: .2, transform: 'scale(.97)' }, { opacity: 1, transform: 'none' }], 360); // la capa vuelve a como empezó
+}
+
+function menu() {
+  card(`<h2>Niveles</h2>${TIERS.map((T, t) => `<section class="tier"><h3>Nivel ${t + 1} · ${T.name}</h3><p>${T.what}</p><div class="grid10">${
+    NIVELES.slice(T.from, T.to + 1).map((n, k) => { const i = T.from + k; return `<button class="btn${n.level.layers.length > 1 ? ' two' : ''}${i === li ? ' cur' : ''}" data-l="${i}" aria-label="Nivel ${t + 1}, prueba ${k + 1}">${k + 1}</button>`; }).join('')}</div></section>`).join('')}
+    <div class="row"><button class="btn" id="goHome">${ICON.home} Inicio</button><button class="btn ghostbtn" id="reTuto">Repetir tutorial</button></div>`);
+  $('card').querySelectorAll('[data-l]').forEach((b) => (b.onclick = () => load(+b.dataset.l)));
+  $('reTuto').onclick = () => { MEM.clear(); closeOv(); home(); };
+  $('goHome').onclick = () => { closeOv(); home(); };
+}
+
+// Una flecha que ahora mismo puede salir y cuyo recorrido pasa por un girador (para el tutorial).
+function turningArrow() {
+  const tc = new Set((board.lay.turners || []).map((t) => t.x + ',' + t.y));
+  return board.live.map((v, j) => (v ? j : -1)).filter((j) => j >= 0).find((j) => { const r = probe(board, j); return r.door != null && r.path.some(([x, y]) => tc.has(x + ',' + y)); }) ?? 0;
+}
+// Recorrido de una flecha (con sus giros), dibujado discontinuo hasta la puerta o hasta donde choca.
+function showRoute(i) {
+  hideRoute();
+  if (!board.live[i]) return;
+  const a = board.arrows[i], r = probe(board, i), ox = (vw() - board.w * S) / 2, oy = (vh() - board.h * S) / 2;
+  const pts = [[a.x, a.y], ...r.path.slice(0, r.door == null ? r.steps : r.path.length).map(([x, y]) => [x, y])].map(([x, y]) => [ox + x * S + S / 2, oy + y * S + S / 2]);
+  const lastDir = r.door != null ? r.edge : (r.path[r.steps]?.[2] || a.dir), [ex, ey] = DIRS[lastDir], end = pts[pts.length - 1];
+  pts.push([end[0] + ex * (r.door != null ? S / 2 + 21 : 30), end[1] + ey * (r.door != null ? S / 2 + 21 : 30)]);
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g'); g.id = 'rprev'; g.setAttribute('pointer-events', 'none');
+  const tip = pts[pts.length - 1], ok = r.door != null;
+  g.innerHTML = `<polyline points="${pts.map((p) => p.join(',')).join(' ')}" fill="none" stroke="var(--ink)" stroke-width="7" stroke-dasharray="4 14" stroke-linecap="round" stroke-linejoin="round" class="pline"/>
+    ${ok ? `<circle cx="${tip[0]}" cy="${tip[1]}" r="11" fill="var(--ink)"/>` : `<path d="M${tip[0] - 12} ${tip[1] - 12}l24 24M${tip[0] + 12} ${tip[1] - 12}l-24 24" stroke="var(--alert)" stroke-width="7" stroke-linecap="round"/>`}`;
+  fxLayer().appendChild(g);
+  if (!reduced) g.animate([{ opacity: 0 }, { opacity: 1 }], 200);
+}
+function hideRoute() { const g = svg.querySelector('#rprev'); if (g) { if (reduced) g.remove(); else g.animate([{ opacity: 1 }, { opacity: 0 }], 160).finished.then(() => g.remove()).catch(() => g.remove()); } }
+{ // mantener pulsada una flecha (≥ 0,35 s): enseña su recorrido y no la mueve
+  let t = 0, shown = false;
+  svg.addEventListener('pointerdown', (e) => { const g = e.target.closest('.arrow'); if (!g) return; shown = false; t = setTimeout(() => { shown = true; showRoute(+g.dataset.i); navigator.vibrate?.(8); }, 350); });
+  const up = () => { clearTimeout(t); if (shown) { svg.swiped = true; hideRoute(); shown = false; } };
+  svg.addEventListener('pointerup', up); svg.addEventListener('pointercancel', up); svg.addEventListener('pointerleave', up);
+}
+{ // deslizar en 2D: hacia arriba bajas a la capa de abajo; hacia abajo vuelves
+  let p0 = null; svg.swiped = false;
+  svg.addEventListener('pointerdown', (e) => { p0 = { x: e.clientX, y: e.clientY }; svg.swiped = false; });
+  svg.addEventListener('pointerup', (e) => {
+    if (!p0) return;
+    const dx = e.clientX - p0.x, dy = e.clientY - p0.y; p0 = null;
+    if (Math.abs(dy) < 50 || Math.abs(dy) < Math.abs(dx) * 1.5 || L.layers.length < 2) return;
+    svg.swiped = true;
+    setView(dy < 0 ? Math.min(view + 1, L.layers.length - 1) : Math.max(board.layer, view - 1));
+  });
+}
+svg.addEventListener('click', (e) => { if (svg.swiped) { svg.swiped = false; return; } if (view > board.layer) return setView(board.layer); const g = e.target.closest('.arrow'); if (g && !$('ov').classList.contains('on')) tap(+g.dataset.i); });
+svg.addEventListener('keydown', (e) => { const g = e.target.closest('.arrow'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); tap(+g.dataset.i); } });
+$('rewindBtn').onclick = rewind;
+$('muteBtn').onclick = () => setMuted(!muted);
+// Safari y Chrome no dejan sonar nada hasta el primer toque: en cuanto lo hay, arranca la música que toque
+addEventListener('pointerdown', () => { if (music && !muted && music.paused) { music.volume = 0; music.play().then(() => fadeVol(music, .28, 900)).catch(() => {}); } }, { once: true, capture: true });
+setMuted(false);
+$('menuBtn').onclick = menu;
+$('ov').addEventListener('click', (e) => { if (e.target.id === 'ov' && board && !isEmpty(board) && !$('ov').classList.contains('welcome')) closeOv(); });
+
+// zonas seguras reales de cada aparato (pt): el 16e tiene muesca (no isla), arriba 47 y abajo 34
+const APARATOS = { 'iphone-16': { t: 59, b: 34, isla: true }, 'iphone-16e': { t: 47, b: 34, isla: false, muesca: true }, 'ipad-11': { t: 24, b: 20, isla: false } };
+const ap = APARATOS[new URLSearchParams(location.search).get('aparato')];
+if (ap) {
+  document.documentElement.style.setProperty('--sa-t', ap.t + 'px');
+  document.documentElement.style.setProperty('--sa-b', ap.b + 'px');
+  $('sys').hidden = false;
+  if (!ap.isla) $('sys').querySelector('.island').remove();
+  if (!ap.muesca) $('sys').querySelector('.notch').remove();
+}
+const q = new URLSearchParams(location.search).get('nivel');
+function home() {
+  Tel.track('scene_open', { name: 'portada' });
+  playMusic('campana'); // en la portada suena el tema principal (si el navegador aún no deja, arranca al primer toque)
+  endless = null; coach = null; hideCoach(); $('chapter').hidden = true; if (on3d) { on3d = false; $('v3d').hidden = true; $('board').style.display = ''; }
+  L = NIVELES[0].level; M = margin(); // el tablero no se ve aún; la portada va encima
+  document.body.style.setProperty('--life', 1);
+  document.querySelector('header').classList.add('gone'); $('ov').classList.add('welcome');
+  // logo: tres capas apiladas en un cubo, pintadas de abajo arriba para que ninguna de abajo tape a una de arriba
+  const slab = (y, pieces) => `<g transform="translate(90 ${y})">
+      <g transform="scale(1 .55) rotate(45)"><rect x="-40" y="-40" width="80" height="80" rx="10" fill="var(--i-plate)" stroke="var(--i-line)" stroke-width="3"/>${pieces}</g></g>`;
+  card(`<svg class="hero" viewBox="0 0 180 150" aria-hidden="true">
+      ${slab(104, '<rect x="2" y="8" width="30" height="20" rx="8" fill="var(--i-yellow)"/>')}
+      ${slab(78, '<rect x="-30" y="4" width="20" height="20" rx="7" fill="var(--i-green)"/><rect x="8" y="-28" width="20" height="32" rx="8" fill="var(--i-yellow)"/>')}
+      ${slab(52, '<rect x="-28" y="-30" width="20" height="44" rx="8" fill="var(--i-red)"/><rect x="6" y="-4" width="20" height="20" rx="7" fill="var(--i-blue)"/>')}
+    </svg>
+    <h1 class="title">Paint Out</h1>
+    <p>4 niveles · 14 pruebas. Saca cada flecha por la puerta de su color.</p>${fsTip()}
+    <div class="row" style="flex-direction:column;align-items:center"><button class="btn primary big" id="play">Jugar</button>
+    <button class="btn big" id="inf">∞ Modo infinito${best ? ` · récord ${best}` : ''}</button>
+    <button class="btn ghostbtn" id="op">Danos tu opinión</button></div>
+    <label class="optout"><input type="checkbox" id="tel" ${Tel.enabled() ? 'checked' : ''}> Enviar datos de juego anónimos</label>`);
+  $('inf').onclick = startEndless;
+  $('op').onclick = () => survey(home, true);
+  $('tel').onchange = (e) => Tel.setEnabled(e.target.checked);
+  $('play').onclick = startGame;
+}
+if (new URLSearchParams(location.search).get('modo') === 'infinito') startEndless();
+else if (q) load(Math.max(0, Math.min(NIVELES.length - 1, +q - 1)));
+else home(); // siempre desde la portada
+</script>
+</body>
+</html>
