@@ -1,9 +1,9 @@
 // Telemetría propia gmb-events (regla 12 del estudio): anónima, con ID de instalación aleatorio y opt-out.
 // Lotes al receptor de config/telemetry.json; se envía al llegar a 10 eventos y al pasar a segundo plano.
-// ponytail: formato del cuerpo y cabecera del token pendientes de store-monitor (petición del 2026-11-13); sin token no se envía nada.
+// paint-out entra SIN token desde gmbstudio.cc y Dash (CORS del Worker, store-monitor f6b2e09); props como strings, ≤500 car.
 (function (root) {
-  const CFG = { url: 'https://eventos.gmbstudio.cc/e', token: null, header: 'Authorization' };
-  const VERSION = '0.52+52';
+  const URL_E = 'https://eventos.gmbstudio.cc/e';
+  const VERSION = '0.53+53';
   const KEY = 'po-install', OFF = 'po-tel-off';
   const store = (() => { try { return localStorage; } catch { return null; } })();
   let install = store?.getItem(KEY);
@@ -17,14 +17,14 @@
 
   const enabled = () => store?.getItem(OFF) !== '1';
   function flush() {
-    if (!q.length || !CFG.token || !enabled()) { if (!enabled()) q = []; return; }
+    if (!q.length || !enabled()) { if (!enabled()) q = []; return; }
     const body = JSON.stringify({ app: 'paint-out', install, platform: 'Web', version: VERSION, region, env, os, events: q });
     q = [];
-    fetch(CFG.url, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json', [CFG.header]: CFG.token }, body }).catch(() => {});
+    fetch(URL_E, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body }).catch(() => {});
   }
   function track(name, props = {}) {
     if (!enabled()) return;
-    q.push({ name, ts: Date.now(), props });
+    q.push({ name, ts: Date.now(), props: Object.fromEntries(Object.entries(props).map(([k, v]) => [k, String(v)])) });
     if (root.PO_DEBUG) console.log('[tel]', name, props);
     if (q.length >= 10) flush();
   }
