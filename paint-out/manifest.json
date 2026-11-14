@@ -1,6 +1,6 @@
 {
-  "name": "Drip Down",
-  "short_name": "Drip Down",
+  "name": "Drip it Down",
+  "short_name": "Drip it Down",
   "display": "fullscreen",
   "orientation": "portrait",
   "start_url": "./index.html",
