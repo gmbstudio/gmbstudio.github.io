@@ -10,9 +10,9 @@ updated: 16 November 2026
 
       <h3>Data we collect</h3>
       <p><strong>No personal data.</strong> Drip it Down has no user accounts of its own and no login. We do not use advertising SDKs, and we do not use third-party analytics SDKs.</p>
-      <p><strong>Anonymous usage statistics (optional).</strong> To tune the difficulty of the stages, Drip it Down sends us anonymous game events (for example: “a stage was started”, “a stage was won”, “a booster was used”), together with the app version, device type and the language configured on the device. This data:</p>
+      <p><strong>Anonymous usage statistics (optional).</strong> To tune the difficulty of the stages and understand how the game is played, Drip it Down sends us anonymous game events (for example: “a stage was started”, “a stage was won”, “a booster was used”, “a coin pack was bought” with its price), together with the app version, device type and the language configured on the device. This data:</p>
       <ul>
-        {% include telemetria-identidad.html %}
+        {% include telemetria-identidad.html identificador="A random identifier, created on first launch and kept in the device’s keychain, is used only to count devices and group the games played on one; it is not linked to you, and turning the statistics off in Settings stops it being sent." %}
         {% include telemetria-garantias.html donde="the game's Settings" %}
       </ul>
 
