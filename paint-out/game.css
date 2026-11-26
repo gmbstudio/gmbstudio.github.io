@@ -1,0 +1,112 @@
+/* Drip it Down: página de JUEGO (regla 13). Siempre oscura, arte a sangre, tipografía del juego.
+   Va después de ../styles.css y solo añade lo propio; nav, secciones, tarjetas y pie son los comunes.
+   ponytail: vive en la carpeta de la app porque web_publicar solo publica grismoor/; si otro juego
+   lo necesita, se sube a styles.css como .hero--game/.gallery/.theme-dark. */
+:root {
+  --ink: #ffffff;        /* blanco sobre el azul del juego #14246e ≈ 14:1 */
+  --muted: #d6defc;      /* ≈ 11:1 */
+  --bg: #14246e;
+  --surface: #1d2f8f;
+  --border: #31459f;
+  --red: #ff6f86;
+  --red-text: #ffd23f;   /* amarillo de las fichas para etiquetas y enlaces: ≈ 10:1 */
+  color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--ink); }
+html { overflow-x: hidden; } /* red de seguridad: la página nunca se desplaza en horizontal */
+/* Barra de desplazamiento oscura también donde el sistema la muestra siempre (ratón en Mac, Windows):
+   si no, sale una franja blanca vertical a la derecha. scrollbar-color en Chrome/Firefox, ::-webkit en Safari. */
+html { scrollbar-color: #3b54b8 var(--bg); }
+::-webkit-scrollbar { width: 12px; height: 12px; background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #3b54b8; border-radius: 6px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-corner { background: var(--bg); }
+.serif { font-family: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif; }
+
+.hero--game {
+  position: relative;
+  max-width: none;
+  margin: 0;
+  padding: 72px max(32px, calc((100vw - 1240px) / 2)) 72px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
+  gap: 48px;
+  align-items: center;
+  background:
+    linear-gradient(90deg, rgba(20,36,110,.94) 0%, rgba(20,36,110,.82) 38%, rgba(20,36,110,.35) 75%, rgba(20,36,110,.55) 100%),
+    linear-gradient(0deg, var(--bg) 0%, rgba(20,36,110,0) 30%),
+    image-set(url(img/home.webp) type("image/webp"), url(img/home.jpg) type("image/jpeg")) center / cover no-repeat;
+  background-color: var(--bg);
+}
+.hero--game .eyebrow { color: var(--muted); }
+.hero--game .eyebrow .dot { background: var(--red-text); animation: none; }
+.hero--game h1 {
+  font-family: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif; font-weight: 900;
+  font-weight: 700;
+  font-size: clamp(36px, 4.6vw, 64px);
+  letter-spacing: 0.5px;
+  line-height: 1.05;
+  margin: 0 0 18px;
+  color: var(--ink);
+}
+.hero--game .game-logo { width: min(340px, 80%); height: auto; margin: 0 0 18px; display: block; }
+.hero--game .hero__sub {
+  font-family: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
+  font-size: 21px; line-height: 1.45;
+  color: var(--ink);
+  margin: 0 0 22px; max-width: 30em;
+}
+.hero--game .proof li { color: var(--ink); background: rgba(29,47,143,.85); border-color: var(--border); }
+.hero--game .hero__note { color: var(--muted); }
+
+/* Tráiler: arranca con un toque (controles nativos), nunca solo: respeta «reducir movimiento». */
+.hero--game > * { min-width: 0; } /* Safari toma el width=1280 del vídeo como mínimo de la columna y la página se ensanchaba */
+.trailer {
+  display: block; width: 100%; max-width: 100%; height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 26px 60px rgba(0,0,0,.5);
+  background: #000;
+}
+.trailer__note { font-size: 12px; color: var(--muted); margin: 12px 0 0; text-align: center; }
+
+/* Galería de salas a sangre: en móvil se desplaza ella en horizontal, la página no. */
+.gallery {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 1fr);
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+  margin: 28px 0 0;
+}
+.gallery figure { margin: 0; scroll-snap-align: start; }
+.gallery img { display: block; width: 100%; height: auto; aspect-ratio: 600 / 1303; object-fit: cover; border-radius: 14px; }
+.gallery figcaption { font-size: 14px; color: var(--muted); margin-top: 8px; }
+
+.lang { font-weight: 600; }
+.lang[aria-current] { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .hero--game {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    text-align: center;
+    padding: 40px 20px 48px;
+    background:
+      linear-gradient(0deg, rgba(20,36,110,.96) 35%, rgba(20,36,110,.7) 100%),
+      image-set(url(img/home-1200.webp) type("image/webp"), url(img/home.jpg) type("image/jpeg")) center / cover no-repeat;
+  }
+  .hero--game .game-logo { margin: 0 auto 18px; }
+  .hero--game .eyebrow .dot { display: none; }
+  .hero--game .hero__sub { margin-left: auto; margin-right: auto; }
+  .gallery { grid-auto-columns: 62%; }
+}
+
+/* El juego es vertical: a la derecha del héroe va la primera captura, no un tráiler. */
+.hero-shot { display: block; width: min(340px, 100%); height: auto; margin: 0 auto; border-radius: 22px; box-shadow: 0 26px 60px rgba(0,0,0,.45); }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 18px 0 0; }
+.facts dt { color: var(--muted); } .facts dd { margin: 0; }
+.btn-dl { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 14px; background: var(--red); color: #fff; font-weight: 800; text-decoration: none; margin-top: 18px; }
