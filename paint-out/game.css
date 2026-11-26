@@ -35,7 +35,7 @@ html { scrollbar-color: #3b54b8 var(--bg); }
   background:
     linear-gradient(90deg, rgba(20,36,110,.94) 0%, rgba(20,36,110,.82) 38%, rgba(20,36,110,.35) 75%, rgba(20,36,110,.55) 100%),
     linear-gradient(0deg, var(--bg) 0%, rgba(20,36,110,0) 30%),
-    image-set(url(img/home.webp) type("image/webp"), url(img/home.jpg) type("image/jpeg")) center / cover no-repeat;
+    image-set(url(img/home-v2.webp) type("image/webp"), url(img/home-v2.jpg) type("image/jpeg")) center / cover no-repeat;
   background-color: var(--bg);
 }
 .hero--game .eyebrow { color: var(--muted); }
@@ -97,7 +97,7 @@ html { scrollbar-color: #3b54b8 var(--bg); }
     padding: 40px 20px 48px;
     background:
       linear-gradient(0deg, rgba(20,36,110,.96) 35%, rgba(20,36,110,.7) 100%),
-      image-set(url(img/home-1200.webp) type("image/webp"), url(img/home.jpg) type("image/jpeg")) center / cover no-repeat;
+      image-set(url(img/home-1200-v2.webp) type("image/webp"), url(img/home-v2.jpg) type("image/jpeg")) center / cover no-repeat;
   }
   .hero--game .game-logo { margin: 0 auto 18px; }
   .hero--game .eyebrow .dot { display: none; }
