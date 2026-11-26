@@ -110,3 +110,7 @@ html { scrollbar-color: #3b54b8 var(--bg); }
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 18px 0 0; }
 .facts dt { color: var(--muted); } .facts dd { margin: 0; }
 .btn-dl { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 14px; background: var(--red); color: #fff; font-weight: 800; text-decoration: none; margin-top: 18px; }
+
+/* cuatro tarjetas: 2 × 2, sin una huérfana */
+#game .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 700px) { #game .grid { grid-template-columns: minmax(0, 1fr); } }
